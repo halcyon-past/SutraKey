@@ -6,6 +6,7 @@ public enum ToastType {
     case start(job: ConversionJob)
     case success(job: ConversionJob, fileURL: URL)
     case failure(job: ConversionJob, message: String)
+    case notice(title: String, message: String, systemImage: String, actionTitle: String?, action: (@MainActor () -> Void)?)
 }
 
 /// Frosted glass floating HUD toast view with actionable buttons.
@@ -31,7 +32,7 @@ public struct SutraToastView: View {
 
                 Text(subtitleText)
                     .font(.system(size: 11, weight: .medium))
-                    .foregroundColor(.white.opacity(0.8))
+                    .foregroundColor(.white.opacity(0.85))
                     .lineLimit(2)
 
                 // Action button if applicable
@@ -94,6 +95,15 @@ public struct SutraToastView: View {
                     .font(.system(size: 15, weight: .bold))
                     .foregroundColor(.red)
             }
+        case .notice(_, _, let systemImage, _, _):
+            ZStack {
+                Circle()
+                    .fill(Color(red: 1.0, green: 0.42, blue: 0.24).opacity(0.2))
+                    .frame(width: 32, height: 32)
+                Image(systemName: systemImage)
+                    .font(.system(size: 15, weight: .bold))
+                    .foregroundColor(Color(red: 1.0, green: 0.42, blue: 0.24))
+            }
         }
     }
 
@@ -105,6 +115,8 @@ public struct SutraToastView: View {
             return "Saved to Downloads"
         case .failure:
             return "Conversion Failed"
+        case .notice(let title, _, _, _, _):
+            return title
         }
     }
 
@@ -116,6 +128,8 @@ public struct SutraToastView: View {
             return fileURL.lastPathComponent
         case .failure(let job, let message):
             return "\(job.action.shortBadge): \(message)"
+        case .notice(_, let message, _, _, _):
+            return message
         }
     }
 
@@ -159,6 +173,25 @@ public struct SutraToastView: View {
                 .cornerRadius(6)
             }
             .buttonStyle(.plain)
+        case .notice(_, _, _, let actionTitle, let action):
+            if let title = actionTitle, let act = action {
+                Button {
+                    act()
+                    onDismiss()
+                } label: {
+                    HStack(spacing: 4) {
+                        Image(systemName: "arrow.up.right.square")
+                        Text(title)
+                    }
+                    .font(.system(size: 11, weight: .semibold))
+                    .foregroundColor(.white)
+                    .padding(.horizontal, 8)
+                    .padding(.vertical, 3)
+                    .background(Color(red: 1.0, green: 0.42, blue: 0.24).opacity(0.4))
+                    .cornerRadius(6)
+                }
+                .buttonStyle(.plain)
+            }
         }
     }
 }

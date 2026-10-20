@@ -51,6 +51,17 @@ public final class SutraToastController: NSObject {
         )
     }
 
+    /// Displays an informational toast HUD notice.
+    public func showNotice(
+        title: String,
+        message: String,
+        systemImage: String = "info.circle.fill",
+        actionTitle: String? = nil,
+        action: (@MainActor () -> Void)? = nil
+    ) {
+        showToast(type: .notice(title: title, message: message, systemImage: systemImage, actionTitle: actionTitle, action: action))
+    }
+
     // MARK: - Floating Panel Management
 
     private func showToast(type: ToastType) {

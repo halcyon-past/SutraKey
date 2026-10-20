@@ -1,4 +1,5 @@
 import AppKit
+import ApplicationServices
 import Foundation
 import os
 import SwiftUI
@@ -35,14 +36,21 @@ public final class AppDelegate: NSObject, NSApplicationDelegate {
             )
         }
 
-        // Start global keyboard/mouse monitor
+        // Start global keyboard/mouse monitor (Shift+Select, Shift+Click, Double-tap Shift)
         ShiftSelectionMonitor.shared.startMonitoring()
 
-        Logger.app.info("SutraKey running invisibly in background. Ready for Shift+Select actions.")
+        // Register system-wide Carbon hotkeys (Cmd+Shift+S, Option+Shift+S)
+        GlobalHotKeyManager.shared.onTrigger = {
+            ShiftSelectionMonitor.shared.attemptRadialTrigger(at: NSEvent.mouseLocation)
+        }
+        GlobalHotKeyManager.shared.registerHotKeys()
+
+        Logger.app.info("SutraKey running invisibly in background. Ready for Shift+Select or Cmd+Shift+S.")
     }
 
     public func applicationWillTerminate(_ notification: Notification) {
         ShiftSelectionMonitor.shared.stopMonitoring()
+        GlobalHotKeyManager.shared.unregisterHotKeys()
     }
 
     private func checkAccessibilityPermissions() {
@@ -50,6 +58,17 @@ public final class AppDelegate: NSObject, NSApplicationDelegate {
         let isTrusted = AXIsProcessTrustedWithOptions(options)
         if !isTrusted {
             Logger.accessibility.warning("SutraKey requires macOS Accessibility permissions to read selected text.")
+            SutraToastController.shared.showNotice(
+                title: "Accessibility Required",
+                message: "Please toggle SutraKey ON in System Settings > Privacy & Security > Accessibility.",
+                systemImage: "hand.raised.fill",
+                actionTitle: "Open Settings",
+                action: {
+                    if let url = URL(string: "x-apple.systempreferences:com.apple.preference.security?Privacy_Accessibility") {
+                        NSWorkspace.shared.open(url)
+                    }
+                }
+            )
         }
     }
 }

@@ -26,6 +26,14 @@ public enum TextSelectionExtractor: Sendable {
             }
         }
 
+        // 3. Fallback: Active clipboard content
+        if let directText = NSPasteboard.general.string(forType: .string), !directText.isEmpty {
+            if let url = URLSanitizer.extractURL(from: directText) {
+                Logger.accessibility.info("Extracted URL from active pasteboard: \(url.absoluteString)")
+                return url
+            }
+        }
+
         return nil
     }
 

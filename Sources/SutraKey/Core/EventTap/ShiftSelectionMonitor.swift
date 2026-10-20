@@ -1,4 +1,5 @@
 import AppKit
+import ApplicationServices
 import Foundation
 import os
 
@@ -11,6 +12,7 @@ public final class ShiftSelectionMonitor: NSObject {
     private var localMonitor: Any?
     private var isDraggingWithShift: Bool = false
     private var dragStartLocation: CGPoint?
+    private var lastShiftPressTime: TimeInterval = 0
 
     public override init() {
         super.init()
@@ -24,7 +26,6 @@ public final class ShiftSelectionMonitor: NSObject {
             .leftMouseDown,
             .leftMouseDragged,
             .leftMouseUp,
-            .mouseMoved,
             .flagsChanged,
             .keyDown
         ]
@@ -69,8 +70,6 @@ public final class ShiftSelectionMonitor: NSObject {
             handleLeftMouseDragged(event)
         case .leftMouseUp:
             handleLeftMouseUp(event)
-        case .mouseMoved:
-            handleMouseMoved(event)
         case .keyDown:
             handleKeyDown(event)
         default:
@@ -88,6 +87,20 @@ public final class ShiftSelectionMonitor: NSObject {
             }
             isDraggingWithShift = false
             dragStartLocation = nil
+            return
+        }
+
+        // Double-Tap Shift Detection:
+        let isShiftPressed = event.modifierFlags.contains(.shift)
+        if isShiftPressed && ModifierExclusivityValidator.isShiftOnly(flags: event.modifierFlags) {
+            let now = ProcessInfo.processInfo.systemUptime
+            if now - lastShiftPressTime < 0.35 {
+                Logger.events.info("Double-tap Shift detected! Summoning radial menu under cursor.")
+                lastShiftPressTime = 0
+                attemptRadialTrigger(at: NSEvent.mouseLocation)
+                return
+            }
+            lastShiftPressTime = now
         }
     }
 
@@ -98,12 +111,6 @@ public final class ShiftSelectionMonitor: NSObject {
                 Logger.events.info("Escape key pressed. Dismissing radial menu.")
                 RadialPanelController.shared.dismiss()
             }
-        }
-    }
-
-    private func handleMouseMoved(_ event: NSEvent) {
-        if RadialPanelController.shared.isVisible {
-            RadialPanelController.shared.handleMouseMoved(currentLocation: NSEvent.mouseLocation)
         }
     }
 
@@ -124,9 +131,14 @@ public final class ShiftSelectionMonitor: NSObject {
             }
         }
 
-        if ModifierExclusivityValidator.isShiftOnly(flags: event.modifierFlags) {
+        // Detect if user initiates click/drag while holding ONLY Shift
+        let isShiftDown = ModifierExclusivityValidator.isShiftOnly(flags: event.modifierFlags) ||
+                          ModifierExclusivityValidator.isShiftOnly(flags: NSEvent.modifierFlags)
+
+        if isShiftDown {
             isDraggingWithShift = true
             dragStartLocation = NSEvent.mouseLocation
+            Logger.events.info("Shift + mouse down initiated at (\(NSEvent.mouseLocation.x, privacy: .public), \(NSEvent.mouseLocation.y, privacy: .public))")
         } else {
             isDraggingWithShift = false
             dragStartLocation = nil
@@ -155,12 +167,14 @@ public final class ShiftSelectionMonitor: NSObject {
             return
         }
 
-        // Case B: User was holding Shift during selection or click
-        if isDraggingWithShift && ModifierExclusivityValidator.isShiftOnly(flags: event.modifierFlags) {
+        // Case B: User initiated selection with Shift held down
+        if isDraggingWithShift {
             isDraggingWithShift = false
             dragStartLocation = nil
 
-            // Small delay to allow OS selection state to settle
+            Logger.events.info("Shift selection finished at (\(currentLocation.x, privacy: .public), \(currentLocation.y, privacy: .public)). Attempting radial menu trigger...")
+
+            // Small delay to allow OS text selection state to settle
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) { [weak self] in
                 self?.attemptRadialTrigger(at: currentLocation)
             }
@@ -170,9 +184,32 @@ public final class ShiftSelectionMonitor: NSObject {
         }
     }
 
-    private func attemptRadialTrigger(at screenPoint: CGPoint) {
-        // Extract selected URL
+    /// Attempts to extract URL from selection/clipboard and summon the radial menu.
+    public func attemptRadialTrigger(at screenPoint: CGPoint) {
+        Logger.events.info("Attempting radial trigger at (\(screenPoint.x, privacy: .public), \(screenPoint.y, privacy: .public))...")
+
         guard let url = TextSelectionExtractor.extractSelectedURL() else {
+            Logger.events.warning("No valid URL found in selection or clipboard.")
+            let isTrusted = AXIsProcessTrusted()
+            if !isTrusted {
+                SutraToastController.shared.showNotice(
+                    title: "Accessibility Required",
+                    message: "Enable SutraKey in System Settings > Accessibility to auto-read selections.",
+                    systemImage: "hand.raised.fill",
+                    actionTitle: "Open Settings",
+                    action: {
+                        if let prefURL = URL(string: "x-apple.systempreferences:com.apple.preference.security?Privacy_Accessibility") {
+                            NSWorkspace.shared.open(prefURL)
+                        }
+                    }
+                )
+            } else {
+                SutraToastController.shared.showNotice(
+                    title: "No URL Found",
+                    message: "Please highlight a URL or copy one to your clipboard first.",
+                    systemImage: "link.badge.plus"
+                )
+            }
             return
         }
 
