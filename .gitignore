@@ -19,3 +19,13 @@ __pycache__/
 *.pyo
 .venv/
 venv/
+
+# Node & Next.js
+node_modules/
+.next/
+web/node_modules/
+web/.next/
+web/out/
+*.tsbuildinfo
+next-env.d.ts
+

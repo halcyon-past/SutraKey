@@ -1,0 +1,64 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    --bg-dark: #090a0d;
+    --accent-sutra: #ff6b3d;
+    --accent-cyan: #38bdf8;
+    --accent-gold: #fbbf24;
+    --accent-purple: #c084fc;
+    --accent-emerald: #34d399;
+  }
+}
+
+/* Subtle background glows */
+.radial-bg {
+  background-image: 
+    radial-gradient(circle at 50% -10%, rgba(255, 107, 61, 0.14) 0%, transparent 60%),
+    radial-gradient(circle at 10% 40%, rgba(56, 189, 248, 0.07) 0%, transparent 40%),
+    radial-gradient(circle at 90% 70%, rgba(192, 132, 252, 0.06) 0%, transparent 45%);
+}
+
+/* Hardware Keycap Styling */
+.keycap {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 3px 9px;
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 13px;
+  font-weight: 600;
+  background: linear-gradient(180deg, #22232a 0%, #17181f 100%);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-bottom: 3px solid rgba(255, 255, 255, 0.15);
+  border-radius: 6px;
+  color: #fff;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.6);
+  transition: all 0.1s ease;
+}
+
+.keycap.pressed {
+  transform: translateY(2px);
+  border-bottom-width: 1px;
+  border-color: rgba(255, 107, 61, 0.6);
+  background: #ff6b3d;
+  color: #000;
+  box-shadow: 0 0 12px rgba(255, 107, 61, 0.5);
+}
+
+/* Glassmorphic Cards */
+.glass-panel {
+  background: rgba(18, 19, 25, 0.7);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.glass-panel-hover {
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.glass-panel-hover:hover {
+  border-color: rgba(255, 255, 255, 0.18);
+  transform: translateY(-2px);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.5);
+}
