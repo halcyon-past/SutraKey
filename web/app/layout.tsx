@@ -15,14 +15,16 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   metadataBase: new URL("https://sutrakey.aritro.cloud"),
   title: "SutraKey — Shift + Select Radial Media & Document Downloader for macOS",
-  description: "Hold Shift + Select any URL to summon a zero-latency radial wheel that downloads video, audio, subtitles, or clean PDFs straight to ~/Downloads. Native Swift macOS utility. 100% Free & Open Source.",
+  description:
+    "Hold Shift + Select any URL to summon a zero-latency liquid radial wheel that downloads video, audio, subtitles, or clean PDFs straight to ~/Downloads. 100% Native, Free & Open Source.",
   icons: {
-    icon: "/MenuBarIcon-White@2x.png",
+    icon: "/MenuBarIcon-Black@2x.png",
     apple: "/AppIcon-1024.png",
   },
   openGraph: {
     title: "SutraKey — macOS Radial Media & PDF Utility",
-    description: "Hold Shift + Select any URL to summon a zero-latency radial wheel that downloads video, audio, subtitles, or clean PDFs straight to ~/Downloads.",
+    description:
+      "Hold Shift + Select any URL to summon a zero-latency liquid radial wheel. 100% Free & Open Source native macOS app.",
     url: "https://sutrakey.aritro.cloud",
     siteName: "SutraKey",
     images: [
@@ -39,7 +41,8 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: "SutraKey — macOS Radial Media & PDF Utility",
-    description: "Hold Shift + Select any URL to summon a zero-latency radial wheel that downloads straight to ~/Downloads.",
+    description:
+      "Hold Shift + Select any URL to summon a zero-latency liquid radial wheel that downloads straight to ~/Downloads.",
     images: ["/AppIcon-1024.png"],
   },
 };
@@ -50,9 +53,9 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="dark scroll-smooth">
+    <html lang="en" className="scroll-smooth">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} min-h-screen bg-[#090a0d] text-slate-100 antialiased font-sans selection:bg-[#ff6b3d]/30 selection:text-[#ff8359]`}
+        className={`${geistSans.variable} ${geistMono.variable} min-h-screen bg-[#fbfbfd] text-[#1d1d1f] dark:bg-[#0a0a0c] dark:text-[#f5f5f7] antialiased font-sans selection:bg-pink-300/40 selection:text-pink-900 dark:selection:bg-pink-500/30 dark:selection:text-pink-200`}
       >
         {children}
       </body>
