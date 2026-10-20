@@ -1,0 +1,47 @@
+name: Branch & PR Governance Guard
+
+on:
+  pull_request_target:
+    types: [opened, synchronize, reopened, edited]
+
+permissions:
+  pull-requests: read
+  contents: read
+
+jobs:
+  validate-branch-naming:
+    name: Enforce SutraKey Branch Policy (Core + Forks)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Validate Source & Target Branch Rules
+        env:
+          HEAD_REF: ${{ github.head_ref }}
+          BASE_REF: ${{ github.base_ref }}
+          IS_FORK: ${{ github.event.pull_request.head.repo.full_name != github.repository }}
+        run: |
+          echo "🔍 Inspecting PR: '$HEAD_REF' -> '$BASE_REF' (From Fork: $IS_FORK)"
+
+          # 1. Target branch must always be one of the 3 core environment branches
+          if [[ ! "$BASE_REF" =~ ^(dev|uat|main)$ ]]; then
+            echo "❌ ERROR: Pull Requests must target 'dev', 'uat', or 'main'. Found: '$BASE_REF'"
+            exit 1
+          fi
+
+          # 2. Core-to-Core merges (between dev, uat, and main) are always permitted
+          if [[ "$HEAD_REF" =~ ^(dev|uat|main)$ ]]; then
+            echo "✅ Valid core environment promotion branch: '$HEAD_REF' -> '$BASE_REF'"
+            exit 0
+          fi
+
+          # 3. Non-core branches (local or forked) must match feature/<env>/<name> or hotfix/<name>
+          if [[ "$HEAD_REF" =~ ^feature/(dev|uat|main)/[a-z0-9-]+$ ]] || [[ "$HEAD_REF" =~ ^hotfix/[a-z0-9-]+$ ]]; then
+            echo "✅ Valid feature/hotfix branch naming convention: '$HEAD_REF'"
+            exit 0
+          fi
+
+          echo "❌ INVALID BRANCH NAME: '$HEAD_REF'"
+          echo "Allowed patterns:"
+          echo "  - Core branches: dev, uat, main"
+          echo "  - Feature branches: feature/<dev|uat|main>/<feature-name> (lowercase alphanumeric & hyphens)"
+          echo "  - Hotfix branches:  hotfix/<feature-name>"
+          exit 1

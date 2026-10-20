@@ -1,0 +1,21 @@
+.DS_Store
+.build/
+.swiftpm/
+Packages/
+xcuserdata/
+DerivedData/
+*.xcworkspace
+*.xcodeproj
+
+# Output and temporary directories
+Assets_Generated/
+.build/assets/
+*.dmg
+dist/
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+venv/

@@ -1,0 +1,47 @@
+name: CI Build & Test
+
+on:
+  push:
+    branches: [main, uat, dev]
+  pull_request:
+    branches: [main, uat, dev]
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test-and-build:
+    name: Build, Test & Verify Icons
+    runs-on: macos-14
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Set Up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install Python Dependencies
+        run: |
+          pip install --upgrade pip
+          pip install pillow numpy
+
+      - name: Verify Procedural Icon Generation Pipeline
+        run: |
+          python3 Scripts/generate_icons.py
+          bash Scripts/build_icns.sh
+
+      - name: Select Xcode Version
+        run: |
+          sudo xcode-select -s /Applications/Xcode_15.4.app || sudo xcode-select -s /Applications/Xcode.app || true
+          swift --version
+
+      - name: Run Swift Tests
+        run: |
+          swift test
+
+      - name: Run Swift Build (Release)
+        run: |
+          swift build -c release

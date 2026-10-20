@@ -1,0 +1,19 @@
+disabled_rules:
+  - trailing_whitespace
+  - line_length
+  - type_body_length
+  - file_length
+
+opt_in_rules:
+  - empty_count
+  - force_unwrapping
+  - fatal_error_message
+  - redundant_nil_coalescing
+
+excluded:
+  - .build
+  - Packages
+  - Tests
+
+force_unwrapping:
+  severity: error
