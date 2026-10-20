@@ -7,9 +7,9 @@ struct URLSanitizerTests {
 
     @Test("Extracts clean URL from raw URL string")
     func testExtractsCleanURL() {
-        let input = "https://youtube.com/watch?v=dQw4w9WgXcQ"
+        let input = "https://youtube.com/watch?v=2u19wN1tDT4"
         let url = URLSanitizer.extractURL(from: input)
-        #expect(url?.absoluteString == "https://youtube.com/watch?v=dQw4w9WgXcQ")
+        #expect(url?.absoluteString == "https://youtube.com/watch?v=2u19wN1tDT4")
     }
 
     @Test("Strips surrounding quotes and brackets")
@@ -56,14 +56,14 @@ struct URLSanitizerTests {
 
     @Test("Normalizes Instagram reel URLs and strips tracking parameters")
     func testInstagramReelNormalization() {
-        let reelsInput = "https://www.instagram.com/reels/Dd88L1GvdGd/?hl=en&igsh=abcdef123"
+        let reelsInput = "https://www.instagram.com/reels/Dc_U1XRpWEI/?hl=en&igsh=abcdef123"
         let extracted = URLSanitizer.extractURL(from: reelsInput)
         #expect(extracted != nil)
-        #expect(extracted?.absoluteString == "https://www.instagram.com/reel/Dd88L1GvdGd/")
+        #expect(extracted?.absoluteString == "https://www.instagram.com/reel/Dc_U1XRpWEI/")
 
-        let pInput = "https://www.instagram.com/p/DdBth25sdJt/?hl=en"
+        let pInput = "https://www.instagram.com/p/Dc_U1XRpWEI/?hl=en"
         let pExtracted = URLSanitizer.extractURL(from: pInput)
         #expect(pExtracted != nil)
-        #expect(pExtracted?.absoluteString == "https://www.instagram.com/p/DdBth25sdJt/")
+        #expect(pExtracted?.absoluteString == "https://www.instagram.com/p/Dc_U1XRpWEI/")
     }
 }

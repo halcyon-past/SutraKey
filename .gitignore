@@ -8,7 +8,6 @@ DerivedData/
 *.xcodeproj
 
 # Output and temporary directories
-Assets_Generated/
 .build/assets/
 *.dmg
 dist/

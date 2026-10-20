@@ -1,7 +1,7 @@
 # SutraKey (सूत्र)
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/halcyon-past/SutraKey/main/Assets_Generated/AppIcon-1024.png" width="140" height="140" alt="SutraKey App Icon" style="border-radius: 28px; box-shadow: 0 16px 36px rgba(0,0,0,0.12);" />
+  <img src="https://raw.githubusercontent.com/halcyon-past/SutraKey/main/web/public/AppIcon-1024.png" width="140" height="140" alt="SutraKey App Icon" style="border-radius: 28px; box-shadow: 0 16px 36px rgba(0,0,0,0.12);" />
 </p>
 
 <p align="center">
@@ -9,6 +9,8 @@
 </p>
 
 <p align="center">
+  <a href="https://github.com/halcyon-past/SutraKey/stargazers"><img src="https://img.shields.io/github/stars/halcyon-past/SutraKey?style=flat-square&logo=github&label=Stars&color=orange" alt="GitHub Stars"></a>
+  <a href="https://github.com/halcyon-past/SutraKey/network/members"><img src="https://img.shields.io/github/forks/halcyon-past/SutraKey?style=flat-square&logo=github&label=Forks&color=blue" alt="GitHub Forks"></a>
   <a href="https://github.com/halcyon-past/SutraKey/actions/workflows/ci-build-and-test.yml"><img src="https://img.shields.io/badge/CI-passing-brightgreen?style=flat-square" alt="CI Status"></a>
   <a href="https://github.com/halcyon-past/SutraKey/blob/main/LICENSE"><img src="https://img.shields.io/badge/License-MIT-blue.svg?style=flat-square" alt="License"></a>
   <a href="https://developer.apple.com/macos/"><img src="https://img.shields.io/badge/macOS-14.0%2B%20Sonoma-black.svg?style=flat-square&logo=apple" alt="macOS"></a>
