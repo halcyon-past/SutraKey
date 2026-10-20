@@ -24,6 +24,7 @@ public final class ShiftSelectionMonitor: NSObject {
             .leftMouseDown,
             .leftMouseDragged,
             .leftMouseUp,
+            .mouseMoved,
             .flagsChanged,
             .keyDown
         ]
@@ -68,6 +69,8 @@ public final class ShiftSelectionMonitor: NSObject {
             handleLeftMouseDragged(event)
         case .leftMouseUp:
             handleLeftMouseUp(event)
+        case .mouseMoved:
+            handleMouseMoved(event)
         case .keyDown:
             handleKeyDown(event)
         default:
@@ -98,16 +101,35 @@ public final class ShiftSelectionMonitor: NSObject {
         }
     }
 
+    private func handleMouseMoved(_ event: NSEvent) {
+        if RadialPanelController.shared.isVisible {
+            RadialPanelController.shared.handleMouseMoved(currentLocation: NSEvent.mouseLocation)
+        }
+    }
+
     private func handleLeftMouseDown(_ event: NSEvent) {
+        // If radial menu is currently open:
+        if RadialPanelController.shared.isVisible {
+            let mouseLoc = NSEvent.mouseLocation
+            if RadialPanelController.shared.containsPoint(mouseLoc) {
+                // User clicked inside the radial menu!
+                // Do NOT dismiss - let the button / gesture process the selection!
+                return
+            } else {
+                // User clicked outside the menu to dismiss it.
+                RadialPanelController.shared.dismiss()
+                isDraggingWithShift = false
+                dragStartLocation = nil
+                return
+            }
+        }
+
         if ModifierExclusivityValidator.isShiftOnly(flags: event.modifierFlags) {
             isDraggingWithShift = true
             dragStartLocation = NSEvent.mouseLocation
         } else {
             isDraggingWithShift = false
             dragStartLocation = nil
-            if RadialPanelController.shared.isVisible {
-                RadialPanelController.shared.dismiss()
-            }
         }
     }
 
@@ -121,9 +143,13 @@ public final class ShiftSelectionMonitor: NSObject {
     private func handleLeftMouseUp(_ event: NSEvent) {
         let currentLocation = NSEvent.mouseLocation
 
-        // Case A: Radial menu is already active -> commit or cancel selection
+        // Case A: Radial menu is already active
         if RadialPanelController.shared.isVisible {
-            RadialPanelController.shared.handleMouseUp(currentLocation: currentLocation)
+            if RadialPanelController.shared.containsPoint(currentLocation) {
+                RadialPanelController.shared.handleMouseUp(currentLocation: currentLocation)
+            } else {
+                RadialPanelController.shared.dismiss()
+            }
             isDraggingWithShift = false
             dragStartLocation = nil
             return
