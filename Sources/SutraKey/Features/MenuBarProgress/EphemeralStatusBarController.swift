@@ -22,6 +22,17 @@ public final class EphemeralStatusBarController: NSObject {
     /// Grace period before status bar item hides after all jobs finish (1.5 seconds by default).
     public var completionGracePeriodSeconds: Double = 1.5
 
+    /// Flag controlling whether physical NSStatusBar item should be created.
+    /// Disabled automatically in headless CI/CD runners to prevent WindowServer CGSConnection aborts.
+    public var allowsSystemStatusItem: Bool = {
+        if ProcessInfo.processInfo.environment["CI"] != nil ||
+           ProcessInfo.processInfo.environment["GITHUB_ACTIONS"] != nil ||
+           ProcessInfo.processInfo.environment["XCTestConfigurationFilePath"] != nil {
+            return false
+        }
+        return true
+    }()
+
     /// Notification hook fired for testing and HUD toasts.
     public var onTaskStartedNotification: ((ConversionJob) -> Void)?
     public var onTaskCompletedNotification: ((ConversionJob) -> Void)?
@@ -97,7 +108,9 @@ public final class EphemeralStatusBarController: NSObject {
         isIconVisible = false
         if let item = statusItem {
             item.isVisible = false
-            NSStatusBar.system.removeStatusItem(item)
+            if allowsSystemStatusItem {
+                NSStatusBar.system.removeStatusItem(item)
+            }
             statusItem = nil
         }
         popover?.close()
@@ -111,6 +124,7 @@ public final class EphemeralStatusBarController: NSObject {
     }
 
     private func setupStatusItemIfNeeded() {
+        guard allowsSystemStatusItem else { return }
         guard statusItem == nil else {
             statusItem?.isVisible = true
             return
@@ -129,7 +143,7 @@ public final class EphemeralStatusBarController: NSObject {
     }
 
     private func updateStatusItemDisplay() {
-        guard let item = statusItem, let button = item.button else { return }
+        guard allowsSystemStatusItem, let item = statusItem, let button = item.button else { return }
 
         // Load custom template image if available
         if let image = NSImage(named: "MenuBarIcon") ?? NSImage(systemSymbolName: "arrow.down.circle.fill", accessibilityDescription: "SutraKey") {
