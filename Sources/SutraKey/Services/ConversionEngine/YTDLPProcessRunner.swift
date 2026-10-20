@@ -43,6 +43,7 @@ public final class YTDLPProcessRunner: Sendable {
             "--no-exec",
             "--restrict-filenames",
             "--newline",
+            "--progress",
             "--print", "after_move:filepath",
             "-o", outputTemplate
         ]

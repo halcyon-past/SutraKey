@@ -74,4 +74,33 @@ struct RadialGeometryTests {
         #expect(RadialGeometryMath.action(forAngleDegrees: .nan) == .video)
         #expect(RadialGeometryMath.action(forAngleDegrees: .infinity) == .video)
     }
+
+    @Test("Hit tests match Cartesian orientations accurately for flipped views")
+    func testFlippedViewHitTestingAccuracy() {
+        let center = CGPoint(x: 170.0, y: 170.0)
+        // Video: top-right (x > center.x, y < center.y)
+        let videoLoc = CGPoint(x: 242.0, y: 117.0)
+        let videoAction = RadialGeometryMath.action(forOffsetDX: Double(videoLoc.x - center.x), dy: Double(center.y - videoLoc.y))
+        #expect(videoAction == .video)
+
+        // Audio: top-left (x < center.x, y < center.y)
+        let audioLoc = CGPoint(x: 142.0, y: 84.0)
+        let audioAction = RadialGeometryMath.action(forOffsetDX: Double(audioLoc.x - center.x), dy: Double(center.y - audioLoc.y))
+        #expect(audioAction == .audio)
+
+        // Subtitles: left (x < center.x, y == center.y)
+        let subLoc = CGPoint(x: 80.0, y: 170.0)
+        let subAction = RadialGeometryMath.action(forOffsetDX: Double(subLoc.x - center.x), dy: Double(center.y - subLoc.y))
+        #expect(subAction == .subtitles)
+
+        // Gallery: bottom-left (x < center.x, y > center.y)
+        let galLoc = CGPoint(x: 142.0, y: 255.0)
+        let galAction = RadialGeometryMath.action(forOffsetDX: Double(galLoc.x - center.x), dy: Double(center.y - galLoc.y))
+        #expect(galAction == .gallery)
+
+        // PDF: bottom-right (x > center.x, y > center.y)
+        let pdfLoc = CGPoint(x: 242.0, y: 222.0)
+        let pdfAction = RadialGeometryMath.action(forOffsetDX: Double(pdfLoc.x - center.x), dy: Double(center.y - pdfLoc.y))
+        #expect(pdfAction == .pdf)
+    }
 }

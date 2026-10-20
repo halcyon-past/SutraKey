@@ -4,6 +4,7 @@ import SwiftUI
 /// Custom hosting view with full mouse tracking area and first-mouse clickability.
 final class RadialHostingView<Content: View>: NSHostingView<Content> {
     var onMouseMove: ((CGPoint) -> Void)?
+    var onMouseExit: (() -> Void)?
     var onMouseClick: ((CGPoint) -> Void)?
 
     override func acceptsFirstMouse(for event: NSEvent?) -> Bool {
@@ -29,7 +30,26 @@ final class RadialHostingView<Content: View>: NSHostingView<Content> {
         onMouseMove?(loc)
     }
 
+    override func mouseDragged(with event: NSEvent) {
+        let loc = convert(event.locationInWindow, from: nil)
+        onMouseMove?(loc)
+    }
+
+    override func mouseExited(with event: NSEvent) {
+        onMouseExit?()
+    }
+
     override func mouseDown(with event: NSEvent) {
+        let loc = convert(event.locationInWindow, from: nil)
+        let center = CGPoint(x: bounds.midX, y: bounds.midY)
+        let dist = hypot(Double(loc.x - center.x), Double(loc.y - center.y))
+        // If clicked outside the active radial disc (> 148pt), dismiss immediately on mouse down
+        if dist > 148.0 {
+            onMouseClick?(loc)
+        }
+    }
+
+    override func mouseUp(with event: NSEvent) {
         let loc = convert(event.locationInWindow, from: nil)
         onMouseClick?(loc)
     }
@@ -121,7 +141,7 @@ public final class RadialPanelController: NSObject {
             guard let state = state else { return }
             let center = CGPoint(x: panelSize / 2.0, y: panelSize / 2.0)
             let dx = Double(loc.x - center.x)
-            let dy = Double(loc.y - center.y) // In NSView, Y increases upwards
+            let dy = Double(center.y - loc.y) // In flipped NSHostingView: Cartesian Y is center.y - loc.y
             let dist = hypot(dx, dy)
 
             if dist < RadialGeometryMath.deadZoneRadius {
@@ -145,11 +165,17 @@ public final class RadialPanelController: NSObject {
             }
         }
 
+        hostingView.onMouseExit = { [weak state] in
+            guard let state = state else { return }
+            state.isCenterHovered = false
+            state.hoveredAction = nil
+        }
+
         hostingView.onMouseClick = { [weak self] loc in
-            guard let self = self else { return }
+            guard let self = self, self.isDisplayed else { return }
             let center = CGPoint(x: panelSize / 2.0, y: panelSize / 2.0)
             let dx = Double(loc.x - center.x)
-            let dy = Double(loc.y - center.y)
+            let dy = Double(center.y - loc.y) // In flipped NSHostingView: Cartesian Y is center.y - loc.y
             let dist = hypot(dx, dy)
 
             if dist < RadialGeometryMath.deadZoneRadius {

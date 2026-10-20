@@ -46,6 +46,23 @@ struct YTDLPProgressParserTests {
         #expect(parsed?.progress == 1.0)
     }
 
+    @Test("Parses initial progress line with Unknown speed and ETA")
+    func testParsesInitialProgressLine() {
+        let line = "[download]   0.0% of    2.76MiB at  Unknown B/s ETA Unknown"
+        let parsed = YTDLPProgressParser.parseLine(line)
+        #expect(parsed != nil)
+        #expect(parsed?.progress == 0.0)
+        #expect(parsed?.speed == "--")
+        #expect(parsed?.eta == "--")
+
+        let tickLine = "[download]   0.2% of    2.76MiB at    1.23MiB/s ETA 00:02"
+        let parsedTick = YTDLPProgressParser.parseLine(tickLine)
+        #expect(parsedTick != nil)
+        #expect(parsedTick?.progress == 0.002)
+        #expect(parsedTick?.speed == "1.23 MiB/s")
+        #expect(parsedTick?.eta == "00:02")
+    }
+
     @Test("Ignores empty or non-matching lines")
     func testIgnoresIrrelevantLines() {
         #expect(YTDLPProgressParser.parseLine("") == nil)

@@ -6,7 +6,7 @@ import SwiftUI
 /// Controls the ephemeral NSStatusItem in the macOS Menu Bar.
 /// Appears strictly while active conversion tasks are running and vanishes when idle.
 @MainActor
-public final class EphemeralStatusBarController: NSObject {
+public final class EphemeralStatusBarController: NSObject, ObservableObject {
     public static let shared = EphemeralStatusBarController()
 
     private var statusItem: NSStatusItem?
@@ -14,10 +14,10 @@ public final class EphemeralStatusBarController: NSObject {
     private var dismissTimer: Timer?
 
     /// Publicly observable state for tests and UI guards.
-    public private(set) var isIconVisible: Bool = false
+    @Published public private(set) var isIconVisible: Bool = false
 
     /// Active jobs currently reflected in the menu bar popover.
-    public private(set) var activeTasks: [ConversionJob] = []
+    @Published public private(set) var activeTasks: [ConversionJob] = []
 
     /// Grace period before status bar item hides after all jobs finish (1.5 seconds by default).
     public var completionGracePeriodSeconds: Double = 1.5
@@ -173,7 +173,7 @@ public final class EphemeralStatusBarController: NSObject {
         pop.contentSize = NSSize(width: 320, height: 280)
 
         let contentView = ProgressPopoverView(
-            jobs: activeTasks,
+            controller: self,
             onCancelJob: { jobId in
                 Task {
                     await ConversionTaskActor.shared.cancelJob(id: jobId)

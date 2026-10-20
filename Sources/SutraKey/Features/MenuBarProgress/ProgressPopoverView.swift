@@ -2,15 +2,26 @@ import SwiftUI
 
 /// Popover content showing active download and conversion jobs with live metrics.
 public struct ProgressPopoverView: View {
-    public let jobs: [ConversionJob]
+    @ObservedObject public var controller: EphemeralStatusBarController
     public let onCancelJob: (UUID) -> Void
 
+    public init(controller: EphemeralStatusBarController = .shared, onCancelJob: @escaping (UUID) -> Void) {
+        self.controller = controller
+        self.onCancelJob = onCancelJob
+    }
+
     public init(jobs: [ConversionJob], onCancelJob: @escaping (UUID) -> Void) {
-        self.jobs = jobs
+        let mock = EphemeralStatusBarController()
+        mock.hideStatusItem()
+        for j in jobs {
+            mock.taskDidStart(j)
+        }
+        self.controller = mock
         self.onCancelJob = onCancelJob
     }
 
     public var body: some View {
+        let jobs = controller.activeTasks
         VStack(alignment: .leading, spacing: 12) {
             // Header
             HStack {

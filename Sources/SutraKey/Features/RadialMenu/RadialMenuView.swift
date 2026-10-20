@@ -57,7 +57,7 @@ public struct RadialMenuView: View {
     @State private var appeared: Bool = false
 
     private let menuRadius: CGFloat = 148.0
-    private let innerRadius: CGFloat = 36.0
+    private let innerRadius: CGFloat = 28.0
 
     public init(
         state: RadialMenuState,
