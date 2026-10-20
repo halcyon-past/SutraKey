@@ -18,6 +18,15 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v4
 
+      - name: Select Xcode 16 (Swift 6)
+        run: |
+          XCODE_LATEST=$(ls -d /Applications/Xcode_16*.app 2>/dev/null | sort -V | tail -n 1)
+          if [ -n "$XCODE_LATEST" ]; then
+            echo "Selecting $XCODE_LATEST"
+            sudo xcode-select -s "$XCODE_LATEST"
+          fi
+          swift --version
+
       - name: Set Up Python
         uses: actions/setup-python@v5
         with:
@@ -33,11 +42,6 @@ jobs:
           python3 Scripts/generate_icons.py
           bash Scripts/build_icns.sh
 
-      - name: Select Xcode Version
-        run: |
-          sudo xcode-select -s /Applications/Xcode_15.4.app || sudo xcode-select -s /Applications/Xcode.app || true
-          swift --version
-
       - name: Run Swift Tests
         run: |
           swift test
@@ -45,3 +49,16 @@ jobs:
       - name: Run Swift Build (Release)
         run: |
           swift build -c release
+
+      - name: Set Up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+          cache-dependency-path: "web/package-lock.json"
+
+      - name: Verify Next.js Web Landing Page Build
+        run: |
+          cd web
+          npm ci
+          npm run build
