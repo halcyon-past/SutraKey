@@ -94,8 +94,15 @@ public enum URLSanitizer: Sendable {
         return true
     }
 
-    /// Resolves the user's native ~/Downloads directory securely.
+    /// Resolves the user's configured download directory (default: ~/Downloads).
     public static var downloadsDirectory: URL {
+        if let custom = UserDefaults.standard.string(forKey: "cloud.aritro.sutrakey.downloadPath"), !custom.isEmpty {
+            let candidate = URL(fileURLWithPath: custom, isDirectory: true)
+            var isDir: ObjCBool = false
+            if FileManager.default.fileExists(atPath: candidate.path, isDirectory: &isDir), isDir.boolValue {
+                return candidate.standardizedFileURL
+            }
+        }
         if let downloads = FileManager.default.urls(for: .downloadsDirectory, in: .userDomainMask).first {
             return downloads.standardizedFileURL
         }

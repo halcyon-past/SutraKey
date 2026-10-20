@@ -8,28 +8,30 @@ import os
 public enum TextSelectionExtractor: Sendable {
 
     /// Extracts a validated URL from current text selection in foreground application.
+    /// - Parameter allowClipboardFallback: If false, strictly requires an active text selection and never falls back to old clipboard contents.
     @MainActor
-    public static func extractSelectedURL() -> URL? {
-        // 1. Primary: macOS Accessibility API
+    public static func extractSelectedURL(allowClipboardFallback: Bool = false) -> URL? {
+        // 1. Primary: macOS Accessibility API (reads current highlight without touching clipboard)
         if let axText = extractViaAccessibility(), !axText.isEmpty {
             if let url = URLSanitizer.extractURL(from: axText) {
-                Logger.accessibility.info("Extracted URL via AX: \(url.absoluteString)")
+                Logger.accessibility.info("Extracted URL via AX selection: \(url.absoluteString)")
                 return url
             }
         }
 
-        // 2. Fallback: Transient clipboard snapshot
+        // 2. Secondary: Transient clipboard snapshot of current selection
+        // Synthesizes a clean Cmd+C, reads the freshly copied selection, and restores the original clipboard.
         if let clipboardText = extractViaTransientClipboard(), !clipboardText.isEmpty {
             if let url = URLSanitizer.extractURL(from: clipboardText) {
-                Logger.accessibility.info("Extracted URL via transient clipboard: \(url.absoluteString)")
+                Logger.accessibility.info("Extracted URL via active selection transient copy: \(url.absoluteString)")
                 return url
             }
         }
 
-        // 3. Fallback: Active clipboard content
-        if let directText = NSPasteboard.general.string(forType: .string), !directText.isEmpty {
+        // 3. Fallback: Active clipboard content (ONLY if explicitly allowed, e.g. via explicit hotkey)
+        if allowClipboardFallback, let directText = NSPasteboard.general.string(forType: .string), !directText.isEmpty {
             if let url = URLSanitizer.extractURL(from: directText) {
-                Logger.accessibility.info("Extracted URL from active pasteboard: \(url.absoluteString)")
+                Logger.accessibility.info("Extracted URL from active pasteboard fallback: \(url.absoluteString)")
                 return url
             }
         }
@@ -37,54 +39,90 @@ public enum TextSelectionExtractor: Sendable {
         return nil
     }
 
-    /// Queries the focused UI element for its selected text via the Accessibility API.
+    /// Queries the focused UI element and its hierarchy for selected text via the Accessibility API.
     private static func extractViaAccessibility() -> String? {
         let systemWide = AXUIElementCreateSystemWide()
-        var focusedApp: AnyObject?
 
-        let appResult = AXUIElementCopyAttributeValue(
-            systemWide,
-            "AXFocusedApplication" as CFString,
-            &focusedApp
-        )
-
-        guard appResult == .success, let focusedApp = focusedApp else {
-            return nil
+        // Attempt 1: System-wide focused element directly
+        var focusedElemObj: AnyObject?
+        if AXUIElementCopyAttributeValue(systemWide, kAXFocusedUIElementAttribute as CFString, &focusedElemObj) == .success,
+           let focusedElem = focusedElemObj {
+            let element = focusedElem as! AXUIElement
+            if let text = checkSelectedText(in: element) {
+                return text
+            }
         }
 
-        // Cast to AXUIElement
-        let appElement = focusedApp as! AXUIElement // Safe standard CFType cast
+        // Attempt 2: Focused application -> focused element
+        var focusedAppObj: AnyObject?
+        if AXUIElementCopyAttributeValue(systemWide, kAXFocusedApplicationAttribute as CFString, &focusedAppObj) == .success,
+           let focusedApp = focusedAppObj {
+            let appElement = focusedApp as! AXUIElement
 
-        var focusedElement: AnyObject?
-        let elemResult = AXUIElementCopyAttributeValue(
-            appElement,
-            "AXFocusedUIElement" as CFString,
-            &focusedElement
-        )
-
-        guard elemResult == .success, let focusedElement = focusedElement else {
-            return nil
-        }
-
-        let element = focusedElement as! AXUIElement
-        var selectedValue: AnyObject?
-        let textResult = AXUIElementCopyAttributeValue(
-            element,
-            "AXSelectedText" as CFString,
-            &selectedValue
-        )
-
-        if textResult == .success, let selectedString = selectedValue as? String {
-            return selectedString.trimmingCharacters(in: .whitespacesAndNewlines)
+            var appFocusedElemObj: AnyObject?
+            if AXUIElementCopyAttributeValue(appElement, kAXFocusedUIElementAttribute as CFString, &appFocusedElemObj) == .success,
+               let appFocusedElem = appFocusedElemObj {
+                let element = appFocusedElem as! AXUIElement
+                if let text = checkSelectedText(in: element) {
+                    return text
+                }
+            }
         }
 
         return nil
     }
 
-    /// Snapshots user's current clipboard, performs a transient copy, reads text, and restores original clipboard.
+    /// Checks an element and up to 4 parent containers for selected text.
+    private static func checkSelectedText(in element: AXUIElement) -> String? {
+        var current: AXUIElement? = element
+        var depth = 0
+
+        while let elem = current, depth < 5 {
+            var selectedValue: AnyObject?
+            if AXUIElementCopyAttributeValue(elem, kAXSelectedTextAttribute as CFString, &selectedValue) == .success,
+               let selectedString = selectedValue as? String {
+                let trimmed = selectedString.trimmingCharacters(in: .whitespacesAndNewlines)
+                if !trimmed.isEmpty {
+                    return trimmed
+                }
+            }
+
+            // Check parameterized range attribute
+            var selectedRangeValue: AnyObject?
+            if AXUIElementCopyAttributeValue(elem, kAXSelectedTextRangeAttribute as CFString, &selectedRangeValue) == .success,
+               let rangeVal = selectedRangeValue {
+                var stringValue: AnyObject?
+                if AXUIElementCopyParameterizedAttributeValue(elem, kAXStringForRangeParameterizedAttribute as CFString, rangeVal, &stringValue) == .success,
+                   let rangeString = stringValue as? String {
+                    let trimmed = rangeString.trimmingCharacters(in: .whitespacesAndNewlines)
+                    if !trimmed.isEmpty {
+                        return trimmed
+                    }
+                }
+            }
+
+            // Move up to parent element (e.g. AXWebArea in WebKit/Chromium)
+            var parentObj: AnyObject?
+            if AXUIElementCopyAttributeValue(elem, kAXParentAttribute as CFString, &parentObj) == .success,
+               let parentElem = parentObj {
+                current = (parentElem as! AXUIElement)
+            } else {
+                current = nil
+            }
+            depth += 1
+        }
+
+        return nil
+    }
+
+    /// Snapshots user's current clipboard, performs a transient copy of the active selection,
+    /// verifies that new text was actually copied, and restores original clipboard.
     @MainActor
     private static func extractViaTransientClipboard() -> String? {
         let pasteboard = NSPasteboard.general
+        let originalChangeCount = pasteboard.changeCount
+
+        // Backup existing clipboard items
         let originalItems = pasteboard.pasteboardItems?.map { item -> (NSPasteboard.PasteboardType, Data) in
             for type in item.types {
                 if let data = item.data(forType: type) {
@@ -94,10 +132,11 @@ public enum TextSelectionExtractor: Sendable {
             return (NSPasteboard.PasteboardType.string, Data())
         }
 
-        // Clear and simulate Cmd+C via CGEvent
-        let initialChangeCount = pasteboard.changeCount
+        // Synthesize Cmd+C using private event source to avoid physical Shift modifier leakage
+        guard let source = CGEventSource(stateID: .privateState) else {
+            return nil
+        }
 
-        let source = CGEventSource(stateID: .hidSystemState)
         let keyDown = CGEvent(keyboardEventSource: source, virtualKey: 0x08, keyDown: true) // 0x08 = 'C'
         keyDown?.flags = .maskCommand
         let keyUp = CGEvent(keyboardEventSource: source, virtualKey: 0x08, keyDown: false)
@@ -106,15 +145,22 @@ public enum TextSelectionExtractor: Sendable {
         keyDown?.post(tap: .cghidEventTap)
         keyUp?.post(tap: .cghidEventTap)
 
-        // Wait briefly for pasteboard update
-        usleep(45_000) // 45ms
+        // Poll pasteboard for changes from the active selection (up to 120ms in 15ms increments)
+        var didChange = false
+        for _ in 0..<8 {
+            usleep(15_000) // 15ms
+            if pasteboard.changeCount != originalChangeCount {
+                didChange = true
+                break
+            }
+        }
 
         var extractedText: String?
-        if pasteboard.changeCount != initialChangeCount {
+        if didChange {
             extractedText = pasteboard.string(forType: .string)
         }
 
-        // Restore original clipboard contents immediately within 50ms window
+        // Restore original clipboard contents so user's clipboard is preserved
         pasteboard.clearContents()
         if let original = originalItems, !original.isEmpty {
             for (type, data) in original {
@@ -122,6 +168,6 @@ public enum TextSelectionExtractor: Sendable {
             }
         }
 
-        return extractedText
+        return extractedText?.trimmingCharacters(in: .whitespacesAndNewlines)
     }
 }

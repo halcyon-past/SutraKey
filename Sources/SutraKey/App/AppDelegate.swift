@@ -36,14 +36,25 @@ public final class AppDelegate: NSObject, NSApplicationDelegate {
             )
         }
 
+        // Initialize status bar presence according to user preferences
+        EphemeralStatusBarController.shared.updateVisibility()
+
         // Start global keyboard/mouse monitor (Shift+Select, Shift+Click, Double-tap Shift)
         ShiftSelectionMonitor.shared.startMonitoring()
 
         // Register system-wide Carbon hotkeys (Cmd+Shift+S, Option+Shift+S)
         GlobalHotKeyManager.shared.onTrigger = {
-            ShiftSelectionMonitor.shared.attemptRadialTrigger(at: NSEvent.mouseLocation)
+            ShiftSelectionMonitor.shared.attemptRadialTrigger(at: NSEvent.mouseLocation, allowClipboardFallback: true)
         }
         GlobalHotKeyManager.shared.registerHotKeys()
+
+        // Optional auto-update check on launch
+        Task {
+            try? await Task.sleep(nanoseconds: 2_000_000_000)
+            if PreferencesManager.shared.autoCheckUpdates {
+                await UpdateManager.shared.checkForUpdates()
+            }
+        }
 
         Logger.app.info("SutraKey running invisibly in background. Ready for Shift+Select or Cmd+Shift+S.")
     }

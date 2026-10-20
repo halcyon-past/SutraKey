@@ -3,8 +3,9 @@ import Foundation
 import os
 import SwiftUI
 
-/// Controls the ephemeral NSStatusItem in the macOS Menu Bar.
-/// Appears strictly while active conversion tasks are running and vanishes when idle.
+/// Controls the NSStatusItem in the macOS Menu Bar.
+/// Supports both ephemeral presence (strictly while active conversion tasks are running)
+/// and persistent presence based on user preferences.
 @MainActor
 public final class EphemeralStatusBarController: NSObject, ObservableObject {
     public static let shared = EphemeralStatusBarController()
@@ -18,6 +19,9 @@ public final class EphemeralStatusBarController: NSObject, ObservableObject {
 
     /// Active jobs currently reflected in the menu bar popover.
     @Published public private(set) var activeTasks: [ConversionJob] = []
+
+    /// Recent finished jobs for quick Finder / playback access.
+    @Published public private(set) var recentCompletedTasks: [ConversionJob] = []
 
     /// Grace period before status bar item hides after all jobs finish (1.5 seconds by default).
     public var completionGracePeriodSeconds: Double = 1.5
@@ -33,14 +37,13 @@ public final class EphemeralStatusBarController: NSObject, ObservableObject {
         return true
     }()
 
-    /// Notification hook fired for testing and HUD toasts.
+    /// Notification hooks fired for testing and HUD toasts.
     public var onTaskStartedNotification: ((ConversionJob) -> Void)?
     public var onTaskCompletedNotification: ((ConversionJob) -> Void)?
     public var onTaskFailedNotification: ((ConversionJob, String) -> Void)?
 
     public override init() {
         super.init()
-        // Strictly hidden on initial launch
         self.isIconVisible = false
     }
 
@@ -69,6 +72,19 @@ public final class EphemeralStatusBarController: NSObject, ObservableObject {
     /// Task completion lifecycle hook.
     public func taskDidComplete(_ job: ConversionJob) {
         activeTasks.removeAll(where: { $0.id == job.id })
+
+        // Prepend to recent tasks (keep last 5)
+        var updatedRecent = recentCompletedTasks.filter { $0.id != job.id }
+        updatedRecent.insert(job, at: 0)
+        if updatedRecent.count > 5 {
+            updatedRecent = Array(updatedRecent.prefix(5))
+        }
+        self.recentCompletedTasks = updatedRecent
+
+        if PreferencesManager.shared.playCompletionSound {
+            NSSound(named: "Glass")?.play()
+        }
+
         onTaskCompletedNotification?(job)
         scheduleGracefulDismissal()
     }
@@ -88,6 +104,12 @@ public final class EphemeralStatusBarController: NSObject, ObservableObject {
             return
         }
 
+        // If user configured menu bar icon to always stay visible:
+        if PreferencesManager.shared.keepStatusBarVisible {
+            updateStatusItemDisplay()
+            return
+        }
+
         dismissTimer?.invalidate()
         if completionGracePeriodSeconds <= 0.0 {
             self.hideStatusItem()
@@ -95,7 +117,11 @@ public final class EphemeralStatusBarController: NSObject, ObservableObject {
             dismissTimer = Timer.scheduledTimer(withTimeInterval: completionGracePeriodSeconds, repeats: false) { [weak self] _ in
                 Task { @MainActor [weak self] in
                     guard let self = self, self.activeTasks.isEmpty else { return }
-                    self.hideStatusItem()
+                    if !PreferencesManager.shared.keepStatusBarVisible {
+                        self.hideStatusItem()
+                    } else {
+                        self.updateStatusItemDisplay()
+                    }
                 }
             }
         }
@@ -116,10 +142,13 @@ public final class EphemeralStatusBarController: NSObject, ObservableObject {
         popover?.close()
     }
 
-    private func updateVisibility() {
-        if !activeTasks.isEmpty && !isIconVisible {
+    public func updateVisibility() {
+        let shouldBeVisible = !activeTasks.isEmpty || PreferencesManager.shared.keepStatusBarVisible
+        if shouldBeVisible && !isIconVisible {
             isIconVisible = true
             setupStatusItemIfNeeded()
+        } else if !shouldBeVisible && isIconVisible {
+            hideStatusItem()
         }
     }
 
@@ -153,8 +182,12 @@ public final class EphemeralStatusBarController: NSObject, ObservableObject {
         }
 
         if let highestProgressJob = activeTasks.max(by: { $0.progress < $1.progress }) {
-            let percent = Int(highestProgressJob.progress * 100)
-            button.title = " \(percent)%"
+            if highestProgressJob.progress <= 0.05 {
+                button.title = " Connecting..."
+            } else {
+                let percent = Int(highestProgressJob.progress * 100)
+                button.title = " \(percent)%"
+            }
         } else {
             button.title = ""
         }
@@ -163,6 +196,25 @@ public final class EphemeralStatusBarController: NSObject, ObservableObject {
     @objc private func statusItemClicked() {
         guard let button = statusItem?.button else { return }
 
+        // Handle right-click context menu
+        if let currentEvent = NSApp.currentEvent, currentEvent.type == .rightMouseUp {
+            let menu = NSMenu()
+            menu.addItem(NSMenuItem(title: "Settings...", action: #selector(openSettings), keyEquivalent: ","))
+            menu.addItem(NSMenuItem(title: "Check for Updates...", action: #selector(checkForUpdates), keyEquivalent: "u"))
+            menu.addItem(NSMenuItem(title: "Open Downloads Folder", action: #selector(openDownloadsFolder), keyEquivalent: "o"))
+            menu.addItem(NSMenuItem.separator())
+            menu.addItem(NSMenuItem(title: "Quit SutraKey", action: #selector(quitApp), keyEquivalent: "q"))
+
+            statusItem?.menu = menu
+            button.performClick(nil)
+            // Reset menu so next left-click opens popover
+            DispatchQueue.main.async { [weak self] in
+                self?.statusItem?.menu = nil
+            }
+            return
+        }
+
+        // Left-click: Open SwiftUI Popover
         if let pop = popover, pop.isShown {
             pop.performClose(nil)
             return
@@ -170,7 +222,7 @@ public final class EphemeralStatusBarController: NSObject, ObservableObject {
 
         let pop = NSPopover()
         pop.behavior = .transient
-        pop.contentSize = NSSize(width: 320, height: 280)
+        pop.contentSize = NSSize(width: 340, height: 320)
 
         let contentView = ProgressPopoverView(
             controller: self,
@@ -184,5 +236,25 @@ public final class EphemeralStatusBarController: NSObject, ObservableObject {
         pop.contentViewController = NSHostingController(rootView: contentView)
         self.popover = pop
         pop.show(relativeTo: button.bounds, of: button, preferredEdge: .minY)
+    }
+
+    @objc private func openSettings() {
+        SettingsWindowController.shared.showSettings()
+    }
+
+    @objc private func checkForUpdates() {
+        SettingsWindowController.shared.showSettings()
+        Task {
+            await UpdateManager.shared.checkForUpdates()
+        }
+    }
+
+    @objc private func openDownloadsFolder() {
+        let dir = PreferencesManager.shared.downloadDirectory
+        NSWorkspace.shared.selectFile(nil, inFileViewerRootedAtPath: dir.path)
+    }
+
+    @objc private func quitApp() {
+        NSApp.terminate(nil)
     }
 }

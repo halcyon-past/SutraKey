@@ -1,0 +1,137 @@
+import AppKit
+import Foundation
+import os
+import SwiftUI
+
+/// Centralized preferences manager persisting user settings via UserDefaults with reactive SwiftUI state.
+@MainActor
+public final class PreferencesManager: ObservableObject {
+    public static let shared = PreferencesManager()
+
+    // MARK: - Keys
+    private let kDownloadPath = "cloud.aritro.sutrakey.downloadPath"
+    private let kKeepStatusBarVisible = "cloud.aritro.sutrakey.keepStatusBarVisible"
+    private let kPreferredVideoCodec = "cloud.aritro.sutrakey.preferredVideoCodec"
+    private let kPreferredAudioBitrate = "cloud.aritro.sutrakey.preferredAudioBitrate"
+    private let kPlayCompletionSound = "cloud.aritro.sutrakey.playCompletionSound"
+    private let kShowCompletionToast = "cloud.aritro.sutrakey.showCompletionToast"
+    private let kAutoCheckUpdates = "cloud.aritro.sutrakey.autoCheckUpdates"
+    private let kLastUpdateCheck = "cloud.aritro.sutrakey.lastUpdateCheck"
+
+    // MARK: - Published Properties
+
+    @Published public var downloadDirectory: URL {
+        didSet {
+            UserDefaults.standard.set(downloadDirectory.path, forKey: kDownloadPath)
+            Logger.app.info("Download directory set to: \(self.downloadDirectory.path)")
+        }
+    }
+
+    @Published public var keepStatusBarVisible: Bool {
+        didSet {
+            UserDefaults.standard.set(keepStatusBarVisible, forKey: kKeepStatusBarVisible)
+        }
+    }
+
+    @Published public var preferredVideoCodec: String {
+        didSet {
+            UserDefaults.standard.set(preferredVideoCodec, forKey: kPreferredVideoCodec)
+        }
+    }
+
+    @Published public var preferredAudioBitrate: String {
+        didSet {
+            UserDefaults.standard.set(preferredAudioBitrate, forKey: kPreferredAudioBitrate)
+        }
+    }
+
+    @Published public var playCompletionSound: Bool {
+        didSet {
+            UserDefaults.standard.set(playCompletionSound, forKey: kPlayCompletionSound)
+        }
+    }
+
+    @Published public var showCompletionToast: Bool {
+        didSet {
+            UserDefaults.standard.set(showCompletionToast, forKey: kShowCompletionToast)
+        }
+    }
+
+    @Published public var autoCheckUpdates: Bool {
+        didSet {
+            UserDefaults.standard.set(autoCheckUpdates, forKey: kAutoCheckUpdates)
+        }
+    }
+
+    @Published public var lastUpdateCheckDate: Date? {
+        didSet {
+            UserDefaults.standard.set(lastUpdateCheckDate, forKey: kLastUpdateCheck)
+        }
+    }
+
+    // MARK: - Init
+
+    public init() {
+        // Resolve default ~/Downloads directory
+        let defaultDownloads: URL = {
+            if let downloads = FileManager.default.urls(for: .downloadsDirectory, in: .userDomainMask).first {
+                return downloads.standardizedFileURL
+            }
+            return FileManager.default.homeDirectoryForCurrentUser.appendingPathComponent("Downloads", isDirectory: true).standardizedFileURL
+        }()
+
+        if let savedPath = UserDefaults.standard.string(forKey: kDownloadPath), !savedPath.isEmpty {
+            let candidate = URL(fileURLWithPath: savedPath, isDirectory: true)
+            var isDir: ObjCBool = false
+            if FileManager.default.fileExists(atPath: candidate.path, isDirectory: &isDir), isDir.boolValue {
+                self.downloadDirectory = candidate.standardizedFileURL
+            } else {
+                self.downloadDirectory = defaultDownloads
+            }
+        } else {
+            self.downloadDirectory = defaultDownloads
+        }
+
+        self.keepStatusBarVisible = UserDefaults.standard.bool(forKey: kKeepStatusBarVisible)
+        self.preferredVideoCodec = UserDefaults.standard.string(forKey: kPreferredVideoCodec) ?? "h264_aac"
+        self.preferredAudioBitrate = UserDefaults.standard.string(forKey: kPreferredAudioBitrate) ?? "320k"
+        self.playCompletionSound = UserDefaults.standard.object(forKey: kPlayCompletionSound) == nil ? true : UserDefaults.standard.bool(forKey: kPlayCompletionSound)
+        self.showCompletionToast = UserDefaults.standard.object(forKey: kShowCompletionToast) == nil ? true : UserDefaults.standard.bool(forKey: kShowCompletionToast)
+        self.autoCheckUpdates = UserDefaults.standard.object(forKey: kAutoCheckUpdates) == nil ? true : UserDefaults.standard.bool(forKey: kAutoCheckUpdates)
+        self.lastUpdateCheckDate = UserDefaults.standard.object(forKey: kLastUpdateCheck) as? Date
+    }
+
+    // MARK: - Actions
+
+    /// Prompts user to pick a new download folder via NSOpenPanel.
+    public func selectDownloadDirectory(window: NSWindow? = nil) {
+        let panel = NSOpenPanel()
+        panel.canChooseFiles = false
+        panel.canChooseDirectories = true
+        panel.canCreateDirectories = true
+        panel.allowsMultipleSelection = false
+        panel.prompt = "Choose Folder"
+        panel.message = "Select default download destination for SutraKey"
+        panel.directoryURL = downloadDirectory
+
+        if let win = window {
+            panel.beginSheetModal(for: win) { [weak self] response in
+                if response == .OK, let selectedURL = panel.url {
+                    self?.downloadDirectory = selectedURL.standardizedFileURL
+                }
+            }
+        } else {
+            let response = panel.runModal()
+            if response == .OK, let selectedURL = panel.url {
+                self.downloadDirectory = selectedURL.standardizedFileURL
+            }
+        }
+    }
+
+    /// Resets download directory to native ~/Downloads.
+    public func resetDownloadDirectory() {
+        if let downloads = FileManager.default.urls(for: .downloadsDirectory, in: .userDomainMask).first {
+            self.downloadDirectory = downloads.standardizedFileURL
+        }
+    }
+}

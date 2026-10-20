@@ -20,6 +20,7 @@ public struct ConversionJob: Identifiable, Sendable, Equatable {
     public var progress: Double // 0.0 to 1.0
     public var speed: String
     public var eta: String
+    public var currentStage: String
     public var status: JobStatus
     public var destinationFileURL: URL?
     public var errorMessage: String?
@@ -34,6 +35,7 @@ public struct ConversionJob: Identifiable, Sendable, Equatable {
         progress: Double = 0.0,
         speed: String = "--",
         eta: String = "--",
+        currentStage: String = "Connecting...",
         status: JobStatus = .queued,
         destinationFileURL: URL? = nil,
         errorMessage: String? = nil,
@@ -47,6 +49,7 @@ public struct ConversionJob: Identifiable, Sendable, Equatable {
         self.progress = progress
         self.speed = speed
         self.eta = eta
+        self.currentStage = currentStage
         self.status = status
         self.destinationFileURL = destinationFileURL
         self.errorMessage = errorMessage

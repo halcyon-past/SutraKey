@@ -170,7 +170,7 @@ public final class ShiftSelectionMonitor: NSObject {
 
             // Small delay to allow OS text selection state to settle
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) { [weak self] in
-                self?.attemptRadialTrigger(at: currentLocation)
+                self?.attemptRadialTrigger(at: currentLocation, allowClipboardFallback: false)
             }
         } else {
             isDraggingWithShift = false
@@ -179,10 +179,10 @@ public final class ShiftSelectionMonitor: NSObject {
     }
 
     /// Attempts to extract URL from selection/clipboard and summon the radial menu.
-    public func attemptRadialTrigger(at screenPoint: CGPoint) {
-        Logger.events.info("Attempting radial trigger at (\(screenPoint.x, privacy: .public), \(screenPoint.y, privacy: .public))...")
+    public func attemptRadialTrigger(at screenPoint: CGPoint, allowClipboardFallback: Bool = false) {
+        Logger.events.info("Attempting radial trigger at (\(screenPoint.x, privacy: .public), \(screenPoint.y, privacy: .public)) [allowClipboard: \(allowClipboardFallback)]...")
 
-        guard let url = TextSelectionExtractor.extractSelectedURL() else {
+        guard let url = TextSelectionExtractor.extractSelectedURL(allowClipboardFallback: allowClipboardFallback) else {
             Logger.events.warning("No valid URL found in selection or clipboard.")
             let isTrusted = AXIsProcessTrusted()
             if !isTrusted {

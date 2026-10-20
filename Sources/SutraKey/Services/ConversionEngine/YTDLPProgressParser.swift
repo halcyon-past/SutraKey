@@ -5,6 +5,7 @@ public struct ParsedProgress: Sendable, Equatable {
     public var progress: Double
     public var speed: String
     public var eta: String
+    public var stage: String
     public var isPostProcessing: Bool
     public var destinationPath: String?
 
@@ -12,12 +13,14 @@ public struct ParsedProgress: Sendable, Equatable {
         progress: Double = 0.0,
         speed: String = "--",
         eta: String = "--",
+        stage: String = "Connecting...",
         isPostProcessing: Bool = false,
         destinationPath: String? = nil
     ) {
         self.progress = progress
         self.speed = speed
         self.eta = eta
+        self.stage = stage
         self.isPostProcessing = isPostProcessing
         self.destinationPath = destinationPath
     }
@@ -64,7 +67,7 @@ public enum YTDLPProgressParser: Sendable {
         let trimmed = line.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !trimmed.isEmpty else { return nil }
 
-        // Check for post-processing lines first:
+        // 1. Check for post-processing lines first:
         // e.g. [ExtractAudio], [Merger], [FixupM3u8], [ffmpeg], [EmbedThumbnail]
         let postProcessingTags = ["[ExtractAudio]", "[Merger]", "[Fixup", "[ffmpeg]", "[EmbedThumbnail]", "[Metadata]"]
         let isPost = postProcessingTags.contains { trimmed.contains($0) }
@@ -85,16 +88,27 @@ public enum YTDLPProgressParser: Sendable {
                     dest = String(trimmed[pathRange]).trimmingCharacters(in: .whitespacesAndNewlines)
                 }
             }
+            let stageName: String
+            if trimmed.contains("[Merger]") {
+                stageName = "Merging H.264 + AAC into MP4..."
+            } else if trimmed.contains("[ExtractAudio]") {
+                stageName = "Extracting high-bitrate MP3..."
+            } else if trimmed.contains("[EmbedThumbnail]") {
+                stageName = "Embedding album cover art..."
+            } else {
+                stageName = "Finalizing media container..."
+            }
             return ParsedProgress(
                 progress: 0.99,
                 speed: "--",
                 eta: "Finalizing...",
+                stage: stageName,
                 isPostProcessing: true,
                 destinationPath: dest
             )
         }
 
-        // Full progress pattern with percent, speed, and ETA
+        // 2. Full progress pattern with percent, speed, and ETA
         if let regex = progressRegex {
             let nsRange = NSRange(trimmed.startIndex..<trimmed.endIndex, in: trimmed)
             if let match = regex.firstMatch(in: trimmed, options: [], range: nsRange) {
@@ -119,13 +133,14 @@ public enum YTDLPProgressParser: Sendable {
                     progress: normalizedProgress,
                     speed: speed,
                     eta: eta,
+                    stage: "Downloading: \(Int(percentVal))%",
                     isPostProcessing: false,
                     destinationPath: nil
                 )
             }
         }
 
-        // Fallback: Just percentage line
+        // 3. Fallback: Just percentage line
         if let pRegex = percentageRegex {
             let nsRange = NSRange(trimmed.startIndex..<trimmed.endIndex, in: trimmed)
             if let match = pRegex.firstMatch(in: trimmed, options: [], range: nsRange),
@@ -136,10 +151,44 @@ public enum YTDLPProgressParser: Sendable {
                     progress: normalizedProgress,
                     speed: "--",
                     eta: "--",
+                    stage: "Downloading: \(Int(percentVal))%",
                     isPostProcessing: percentVal >= 100.0,
                     destinationPath: nil
                 )
             }
+        }
+
+        // 4. Initial connecting & extracting stages (prevents staying stuck at 0% with no feedback)
+        let connectingIndicators = ["Extracting URL:", "Downloading webpage", "Downloading API JSON", "Downloading player", "Downloading m3u8", "Downloading 1 format"]
+        if connectingIndicators.contains(where: { trimmed.contains($0) }) {
+            return ParsedProgress(
+                progress: 0.05,
+                speed: "--",
+                eta: "Resolving...",
+                stage: "Connecting to media stream...",
+                isPostProcessing: false,
+                destinationPath: nil
+            )
+        }
+
+        // 5. Destination announced before download chunks begin
+        if trimmed.hasPrefix("[download] Destination:") {
+            var destPath: String?
+            if let destRegex = destinationRegex {
+                let range = NSRange(trimmed.startIndex..<trimmed.endIndex, in: trimmed)
+                if let match = destRegex.firstMatch(in: trimmed, options: [], range: range),
+                   let pathRange = Range(match.range(at: 1), in: trimmed) {
+                    destPath = String(trimmed[pathRange]).trimmingCharacters(in: .whitespacesAndNewlines)
+                }
+            }
+            return ParsedProgress(
+                progress: 0.08,
+                speed: "--",
+                eta: "Starting...",
+                stage: "Starting download stream...",
+                isPostProcessing: false,
+                destinationPath: destPath
+            )
         }
 
         return nil

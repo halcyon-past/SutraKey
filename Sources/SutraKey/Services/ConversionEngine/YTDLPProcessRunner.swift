@@ -21,12 +21,12 @@ public final class YTDLPProcessRunner: Sendable {
     /// - Parameters:
     ///   - url: Target media URL
     ///   - action: Target conversion action
-    ///   - onProgress: Closure invoked on stdout progress updates (progress, speed, eta)
+    ///   - onProgress: Closure invoked on stdout progress updates (progress, speed, eta, stage)
     /// - Returns: Destination file URL in ~/Downloads
     public func execute(
         url: URL,
         action: ConversionAction,
-        onProgress: @escaping @Sendable (Double, String, String) -> Void
+        onProgress: @escaping @Sendable (Double, String, String, String) -> Void
     ) async throws -> URL {
         guard let ytdlpExecutable = BinaryResolver.ytdlpPath else {
             throw NSError(
@@ -124,7 +124,7 @@ public final class YTDLPProcessRunner: Sendable {
                         }
 
                         if let parsed = YTDLPProgressParser.parseLine(line) {
-                            onProgress(parsed.progress, parsed.speed, parsed.eta)
+                            onProgress(parsed.progress, parsed.speed, parsed.eta, parsed.stage)
                             if let dest = parsed.destinationPath {
                                 destinationLock.withLock { $0 = dest }
                             }

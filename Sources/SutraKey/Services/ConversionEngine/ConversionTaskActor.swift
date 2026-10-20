@@ -114,10 +114,10 @@ public actor ConversionTaskActor {
                 let destinationURL = try await runner.execute(
                     url: targetURL,
                     action: targetAction,
-                    onProgress: { [weak self] progress, speed, eta in
+                    onProgress: { [weak self] progress, speed, eta, stage in
                         guard let self = self else { return }
                         Task {
-                            await self.updateProgress(id: id, progress: progress, speed: speed, eta: eta)
+                            await self.updateProgress(id: id, progress: progress, speed: speed, eta: eta, stage: stage)
                         }
                     }
                 )
@@ -126,6 +126,7 @@ public actor ConversionTaskActor {
                 if var completedJob = jobs[id] {
                     completedJob.destinationFileURL = destinationURL
                     completedJob.progress = 1.0
+                    completedJob.currentStage = "Saved to Downloads"
                     completedJob.status = .completed
                     jobs[id] = completedJob
                     notifyCompleted(completedJob)
@@ -136,6 +137,7 @@ public actor ConversionTaskActor {
             if var failedJob = jobs[id] {
                 failedJob.status = .failed
                 failedJob.errorMessage = error.localizedDescription
+                failedJob.currentStage = "Failed: \(error.localizedDescription)"
                 jobs[id] = failedJob
                 Logger.conversion.error("Job \(id) failed: \(error.localizedDescription)")
                 notifyFailed(failedJob, error: error.localizedDescription)
@@ -171,11 +173,12 @@ public actor ConversionTaskActor {
         }
     }
 
-    private func updateProgress(id: UUID, progress: Double, speed: String, eta: String) {
+    private func updateProgress(id: UUID, progress: Double, speed: String, eta: String, stage: String) {
         guard var job = jobs[id], !job.isTerminal else { return }
         job.progress = progress
         job.speed = speed
         job.eta = eta
+        job.currentStage = stage
         if progress >= 0.99 {
             job.status = .postProcessing
         } else {
