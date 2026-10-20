@@ -1,10 +1,37 @@
 import AppKit
 import SwiftUI
 
-/// Custom hosting view that accepts the first click in non-activating floating panels.
-final class FirstMouseHostingView<Content: View>: NSHostingView<Content> {
+/// Custom hosting view with full mouse tracking area and first-mouse clickability.
+final class RadialHostingView<Content: View>: NSHostingView<Content> {
+    var onMouseMove: ((CGPoint) -> Void)?
+    var onMouseClick: ((CGPoint) -> Void)?
+
     override func acceptsFirstMouse(for event: NSEvent?) -> Bool {
         return true
+    }
+
+    override func updateTrackingAreas() {
+        super.updateTrackingAreas()
+        for area in trackingAreas {
+            removeTrackingArea(area)
+        }
+        let area = NSTrackingArea(
+            rect: bounds,
+            options: [.mouseMoved, .activeAlways, .inVisibleRect, .mouseEnteredAndExited],
+            owner: self,
+            userInfo: nil
+        )
+        addTrackingArea(area)
+    }
+
+    override func mouseMoved(with event: NSEvent) {
+        let loc = convert(event.locationInWindow, from: nil)
+        onMouseMove?(loc)
+    }
+
+    override func mouseDown(with event: NSEvent) {
+        let loc = convert(event.locationInWindow, from: nil)
+        onMouseClick?(loc)
     }
 }
 
@@ -20,7 +47,7 @@ public final class RadialPanelController: NSObject {
     public static let shared = RadialPanelController()
 
     private var panel: NSPanel?
-    private var radialView: RadialMenuView?
+    private var menuState: RadialMenuState?
     private var centerScreenPoint: CGPoint = .zero
     private var isDisplayed: Bool = false
 
@@ -74,7 +101,11 @@ public final class RadialPanelController: NSObject {
         newPanel.ignoresMouseEvents = false
         newPanel.acceptsMouseMovedEvents = true
 
+        let state = RadialMenuState()
+        self.menuState = state
+
         let menuView = RadialMenuView(
+            state: state,
             url: url,
             onSelectAction: { [weak self] action in
                 self?.dismiss()
@@ -85,8 +116,60 @@ public final class RadialPanelController: NSObject {
             }
         )
 
-        self.radialView = menuView
-        newPanel.contentView = FirstMouseHostingView(rootView: menuView)
+        let hostingView = RadialHostingView(rootView: menuView)
+        hostingView.onMouseMove = { [weak state] loc in
+            guard let state = state else { return }
+            let center = CGPoint(x: panelSize / 2.0, y: panelSize / 2.0)
+            let dx = Double(loc.x - center.x)
+            let dy = Double(loc.y - center.y) // In NSView, Y increases upwards
+            let dist = hypot(dx, dy)
+
+            if dist < RadialGeometryMath.deadZoneRadius {
+                if !state.isCenterHovered {
+                    state.isCenterHovered = true
+                    state.hoveredAction = nil
+                    NSHapticFeedbackManager.defaultPerformer.perform(.alignment, performanceTime: .now)
+                }
+            } else if dist <= 148.0 {
+                state.isCenterHovered = false
+                let newAction = RadialGeometryMath.action(forOffsetDX: dx, dy: dy)
+                if newAction != state.hoveredAction {
+                    state.hoveredAction = newAction
+                    if newAction != nil {
+                        NSHapticFeedbackManager.defaultPerformer.perform(.alignment, performanceTime: .now)
+                    }
+                }
+            } else {
+                state.isCenterHovered = false
+                state.hoveredAction = nil
+            }
+        }
+
+        hostingView.onMouseClick = { [weak self] loc in
+            guard let self = self else { return }
+            let center = CGPoint(x: panelSize / 2.0, y: panelSize / 2.0)
+            let dx = Double(loc.x - center.x)
+            let dy = Double(loc.y - center.y)
+            let dist = hypot(dx, dy)
+
+            if dist < RadialGeometryMath.deadZoneRadius {
+                // Clicked Center Cancel Hub
+                self.dismiss()
+            } else if dist <= 148.0 {
+                if let action = RadialGeometryMath.action(forOffsetDX: dx, dy: dy) {
+                    NSHapticFeedbackManager.defaultPerformer.perform(.alignment, performanceTime: .now)
+                    self.dismiss()
+                    onAction(action)
+                } else {
+                    self.dismiss()
+                }
+            } else {
+                // Clicked outside active pie disc
+                self.dismiss()
+            }
+        }
+
+        newPanel.contentView = hostingView
         self.panel = newPanel
         self.isDisplayed = true
 
@@ -104,43 +187,13 @@ public final class RadialPanelController: NSObject {
         panel?.frame
     }
 
-    /// Handles mouse dragged event to update hovered slice.
-    public func handleMouseDragged(currentLocation: CGPoint) {
-        guard isDisplayed, let view = radialView else { return }
-        let delta = CGPoint(
-            x: currentLocation.x - centerScreenPoint.x,
-            y: currentLocation.y - centerScreenPoint.y
-        )
-        view.updateHover(cursorDelta: delta)
-    }
-
-    /// Handles mouse moved event to update hovered slice.
-    public func handleMouseMoved(currentLocation: CGPoint) {
-        guard isDisplayed, let view = radialView else { return }
-        let delta = CGPoint(
-            x: currentLocation.x - centerScreenPoint.x,
-            y: currentLocation.y - centerScreenPoint.y
-        )
-        view.updateHover(cursorDelta: delta)
-    }
-
-    /// Handles mouse up event to commit selected slice.
-    public func handleMouseUp(currentLocation: CGPoint) {
-        guard isDisplayed, let view = radialView else { return }
-        let delta = CGPoint(
-            x: currentLocation.x - centerScreenPoint.x,
-            y: currentLocation.y - centerScreenPoint.y
-        )
-        view.commitSelection(cursorDelta: delta)
-    }
-
     /// Cleanly dismisses the panel.
     public func dismiss() {
         guard isDisplayed else { return }
         isDisplayed = false
         panel?.orderOut(nil)
         panel = nil
-        radialView = nil
+        menuState = nil
     }
 
     public var isVisible: Bool {

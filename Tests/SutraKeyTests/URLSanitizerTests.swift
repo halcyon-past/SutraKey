@@ -53,4 +53,17 @@ struct URLSanitizerTests {
             #expect(extracted == nil, "Expected nil for invalid input: \(input)")
         }
     }
+
+    @Test("Normalizes Instagram reel URLs and strips tracking parameters")
+    func testInstagramReelNormalization() {
+        let reelsInput = "https://www.instagram.com/reels/Dd88L1GvdGd/?hl=en&igsh=abcdef123"
+        let extracted = URLSanitizer.extractURL(from: reelsInput)
+        #expect(extracted != nil)
+        #expect(extracted?.absoluteString == "https://www.instagram.com/reel/Dd88L1GvdGd/")
+
+        let pInput = "https://www.instagram.com/p/DdBth25sdJt/?hl=en"
+        let pExtracted = URLSanitizer.extractURL(from: pInput)
+        #expect(pExtracted != nil)
+        #expect(pExtracted?.absoluteString == "https://www.instagram.com/p/DdBth25sdJt/")
+    }
 }

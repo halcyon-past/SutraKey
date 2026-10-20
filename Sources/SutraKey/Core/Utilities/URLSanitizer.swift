@@ -16,7 +16,7 @@ public enum URLSanitizer: Sendable {
         // 1. First attempt: Direct URL initialization with stripped brackets and quotes
         let cleanedDirect = cleanPunctuationAndEnclosures(trimmed)
         if let directURL = URL(string: cleanedDirect), isValidWebURL(directURL) {
-            return directURL
+            return normalizeWebURL(directURL)
         }
 
         // 2. Second attempt: Detect embedded URLs using NSDataDetector
@@ -25,7 +25,7 @@ public enum URLSanitizer: Sendable {
             let matches = detector.matches(in: trimmed, options: [], range: NSRange(location: 0, length: nsString.length))
             for match in matches {
                 if let candidateURL = match.url, isValidWebURL(candidateURL) {
-                    return candidateURL
+                    return normalizeWebURL(candidateURL)
                 }
             }
         }
@@ -38,12 +38,35 @@ public enum URLSanitizer: Sendable {
                let matchRange = Range(match.range, in: trimmed) {
                 let candidateString = cleanPunctuationAndEnclosures(String(trimmed[matchRange]))
                 if let url = URL(string: candidateString), isValidWebURL(url) {
-                    return url
+                    return normalizeWebURL(url)
                 }
             }
         }
 
         return nil
+    }
+
+    /// Normalizes URLs into clean canonical formats (e.g. Instagram /reels/ -> /reel/ and strips tracking parameters).
+    public static func normalizeWebURL(_ url: URL) -> URL {
+        var str = url.absoluteString
+
+        // 1. Normalize Instagram /reels/ to /reel/
+        if str.contains("instagram.com/reels/") {
+            str = str.replacingOccurrences(of: "instagram.com/reels/", with: "instagram.com/reel/")
+        }
+
+        // 2. Clean tracking queries from Instagram URLs (e.g. ?hl=en, ?igsh=...)
+        if let components = URLComponents(string: str), let host = components.host?.lowercased() {
+            if host.contains("instagram.com") {
+                var comp = components
+                comp.query = nil
+                if let cleaned = comp.url {
+                    return cleaned
+                }
+            }
+        }
+
+        return URL(string: str) ?? url
     }
 
     /// Strips enclosing quotes, markdown links, parentheses, and trailing punctuation.

@@ -43,6 +43,7 @@ public final class YTDLPProcessRunner: Sendable {
             "--no-exec",
             "--restrict-filenames",
             "--newline",
+            "--print", "after_move:filepath",
             "-o", outputTemplate
         ]
 
@@ -52,9 +53,12 @@ public final class YTDLPProcessRunner: Sendable {
 
         switch action {
         case .video:
+            // Prefer native H.264 / AAC so macOS QuickTime Player and iOS can play the video natively with zero corruption.
             arguments.append(contentsOf: [
-                "-f", "bv*[ext=mp4]+ba[ext=m4a]/b[ext=mp4]/bv*+ba/b",
-                "--merge-output-format", "mp4"
+                "-f", "bv*[vcodec^=avc]+ba[ext=m4a]/bv*[ext=mp4]+ba[ext=m4a]/b[ext=mp4]/bv*+ba/b",
+                "--format-sort", "vcodec:h264,res,acodec:m4a",
+                "--merge-output-format", "mp4",
+                "--postprocessor-args", "Merger:-c:v libx264 -c:a aac -movflags +faststart"
             ])
         case .audio:
             arguments.append(contentsOf: [
@@ -100,17 +104,29 @@ public final class YTDLPProcessRunner: Sendable {
         processLock.withLock { $0 = proc }
 
         let destinationLock = OSAllocatedUnfairLock<String?>(initialState: nil)
+        let bufferLock = OSAllocatedUnfairLock<String>(initialState: "")
 
         stdoutPipe.fileHandleForReading.readabilityHandler = { handle in
             let data = handle.availableData
             guard !data.isEmpty else { return }
-            if let output = String(data: data, encoding: .utf8) {
-                let lines = output.components(separatedBy: .newlines)
-                for line in lines {
-                    if let parsed = YTDLPProgressParser.parseLine(line) {
-                        onProgress(parsed.progress, parsed.speed, parsed.eta)
-                        if let dest = parsed.destinationPath {
-                            destinationLock.withLock { $0 = dest }
+            if let textChunk = String(data: data, encoding: .utf8) {
+                bufferLock.withLock { buffer in
+                    buffer += textChunk
+                    while let newlineIndex = buffer.firstIndex(of: "\n") {
+                        let line = String(buffer[..<newlineIndex]).trimmingCharacters(in: .whitespacesAndNewlines)
+                        buffer.removeSubrange(...newlineIndex)
+                        guard !line.isEmpty else { continue }
+
+                        // Check if line is the printed final destination path from --print after_move:filepath
+                        if line.hasPrefix("/") {
+                            destinationLock.withLock { $0 = line }
+                        }
+
+                        if let parsed = YTDLPProgressParser.parseLine(line) {
+                            onProgress(parsed.progress, parsed.speed, parsed.eta)
+                            if let dest = parsed.destinationPath {
+                                destinationLock.withLock { $0 = dest }
+                            }
                         }
                     }
                 }

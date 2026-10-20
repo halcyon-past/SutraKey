@@ -49,6 +49,14 @@ public enum YTDLPProgressParser: Sendable {
         )
     }()
 
+    // Merger destination regex: [Merger] Merging formats into "/path/file.mp4"
+    private static let mergerRegex: NSRegularExpression? = {
+        try? NSRegularExpression(
+            pattern: #"Merging formats into\s*["']?([^"']+)["']?"#,
+            options: []
+        )
+    }()
+
     /// Parses a single line of yt-dlp stdout.
     /// - Parameter line: Raw string emitted from yt-dlp process
     /// - Returns: `ParsedProgress?` if progress or post-processing status was recognized.
@@ -66,6 +74,13 @@ public enum YTDLPProgressParser: Sendable {
             if let destRegex = destinationRegex {
                 let range = NSRange(trimmed.startIndex..<trimmed.endIndex, in: trimmed)
                 if let match = destRegex.firstMatch(in: trimmed, options: [], range: range),
+                   let pathRange = Range(match.range(at: 1), in: trimmed) {
+                    dest = String(trimmed[pathRange]).trimmingCharacters(in: .whitespacesAndNewlines)
+                }
+            }
+            if dest == nil, let mergeRegex = mergerRegex {
+                let range = NSRange(trimmed.startIndex..<trimmed.endIndex, in: trimmed)
+                if let match = mergeRegex.firstMatch(in: trimmed, options: [], range: range),
                    let pathRange = Range(match.range(at: 1), in: trimmed) {
                     dest = String(trimmed[pathRange]).trimmingCharacters(in: .whitespacesAndNewlines)
                 }

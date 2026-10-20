@@ -146,10 +146,7 @@ public final class ShiftSelectionMonitor: NSObject {
     }
 
     private func handleLeftMouseDragged(_ event: NSEvent) {
-        let currentLocation = NSEvent.mouseLocation
-        if RadialPanelController.shared.isVisible {
-            RadialPanelController.shared.handleMouseDragged(currentLocation: currentLocation)
-        }
+        // Drag events inside the radial menu are tracked natively by RadialHostingView
     }
 
     private func handleLeftMouseUp(_ event: NSEvent) {
@@ -157,11 +154,8 @@ public final class ShiftSelectionMonitor: NSObject {
 
         // Case A: Radial menu is already active
         if RadialPanelController.shared.isVisible {
-            if RadialPanelController.shared.containsPoint(currentLocation) {
-                RadialPanelController.shared.handleMouseUp(currentLocation: currentLocation)
-            } else {
-                RadialPanelController.shared.dismiss()
-            }
+            // Keep the menu open; do not dismiss on mouse up.
+            // Menu remains accessible until the user clicks a slice, clicks cancel, or clicks outside.
             isDraggingWithShift = false
             dragStartLocation = nil
             return
