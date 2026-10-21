@@ -183,26 +183,37 @@ public final class ShiftSelectionMonitor: NSObject {
         Logger.events.info("Attempting radial trigger at (\(screenPoint.x, privacy: .public), \(screenPoint.y, privacy: .public)) [allowClipboard: \(allowClipboardFallback)]...")
 
         guard let url = TextSelectionExtractor.extractSelectedURL(allowClipboardFallback: allowClipboardFallback) else {
-            Logger.events.warning("No valid URL found in selection or clipboard.")
-            let isTrusted = AXIsProcessTrusted()
-            if !isTrusted {
-                SutraToastController.shared.showNotice(
-                    title: "Accessibility Required",
-                    message: "If already enabled, toggle SutraKey OFF and ON in System Settings > Accessibility to refresh macOS permissions.",
-                    systemImage: "hand.raised.fill",
-                    actionTitle: "Open Settings",
-                    action: {
-                        if let prefURL = URL(string: "x-apple.systempreferences:com.apple.preference.security?Privacy_Accessibility") {
-                            NSWorkspace.shared.open(prefURL)
-                        }
-                    }
-                )
-            } else {
+            Logger.events.warning("No valid URL found in selection or clipboard [allowClipboardFallback: \(allowClipboardFallback)].")
+            
+            if allowClipboardFallback {
+                // Triggered via shortcut (Cmd+Shift+S) - Accessibility is not strictly needed if link is copied
                 SutraToastController.shared.showNotice(
                     title: "No URL Found",
-                    message: "Please highlight a URL or copy one to your clipboard first.",
+                    message: "Highlight a URL or copy one to your clipboard (⌘C), then press ⌘⇧S.",
                     systemImage: "link.badge.plus"
                 )
+            } else {
+                // Triggered via Shift + Drag selection - strictly requires macOS Accessibility to read text without clipboard
+                let isTrusted = AXIsProcessTrusted()
+                if !isTrusted {
+                    SutraToastController.shared.showNotice(
+                        title: "Accessibility Required",
+                        message: "In System Settings > Accessibility, remove SutraKey with [-] and re-add with [+] to refresh permissions.",
+                        systemImage: "hand.raised.fill",
+                        actionTitle: "Open Settings",
+                        action: {
+                            if let prefURL = URL(string: "x-apple.systempreferences:com.apple.preference.security?Privacy_Accessibility") {
+                                NSWorkspace.shared.open(prefURL)
+                            }
+                        }
+                    )
+                } else {
+                    SutraToastController.shared.showNotice(
+                        title: "No URL Selected",
+                        message: "Highlight a valid URL (YouTube, Instagram, or media link) with Shift held.",
+                        systemImage: "cursorarrow.and.square.on.square.dashed"
+                    )
+                }
             }
             return
         }
