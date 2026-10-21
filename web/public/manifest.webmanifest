@@ -1,7 +1,7 @@
 {
-  "name": "SutraKey — macOS Radial Media & Document Downloader",
+  "name": "SutraKey (Sutra Key) — macOS Radial Media & Document Downloader",
   "short_name": "SutraKey",
-  "description": "Hold Shift + Select any URL to summon a zero-latency liquid radial wheel that downloads video, audio, subtitles, or clean PDFs straight to ~/Downloads. 100% Native Swift 6, Free & Open Source.",
+  "description": "SutraKey (Sutra Key): Hold Shift + Select any URL to summon a zero-latency liquid radial wheel that downloads video, audio, subtitles, or clean PDFs straight to ~/Downloads. 100% Native Swift 6, Free & Open Source.",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",

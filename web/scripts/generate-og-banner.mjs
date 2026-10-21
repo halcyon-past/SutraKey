@@ -153,16 +153,16 @@ const svg = `
   <rect x="80" y="70" width="76" height="76" rx="18" fill="none" stroke="#ffffff" stroke-opacity="0.25" stroke-width="1.5"/>
 
   <!-- Product Name & Badges -->
-  <text x="174" y="103" fill="#ffffff" font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, sans-serif" font-size="34" font-weight="700" letter-spacing="-0.5">
+  <text x="174" y="103" fill="#ffffff" font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, sans-serif" font-size="32" font-weight="700" letter-spacing="-0.5">
     SutraKey
   </text>
-  <text x="328" y="103" fill="#9ca3af" font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Segoe UI', Roboto, sans-serif" font-size="18" font-weight="400">
-    (सूत्र)
+  <text x="318" y="103" fill="#9ca3af" font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Segoe UI', Roboto, sans-serif" font-size="16" font-weight="500">
+    / Sutra Key
   </text>
 
   <!-- Platform Badge Pill -->
-  <rect x="385" y="82" width="102" height="28" rx="14" fill="#ffffff" fill-opacity="0.08" stroke="#ffffff" stroke-opacity="0.14" stroke-width="1"/>
-  <text x="436" y="100" fill="#e5e7eb" font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Segoe UI', Roboto, sans-serif" font-size="12" font-weight="600" text-anchor="middle">
+  <rect x="435" y="82" width="94" height="28" rx="14" fill="#ffffff" fill-opacity="0.08" stroke="#ffffff" stroke-opacity="0.14" stroke-width="1"/>
+  <text x="482" y="100" fill="#e5e7eb" font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Segoe UI', Roboto, sans-serif" font-size="12" font-weight="600" text-anchor="middle">
     macOS 15+
   </text>
 

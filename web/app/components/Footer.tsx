@@ -23,7 +23,7 @@ export function Footer() {
             </div>
             <div>
               <span className="font-semibold text-neutral-900 dark:text-neutral-100 text-sm">
-                SutraKey (सूत्र)
+                SutraKey / Sutra Key (सूत्र)
               </span>
               <span className="block text-[11px] text-neutral-400 dark:text-neutral-500">
                 macOS Radial Media &amp; PDF Utility

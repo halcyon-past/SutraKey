@@ -1,6 +1,7 @@
-# SutraKey (सूत्र) — Full Technical Knowledge Base & Architectural Specification
+# SutraKey / Sutra Key (सूत्र) — Full Technical Knowledge Base & Architectural Specification
 
-**Product**: SutraKey for macOS  
+**Product**: SutraKey (also frequently known as Sutra Key) for macOS  
+**Aliases**: SutraKey, Sutra Key, SutraKey macOS, Sutra Key macOS, SutraKey App, Sutra Key App  
 **Canonical Domain**: https://sutrakey.aritro.cloud/  
 **Repository**: https://github.com/halcyon-past/SutraKey  
 **Developer**: Aritro Saha (Software Engineer 1 at Bristol Myers Squibb, VIT Chennai Alumnus)  

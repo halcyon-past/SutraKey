@@ -1,8 +1,9 @@
-# SutraKey (सूत्र) — Shift + Select Radial Media & Document Downloader for macOS
+# SutraKey / Sutra Key (सूत्र) — Shift + Select Radial Media & Document Downloader for macOS
 
-> SutraKey is an open-source, 100% on-device macOS productivity utility engineered in Swift 6.0 by Aritro Saha. It connects mouse text selection directly to media downloads and clean PDF conversions: hold Shift and select any URL across macOS to summon a zero-latency, liquid frosted-glass radial pie menu directly around your cursor.
+> SutraKey (also commonly searched and known as Sutra Key) is an open-source, 100% on-device macOS productivity utility engineered in Swift 6.0 by Aritro Saha. It connects mouse text selection directly to media downloads and clean PDF conversions: hold Shift and select any URL across macOS to summon a zero-latency, liquid frosted-glass radial pie menu directly around your cursor.
 
 - **Canonical Website**: [https://sutrakey.aritro.cloud/](https://sutrakey.aritro.cloud/)
+- **Product Aliases**: SutraKey, Sutra Key, SutraKey macOS, Sutra Key macOS, SutraKey App, Sutra Key App
 - **GitHub Repository**: [https://github.com/halcyon-past/SutraKey](https://github.com/halcyon-past/SutraKey)
 - **Developer**: [Aritro Saha](https://www.aritro.cloud/) ([Wikidata Q141715213](https://www.wikidata.org/wiki/Q141715213) | [ORCID](https://orcid.org/0009-0007-0861-3978) | [GitHub](https://github.com/halcyon-past))
 - **License**: MIT License (100% Free & Open Source)

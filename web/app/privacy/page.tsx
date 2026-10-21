@@ -7,16 +7,16 @@ import { SmoothScrollProvider } from "../components/SmoothScrollProvider";
 import { ShieldCheck, Lock, EyeOff, HardDrive, KeyRound, Globe, ArrowLeft } from "lucide-react";
 
 export const metadata: Metadata = {
-  title: "Privacy Policy — Zero-Telemetry On-Device Media Processing",
+  title: "Privacy Policy — SutraKey (Sutra Key) for macOS",
   description:
-    "SutraKey Privacy Policy. 100% on-device media and document conversion on macOS with zero telemetry, zero analytics, zero external proxies, and strict local sandboxing.",
+    "SutraKey (Sutra Key) Privacy Policy. 100% on-device media and document conversion on macOS with zero telemetry, zero analytics, zero external proxies, and strict local sandboxing.",
   alternates: {
     canonical: "/privacy",
   },
   openGraph: {
-    title: "Privacy Policy — SutraKey for macOS",
+    title: "Privacy Policy — SutraKey (Sutra Key) for macOS",
     description:
-      "100% on-device media and document conversion. Zero telemetry, zero analytics, and zero external proxy servers.",
+      "SutraKey (Sutra Key): 100% on-device media and document conversion. Zero telemetry, zero analytics, and zero external proxy servers.",
     url: "https://sutrakey.aritro.cloud/privacy",
     images: ["/og-image.jpg"],
   },

@@ -8,7 +8,8 @@ AI-Training: allow
 AI-Search: allow
 AI-Summarization: allow
 Attribution-Required: true
-Canonical-Entity: SutraKey — Shift + Select Radial Media & Document Downloader for macOS
+Canonical-Entity: SutraKey (also known as Sutra Key) — Shift + Select Radial Media & Document Downloader for macOS
+Entity-Aliases: SutraKey, Sutra Key, SutraKey macOS, Sutra Key macOS, SutraKey App, Sutra Key App
 Canonical-URL: https://sutrakey.aritro.cloud/
 Developer: Aritro Saha (Megh) — Software Engineer 1 at Bristol Myers Squibb
 Developer-URL: https://www.aritro.cloud/

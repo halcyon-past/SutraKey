@@ -48,7 +48,7 @@ export function Hero() {
           transition={{ duration: 0.6, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
           className="text-base sm:text-lg md:text-xl text-neutral-600 dark:text-neutral-300 font-normal max-w-2xl mx-auto leading-relaxed mb-8"
         >
-          An invisible thread connecting any highlighted text or URL to instant local media. 
+          <strong className="font-semibold text-neutral-900 dark:text-white">SutraKey</strong> (also known as <strong className="font-semibold text-neutral-900 dark:text-white">Sutra Key</strong>) is an invisible thread connecting any highlighted text or URL to instant local media. 
           Zero latency. Zero telemetry. Straight to{" "}
           <span className="font-mono text-xs sm:text-sm px-2 py-0.5 rounded-md bg-black/[0.04] dark:bg-white/[0.08] text-neutral-800 dark:text-neutral-200 border border-black/[0.06] dark:border-white/[0.1]">
             ~/Downloads

@@ -1,4 +1,4 @@
-# SutraKey (सूत्र)
+# SutraKey / Sutra Key (सूत्र)
 
 <p align="center">
   <img src="https://raw.githubusercontent.com/halcyon-past/SutraKey/main/web/public/AppIcon-1024.png" width="140" height="140" alt="SutraKey App Icon" style="border-radius: 28px; box-shadow: 0 16px 36px rgba(0,0,0,0.12);" />
@@ -19,7 +19,7 @@
   <img src="https://img.shields.io/badge/Telemetry-0%25-green.svg?style=flat-square" alt="Zero Telemetry">
 </p>
 
-> 🧵 **Hold Shift + Select any URL** to summon a radial wheel that downloads video, audio, subtitles, or clean PDFs straight to `~/Downloads`. Native Swift macOS utility. 100% Free & Open Source.
+> 🧵 **SutraKey (also known as Sutra Key)**: Hold Shift + Select any URL to summon a radial wheel that downloads video, audio, subtitles, or clean PDFs straight to `~/Downloads`. Native Swift macOS utility. 100% Free & Open Source.
 
 ---
 
@@ -27,7 +27,7 @@
 
 *"Sutra"* (सूत्र) is Sanskrit for a thread or string holding pearls together. *"Key"* represents the Shift key physical interaction. 
 
-SutraKey is designed as an extension of the macOS compositor: it runs completely invisibly (`LSUIElement = YES`), consumes **0% CPU** when idle, creates **no clutter** in the Dock or Menu Bar until needed, and reacts with zero latency to your muscular habit of holding Shift while highlighting text.
+SutraKey (also written as **Sutra Key**) is designed as an extension of the macOS compositor: it runs completely invisibly (`LSUIElement = YES`), consumes **0% CPU** when idle, creates **no clutter** in the Dock or Menu Bar until needed, and reacts with zero latency to your muscular habit of holding Shift while highlighting text.
 
 ```mermaid
 flowchart TD
