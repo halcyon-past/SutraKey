@@ -96,14 +96,23 @@ public actor ConversionTaskActor {
 
         do {
             if targetAction == .pdf {
-                // Handled via offscreen WebToPDFService on MainActor
+                await self.updateProgress(id: id, progress: 0.15, speed: nil, eta: nil, stage: "Loading webpage...")
                 let pdfService = await WebToPDFService()
-                let savedURL = try await pdfService.convertToPDF(url: targetURL)
+                let savedURL = try await pdfService.convertToPDF(
+                    url: targetURL,
+                    onStageUpdate: { [weak self] stage, prog in
+                        guard let self = self else { return }
+                        Task {
+                            await self.updateProgress(id: id, progress: prog, speed: nil, eta: nil, stage: stage)
+                        }
+                    }
+                )
 
                 if var completedJob = jobs[id] {
                     completedJob.destinationFileURL = savedURL
                     completedJob.progress = 1.0
                     completedJob.status = .completed
+                    completedJob.currentStage = "Finished"
                     jobs[id] = completedJob
                     notifyCompleted(completedJob)
                 }
