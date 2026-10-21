@@ -144,6 +144,54 @@ public struct SettingsView: View {
                         .font(.system(size: 12))
                 }
             }
+
+            Divider()
+                .padding(.vertical, 4)
+
+            Section {
+                VStack(alignment: .leading, spacing: 8) {
+                    Text("Authentication & Browser Cookies")
+                        .font(.system(size: 13, weight: .semibold))
+
+                    Text("Instagram Stories and age-restricted media require an active authenticated session.")
+                        .font(.system(size: 11))
+                        .foregroundColor(.secondary)
+
+                    Picker("Import Cookies from:", selection: $prefs.browserCookiesSource) {
+                        Text("Brave Browser").tag("brave")
+                        Text("Google Chrome").tag("chrome")
+                        Text("Safari").tag("safari")
+                        Text("Microsoft Edge").tag("edge")
+                        Text("Firefox").tag("firefox")
+                        Text("Custom cookies.txt File").tag("custom")
+                        Text("None (Public Media Only)").tag("none")
+                    }
+                    .pickerStyle(.menu)
+                    .frame(width: 260)
+
+                    if prefs.browserCookiesSource == "custom" {
+                        HStack {
+                            Text(prefs.customCookiesPath.isEmpty ? "No cookies.txt selected" : prefs.customCookiesPath)
+                                .font(.system(size: 11, design: .monospaced))
+                                .lineLimit(1)
+                                .truncationMode(.middle)
+                                .foregroundColor(.secondary)
+
+                            Spacer()
+
+                            Button("Select cookies.txt...") {
+                                let panel = NSOpenPanel()
+                                panel.canChooseFiles = true
+                                panel.canChooseDirectories = false
+                                panel.allowsMultipleSelection = false
+                                if panel.runModal() == .OK, let url = panel.url {
+                                    prefs.customCookiesPath = url.path
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         }
     }
 

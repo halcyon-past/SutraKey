@@ -52,8 +52,38 @@ public enum TextSelectionExtractor: Sendable {
     /// Retrieves the URL of the active tab if the frontmost application is a supported browser.
     @MainActor
     public static func extractFromFrontmostBrowser() -> String? {
-        guard let frontApp = NSWorkspace.shared.frontmostApplication,
-              let bundleID = frontApp.bundleIdentifier else { return nil }
+        let supportedBrowserBundleIDs = [
+            "com.brave.Browser",
+            "com.google.Chrome",
+            "com.google.Chrome.canary",
+            "com.apple.Safari",
+            "com.apple.SafariTechnologyPreview",
+            "company.thebrowser.Browser",
+            "com.microsoft.edgemac",
+            "com.vivaldi.Vivaldi",
+            "com.kagi.kagimacOS"
+        ]
+
+        var targetBundleID = NSWorkspace.shared.frontmostApplication?.bundleIdentifier
+
+        if targetBundleID == nil || !supportedBrowserBundleIDs.contains(targetBundleID!) {
+            // Find running browser that is active or frontmost
+            if let activeBrowser = NSWorkspace.shared.runningApplications.first(where: { app in
+                guard let bid = app.bundleIdentifier else { return false }
+                return supportedBrowserBundleIDs.contains(bid) && app.isActive
+            }) {
+                targetBundleID = activeBrowser.bundleIdentifier
+            } else {
+                for bid in supportedBrowserBundleIDs {
+                    if let app = NSRunningApplication.runningApplications(withBundleIdentifier: bid).first, !app.isHidden {
+                        targetBundleID = bid
+                        break
+                    }
+                }
+            }
+        }
+
+        guard let bundleID = targetBundleID else { return nil }
 
         let scriptSource: String
         switch bundleID {

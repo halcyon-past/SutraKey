@@ -111,9 +111,14 @@ public actor ConversionTaskActor {
                 let runner = YTDLPProcessRunner()
                 activeRunners[id] = runner
 
+                let cookieArgs = await MainActor.run {
+                    PreferencesManager.shared.resolveCookieArguments(for: targetURL)
+                }
+
                 let destinationURL = try await runner.execute(
                     url: targetURL,
                     action: targetAction,
+                    cookieArguments: cookieArgs,
                     onProgress: { [weak self] progress, speed, eta, stage in
                         guard let self = self else { return }
                         Task {

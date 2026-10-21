@@ -78,9 +78,15 @@ if [ -n "$FFMPEG_SYS" ] && [ -x "$FFMPEG_SYS" ]; then
     echo "✅ Bundled ffmpeg into $TARGET_APP/Contents/Resources/Binaries/ffmpeg"
 fi
 
-# 7. Ad-hoc codesign
-echo "🔏 Signing application bundle (ad-hoc)..."
-codesign --force --deep --sign - "$TARGET_APP"
+# 7. Codesign with persistent local identity or ad-hoc fallback
+SIGN_IDENTITY="-"
+if security find-certificate -c "SutraKey CodeSign" ~/Library/Keychains/login.keychain-db >/dev/null 2>&1; then
+    SIGN_IDENTITY="SutraKey CodeSign"
+    echo "🔏 Signing application bundle with persistent identity '$SIGN_IDENTITY'..."
+else
+    echo "🔏 Signing application bundle (ad-hoc)..."
+fi
+codesign --force --deep --sign "$SIGN_IDENTITY" "$TARGET_APP"
 
 # 8. Clear quarantine attributes
 xattr -cr "$TARGET_APP" 2>/dev/null || true

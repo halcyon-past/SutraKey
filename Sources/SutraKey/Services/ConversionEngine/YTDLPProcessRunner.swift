@@ -26,6 +26,7 @@ public final class YTDLPProcessRunner: Sendable {
     public func execute(
         url: URL,
         action: ConversionAction,
+        cookieArguments: [String] = [],
         onProgress: @escaping @Sendable (Double, String, String, String) -> Void
     ) async throws -> URL {
         guard let ytdlpExecutable = BinaryResolver.ytdlpPath else {
@@ -47,6 +48,10 @@ public final class YTDLPProcessRunner: Sendable {
             "--print", "after_move:filepath",
             "-o", outputTemplate
         ]
+
+        if !cookieArguments.isEmpty {
+            arguments.append(contentsOf: cookieArguments)
+        }
 
         if let ffmpeg = BinaryResolver.ffmpegPath {
             arguments.append(contentsOf: ["--ffmpeg-location", ffmpeg])
@@ -143,11 +148,17 @@ public final class YTDLPProcessRunner: Sendable {
         let status = proc.terminationStatus
         guard status == 0 else {
             let errorData = stderrPipe.fileHandleForReading.readDataToEndOfFile()
-            let errorMsg = String(data: errorData, encoding: .utf8) ?? "Process exited with code \(status)"
+            let rawError = String(data: errorData, encoding: .utf8) ?? "Process exited with code \(status)"
+
+            var userFriendlyMsg = rawError
+            if rawError.contains("This content is unreachable") || rawError.contains("cookies-from-browser") || rawError.contains("unable to extract user info") {
+                userFriendlyMsg = "Instagram Stories require login cookies. Open SutraKey Settings > General and configure Browser Cookies (e.g. Brave) or select a cookies.txt file."
+            }
+
             throw NSError(
                 domain: "cloud.aritro.sutrakey",
                 code: Int(status),
-                userInfo: [NSLocalizedDescriptionKey: errorMsg]
+                userInfo: [NSLocalizedDescriptionKey: userFriendlyMsg]
             )
         }
 

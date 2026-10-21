@@ -17,6 +17,8 @@ public final class PreferencesManager: ObservableObject {
     private let kShowCompletionToast = "cloud.aritro.sutrakey.showCompletionToast"
     private let kAutoCheckUpdates = "cloud.aritro.sutrakey.autoCheckUpdates"
     private let kLastUpdateCheck = "cloud.aritro.sutrakey.lastUpdateCheck"
+    private let kBrowserCookiesSource = "cloud.aritro.sutrakey.browserCookiesSource"
+    private let kCustomCookiesPath = "cloud.aritro.sutrakey.customCookiesPath"
 
     // MARK: - Published Properties
 
@@ -69,6 +71,18 @@ public final class PreferencesManager: ObservableObject {
         }
     }
 
+    @Published public var browserCookiesSource: String {
+        didSet {
+            UserDefaults.standard.set(browserCookiesSource, forKey: kBrowserCookiesSource)
+        }
+    }
+
+    @Published public var customCookiesPath: String {
+        didSet {
+            UserDefaults.standard.set(customCookiesPath, forKey: kCustomCookiesPath)
+        }
+    }
+
     // MARK: - Init
 
     public init() {
@@ -99,6 +113,28 @@ public final class PreferencesManager: ObservableObject {
         self.showCompletionToast = UserDefaults.standard.object(forKey: kShowCompletionToast) == nil ? true : UserDefaults.standard.bool(forKey: kShowCompletionToast)
         self.autoCheckUpdates = UserDefaults.standard.object(forKey: kAutoCheckUpdates) == nil ? true : UserDefaults.standard.bool(forKey: kAutoCheckUpdates)
         self.lastUpdateCheckDate = UserDefaults.standard.object(forKey: kLastUpdateCheck) as? Date
+
+        // Default browser cookies source: auto-detect Brave or Chrome if installed, otherwise "brave"
+        let defaultBrowser: String = {
+            if FileManager.default.fileExists(atPath: "/Applications/Brave Browser.app") {
+                return "brave"
+            } else if FileManager.default.fileExists(atPath: "/Applications/Google Chrome.app") {
+                return "chrome"
+            }
+            return "brave"
+        }()
+        self.browserCookiesSource = UserDefaults.standard.string(forKey: kBrowserCookiesSource) ?? defaultBrowser
+        self.customCookiesPath = UserDefaults.standard.string(forKey: kCustomCookiesPath) ?? ""
+    }
+
+    /// Resolves yt-dlp arguments for cookies based on user preferences.
+    public func resolveCookieArguments(for url: URL? = nil) -> [String] {
+        if browserCookiesSource == "custom", !customCookiesPath.isEmpty {
+            return ["--cookies", customCookiesPath]
+        } else if browserCookiesSource != "none", !browserCookiesSource.isEmpty {
+            return ["--cookies-from-browser", browserCookiesSource]
+        }
+        return []
     }
 
     // MARK: - Actions
