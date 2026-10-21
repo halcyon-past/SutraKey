@@ -44,15 +44,15 @@ public enum ConversionAction: String, CaseIterable, Identifiable, Sendable {
     public var sfSymbol: String {
         switch self {
         case .video:
-            return "film.fill"
+            return "film"
         case .audio:
-            return "waveform"
+            return "music.note"
         case .subtitles:
-            return "captions.bubble.fill"
+            return "doc.text"
         case .gallery:
-            return "photo.on.rectangle.angled"
+            return "photo"
         case .pdf:
-            return "doc.text.fill"
+            return "book"
         }
     }
 
