@@ -171,4 +171,53 @@ public final class PreferencesManager: ObservableObject {
             self.downloadDirectory = downloads.standardizedFileURL
         }
     }
+
+    /// Verifies and triggers macOS Keychain authorization for the configured browser's Safe Storage.
+    public func testBrowserKeychainAccess() async -> (success: Bool, message: String) {
+        let browser = browserCookiesSource
+        guard browser != "none" && browser != "custom" else {
+            return (true, "No browser keychain required.")
+        }
+
+        let keychainService: String
+        let keychainAccount: String
+        switch browser {
+        case "brave":
+            keychainService = "Brave Safe Storage"
+            keychainAccount = "Brave"
+        case "chrome":
+            keychainService = "Chrome Safe Storage"
+            keychainAccount = "Chrome"
+        case "edge":
+            keychainService = "Microsoft Edge Safe Storage"
+            keychainAccount = "Microsoft Edge"
+        case "safari", "firefox":
+            return (true, "\(browser.capitalized) does not require Chromium Safe Storage keychain access.")
+        default:
+            return (true, "Ready.")
+        }
+
+        return await withCheckedContinuation { continuation in
+            DispatchQueue.global(qos: .userInitiated).async {
+                let proc = Process()
+                proc.executableURL = URL(fileURLWithPath: "/usr/bin/security")
+                proc.arguments = ["find-generic-password", "-w", "-a", keychainAccount, "-s", keychainService]
+                let pipe = Pipe()
+                proc.standardOutput = pipe
+                proc.standardError = pipe
+
+                do {
+                    try proc.run()
+                    proc.waitUntilExit()
+                    if proc.terminationStatus == 0 {
+                        continuation.resume(returning: (true, "Keychain authorized! Cookies are accessible."))
+                    } else {
+                        continuation.resume(returning: (false, "Keychain prompt was cancelled or denied. Click 'Always Allow' when prompted."))
+                    }
+                } catch {
+                    continuation.resume(returning: (false, "Failed to test security: \(error.localizedDescription)"))
+                }
+            }
+        }
+    }
 }

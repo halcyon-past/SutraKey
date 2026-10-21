@@ -7,6 +7,8 @@ public struct SettingsView: View {
     @ObservedObject public var updater: UpdateManager
 
     @State private var selectedTab: SettingsTab = .general
+    @State private var keychainTesting: Bool = false
+    @State private var keychainTestResult: (success: Bool, message: String)? = nil
 
     public enum SettingsTab: String, CaseIterable, Identifiable {
         case general = "General"
@@ -168,6 +170,43 @@ public struct SettingsView: View {
                     }
                     .pickerStyle(.menu)
                     .frame(width: 260)
+
+                    if ["brave", "chrome", "edge"].contains(prefs.browserCookiesSource) {
+                        VStack(alignment: .leading, spacing: 6) {
+                            HStack(spacing: 8) {
+                                Button {
+                                    keychainTesting = true
+                                    Task {
+                                        let res = await prefs.testBrowserKeychainAccess()
+                                        keychainTestResult = res
+                                        keychainTesting = false
+                                    }
+                                } label: {
+                                    if keychainTesting {
+                                        ProgressView().controlSize(.small)
+                                    } else {
+                                        Text("Authorize & Test Keychain Access")
+                                    }
+                                }
+                                .disabled(keychainTesting)
+
+                                if let res = keychainTestResult {
+                                    HStack(spacing: 4) {
+                                        Image(systemName: res.success ? "checkmark.circle.fill" : "exclamationmark.triangle.fill")
+                                            .foregroundColor(res.success ? .green : .red)
+                                        Text(res.message)
+                                            .font(.system(size: 11))
+                                            .foregroundColor(res.success ? .green : .red)
+                                    }
+                                }
+                            }
+
+                            Text("Tip: When macOS prompts for Keychain access to 'Safe Storage', click 'Always Allow' so downloads authenticate automatically.")
+                                .font(.system(size: 11))
+                                .foregroundColor(.secondary)
+                        }
+                        .padding(.top, 2)
+                    }
 
                     if prefs.browserCookiesSource == "custom" {
                         HStack {

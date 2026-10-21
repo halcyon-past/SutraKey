@@ -151,8 +151,18 @@ public final class YTDLPProcessRunner: Sendable {
             let rawError = String(data: errorData, encoding: .utf8) ?? "Process exited with code \(status)"
 
             var userFriendlyMsg = rawError
-            if rawError.contains("This content is unreachable") || rawError.contains("cookies-from-browser") || rawError.contains("unable to extract user info") {
-                userFriendlyMsg = "Instagram Stories require login cookies. Open SutraKey Settings > General and configure Browser Cookies (e.g. Brave) or select a cookies.txt file."
+            let hasCookiesConfigured = !cookieArguments.isEmpty
+
+            if rawError.contains("This content is unreachable") ||
+               rawError.contains("unable to extract user info") ||
+               rawError.contains("cookies-from-browser") {
+                if !hasCookiesConfigured {
+                    userFriendlyMsg = "Instagram Stories require login cookies. Open SutraKey Settings > General and configure Browser Cookies (e.g. Brave) or select a cookies.txt file."
+                } else if rawError.contains("Keychain") || rawError.contains("find-generic-password") || rawError.contains("access was denied") {
+                    userFriendlyMsg = "Keychain access prompt was cancelled or timed out. When macOS prompts for Keychain access to 'Safe Storage', click 'Always Allow', or use a cookies.txt file in Settings."
+                } else {
+                    userFriendlyMsg = "Instagram Story unreachable with current cookies. Make sure you are logged into Instagram in your configured browser, and that the story has not expired (24h limit) or is from a private account."
+                }
             }
 
             throw NSError(
