@@ -49,7 +49,7 @@ export function LiquidGlass({
     >
       {/* Vaso Liquid Glass Physical Lens (Underlying refraction layer, never warps text) */}
       <div
-        className="pointer-events-none absolute inset-0 overflow-hidden z-0"
+        className="pointer-events-none absolute inset-0 overflow-hidden -z-10"
         style={{ borderRadius: radius }}
       >
         <Vaso
@@ -68,10 +68,8 @@ export function LiquidGlass({
         style={{ borderTopLeftRadius: radius, borderTopRightRadius: radius }}
       />
 
-      {/* Crisp, Razor-Sharp Content Container (100% legible typography) */}
-      <div className="relative z-10 w-full h-full text-[#1d1d1f] dark:text-[#f5f5f7]">
-        {children}
-      </div>
+      {/* Direct in-flow children: preserves natural flex/grid layouts from className */}
+      {children}
     </div>
   );
 }

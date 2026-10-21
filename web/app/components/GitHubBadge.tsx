@@ -55,7 +55,7 @@ export function GitHubBadge({ compact = false }: { compact?: boolean }) {
         target="_blank"
         rel="noopener noreferrer"
         aria-label="GitHub repository with stars and forks"
-        className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-black/[0.04] dark:bg-white/[0.06] hover:bg-black/[0.08] dark:hover:bg-white/[0.12] border border-black/[0.06] dark:border-white/[0.1] text-xs font-medium text-neutral-700 dark:text-neutral-200 transition-all duration-200 group"
+        className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-black/[0.04] dark:bg-white/[0.06] hover:bg-black/[0.08] dark:hover:bg-white/[0.12] border border-black/[0.06] dark:border-white/[0.1] text-xs font-medium text-neutral-700 dark:text-neutral-200 transition-all duration-200 group whitespace-nowrap"
       >
         <GithubIcon size={14} className="group-hover:scale-110 transition-transform duration-200" />
         <span className="flex items-center gap-1 font-mono text-[11px]">
@@ -77,27 +77,28 @@ export function GitHubBadge({ compact = false }: { compact?: boolean }) {
       target="_blank"
       rel="noopener noreferrer"
       aria-label="View SutraKey on GitHub with live stars and forks"
-      className="inline-flex items-center gap-3 px-4 py-2 rounded-full bg-white/70 dark:bg-white/[0.07] hover:bg-white/90 dark:hover:bg-white/[0.12] border border-black/[0.08] dark:border-white/[0.12] shadow-sm backdrop-blur-xl text-xs font-medium text-[#1d1d1f] dark:text-white transition-all duration-200 hover:-translate-y-0.5 active:translate-y-0 group"
+      className="inline-flex items-center gap-2.5 sm:gap-3 px-3.5 sm:px-4 py-2 rounded-full bg-white/70 dark:bg-white/[0.07] hover:bg-white/90 dark:hover:bg-white/[0.12] border border-black/[0.08] dark:border-white/[0.12] shadow-sm backdrop-blur-xl text-xs font-medium text-[#1d1d1f] dark:text-white transition-all duration-200 hover:-translate-y-0.5 active:translate-y-0 group whitespace-nowrap"
     >
       <div className="flex items-center gap-2">
-        <GithubIcon size={16} className="group-hover:scale-110 transition-transform duration-200" />
-        <span className="font-semibold tracking-tight">halcyon-past/SutraKey</span>
+        <GithubIcon size={15} className="group-hover:scale-110 transition-transform duration-200 text-neutral-700 dark:text-neutral-200" />
+        <span className="font-semibold tracking-tight">
+          <span className="hidden sm:inline text-neutral-500 dark:text-neutral-400 font-normal">halcyon-past/</span>
+          <span>SutraKey</span>
+        </span>
       </div>
 
       <div className="h-3 w-px bg-black/[0.1] dark:bg-white/[0.15]" />
 
-      <div className="flex items-center gap-1.5 text-neutral-600 dark:text-neutral-300 font-mono text-[11px]">
-        <Star size={12} className="text-amber-500 fill-amber-500" />
+      <div className="flex items-center gap-1 text-neutral-600 dark:text-neutral-300 font-mono text-[11px]">
+        <Star size={11} className="text-amber-500 fill-amber-500" />
         <span className="font-semibold text-neutral-800 dark:text-neutral-100">{starCount}</span>
-        <span className="text-neutral-400 dark:text-neutral-500">stars</span>
       </div>
 
       <div className="h-3 w-px bg-black/[0.1] dark:bg-white/[0.15]" />
 
-      <div className="flex items-center gap-1.5 text-neutral-600 dark:text-neutral-300 font-mono text-[11px]">
-        <GitFork size={12} className="text-sky-500" />
+      <div className="flex items-center gap-1 text-neutral-600 dark:text-neutral-300 font-mono text-[11px]">
+        <GitFork size={11} className="text-sky-500" />
         <span className="font-semibold text-neutral-800 dark:text-neutral-100">{forkCount}</span>
-        <span className="text-neutral-400 dark:text-neutral-500">forks</span>
       </div>
     </a>
   );
