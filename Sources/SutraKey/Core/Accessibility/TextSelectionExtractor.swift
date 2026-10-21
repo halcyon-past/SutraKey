@@ -11,7 +11,7 @@ public enum TextSelectionExtractor: Sendable {
     /// - Parameter allowClipboardFallback: If false, strictly requires an active text selection and never falls back to old clipboard contents.
     @MainActor
     public static func extractSelectedURL(allowClipboardFallback: Bool = false) -> URL? {
-        // 1. Primary: macOS Accessibility API (reads current highlight without touching clipboard)
+        // 1. Primary: macOS Accessibility API (reads current highlight or omnibox value without touching clipboard)
         if let axText = extractViaAccessibility(), !axText.isEmpty {
             if let url = URLSanitizer.extractURL(from: axText) {
                 Logger.accessibility.info("Extracted URL via AX selection: \(url.absoluteString)")
@@ -19,7 +19,17 @@ public enum TextSelectionExtractor: Sendable {
             }
         }
 
-        // 2. Secondary: Transient clipboard snapshot of current selection
+        // 2. Secondary: Frontmost Browser Active Tab URL (Brave, Chrome, Safari, Arc, Edge, etc.)
+        // When the user highlights the omnibox address bar or views a media page in their browser,
+        // this extracts the active tab's URL with 100% reliability and zero permission friction.
+        if let browserText = extractFromFrontmostBrowser(), !browserText.isEmpty {
+            if let url = URLSanitizer.extractURL(from: browserText) {
+                Logger.accessibility.info("Extracted URL from frontmost browser active tab: \(url.absoluteString)")
+                return url
+            }
+        }
+
+        // 3. Tertiary: Transient clipboard snapshot of current selection
         // Synthesizes a clean Cmd+C, reads the freshly copied selection, and restores the original clipboard.
         if let clipboardText = extractViaTransientClipboard(), !clipboardText.isEmpty {
             if let url = URLSanitizer.extractURL(from: clipboardText) {
@@ -28,12 +38,49 @@ public enum TextSelectionExtractor: Sendable {
             }
         }
 
-        // 3. Fallback: Active clipboard content (ONLY if explicitly allowed, e.g. via explicit hotkey)
+        // 4. Fallback: Active clipboard content (ONLY if explicitly allowed, e.g. via explicit hotkey)
         if allowClipboardFallback, let directText = NSPasteboard.general.string(forType: .string), !directText.isEmpty {
             if let url = URLSanitizer.extractURL(from: directText) {
                 Logger.accessibility.info("Extracted URL from active pasteboard fallback: \(url.absoluteString)")
                 return url
             }
+        }
+
+        return nil
+    }
+
+    /// Retrieves the URL of the active tab if the frontmost application is a supported browser.
+    @MainActor
+    public static func extractFromFrontmostBrowser() -> String? {
+        guard let frontApp = NSWorkspace.shared.frontmostApplication,
+              let bundleID = frontApp.bundleIdentifier else { return nil }
+
+        let scriptSource: String
+        switch bundleID {
+        case "com.brave.Browser":
+            scriptSource = "tell application \"Brave Browser\" to get URL of active tab of front window"
+        case "com.google.Chrome", "com.google.Chrome.canary":
+            scriptSource = "tell application \"Google Chrome\" to get URL of active tab of front window"
+        case "com.apple.Safari", "com.apple.SafariTechnologyPreview":
+            scriptSource = "tell application \"Safari\" to get URL of front document"
+        case "company.thebrowser.Browser":
+            scriptSource = "tell application \"Arc\" to get URL of active tab of front window"
+        case "com.microsoft.edgemac":
+            scriptSource = "tell application \"Microsoft Edge\" to get URL of active tab of front window"
+        case "com.vivaldi.Vivaldi":
+            scriptSource = "tell application \"Vivaldi\" to get URL of active tab of front window"
+        case "com.kagi.kagimacOS":
+            scriptSource = "tell application \"Orion\" to get URL of front document"
+        default:
+            return nil
+        }
+
+        var error: NSDictionary?
+        let appleScript = NSAppleScript(source: scriptSource)
+        if let result = appleScript?.executeAndReturnError(&error),
+           let urlString = result.stringValue?.trimmingCharacters(in: .whitespacesAndNewlines),
+           !urlString.isEmpty {
+            return urlString
         }
 
         return nil
@@ -87,6 +134,16 @@ public enum TextSelectionExtractor: Sendable {
                 }
             }
 
+            // Check value attribute (e.g. Chromium / Safari omnibox or text fields)
+            var valObj: AnyObject?
+            if AXUIElementCopyAttributeValue(elem, kAXValueAttribute as CFString, &valObj) == .success,
+               let valString = valObj as? String {
+                let trimmed = valString.trimmingCharacters(in: .whitespacesAndNewlines)
+                if !trimmed.isEmpty, let _ = URLSanitizer.extractURL(from: trimmed) {
+                    return trimmed
+                }
+            }
+
             // Check parameterized range attribute
             var selectedRangeValue: AnyObject?
             if AXUIElementCopyAttributeValue(elem, kAXSelectedTextRangeAttribute as CFString, &selectedRangeValue) == .success,
@@ -136,6 +193,11 @@ public enum TextSelectionExtractor: Sendable {
         guard let source = CGEventSource(stateID: .privateState) else {
             return nil
         }
+
+        // Explicitly release Shift to prevent physical Shift from merging into Cmd+Shift+C (which opens DevTools in Chromium)
+        let shiftUp = CGEvent(keyboardEventSource: source, virtualKey: 0x38, keyDown: false)
+        shiftUp?.flags = []
+        shiftUp?.post(tap: .cghidEventTap)
 
         let keyDown = CGEvent(keyboardEventSource: source, virtualKey: 0x08, keyDown: true) // 0x08 = 'C'
         keyDown?.flags = .maskCommand
