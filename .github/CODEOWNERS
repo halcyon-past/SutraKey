@@ -1,0 +1,27 @@
+# SutraKey CODEOWNERS
+# Automatically assign reviews and designate ownership for pull requests.
+# Reference: https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners
+
+# Global catch-all owner
+* @halcyon-past
+
+# Native Swift 6.0 macOS Core Application & Test Suites
+/Sources/ @halcyon-past
+/Tests/ @halcyon-past
+Package.swift @halcyon-past
+
+# Next.js 16 Web Showcase, SEO & Static Assets
+/web/ @halcyon-past
+
+# Automation, Icon Generators & Packaging Scripts
+/Scripts/ @halcyon-past
+
+# GitHub Actions Workflows, Issue Templates & Governance
+/.github/ @halcyon-past
+
+# Documentation, Architecture & Compliance
+/docs/ @halcyon-past
+*.md @halcyon-past
+LICENSE @halcyon-past
+SECURITY.md @halcyon-past
+CODE_OF_CONDUCT.md @halcyon-past
