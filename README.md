@@ -94,7 +94,7 @@ flowchart TD
 
 ### Homebrew (Recommended)
 ```bash
-brew tap aritrosaha/sutrakey
+brew tap halcyon-past/sutrakey
 brew install --cask sutrakey
 ```
 

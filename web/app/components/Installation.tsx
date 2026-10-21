@@ -45,16 +45,19 @@ export function Installation() {
               Homebrew Cask
             </h3>
             <p className="text-xs text-neutral-600 dark:text-neutral-300 mb-6 leading-relaxed">
-              Automatic updates and seamless dependency management via Homebrew.
+              Automatic updates and seamless dependency management via Homebrew tap.
             </p>
           </div>
 
           <button
-            onClick={() => copyText("brew install sutrakey", 1)}
-            className="w-full flex items-center justify-between p-3 rounded-2xl bg-black/[0.04] dark:bg-white/[0.06] border border-black/[0.04] dark:border-white/[0.08] font-mono text-xs text-neutral-800 dark:text-neutral-200 hover:bg-black/[0.06] transition-colors cursor-pointer"
+            onClick={() => copyText("brew tap halcyon-past/sutrakey && brew install --cask sutrakey", 1)}
+            className="w-full flex items-center justify-between p-3 rounded-2xl bg-black/[0.04] dark:bg-white/[0.06] border border-black/[0.04] dark:border-white/[0.08] font-mono text-xs text-neutral-800 dark:text-neutral-200 hover:bg-black/[0.06] dark:hover:bg-white/[0.1] transition-colors cursor-pointer group"
           >
-            <span>brew install sutrakey</span>
-            {copiedIndex === 1 ? <Check size={14} className="text-emerald-500" /> : <Copy size={14} className="text-neutral-400" />}
+            <div className="flex items-center gap-2 truncate">
+              <span className="text-neutral-400 dark:text-neutral-500 select-none">$</span>
+              <span className="truncate">brew install --cask sutrakey</span>
+            </div>
+            {copiedIndex === 1 ? <Check size={14} className="text-emerald-500 shrink-0 ml-2" /> : <Copy size={14} className="text-neutral-400 group-hover:text-white shrink-0 ml-2" />}
           </button>
         </LiquidGlass>
 
