@@ -188,7 +188,7 @@ public final class ShiftSelectionMonitor: NSObject {
             if !isTrusted {
                 SutraToastController.shared.showNotice(
                     title: "Accessibility Required",
-                    message: "Enable SutraKey in System Settings > Accessibility to auto-read selections.",
+                    message: "If already enabled, toggle SutraKey OFF and ON in System Settings > Accessibility to refresh macOS permissions.",
                     systemImage: "hand.raised.fill",
                     actionTitle: "Open Settings",
                     action: {

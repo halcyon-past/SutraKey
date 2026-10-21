@@ -80,6 +80,22 @@ public final class AppDelegate: NSObject, NSApplicationDelegate {
                     }
                 }
             )
+
+            // Actively observe until user grants accessibility in System Settings
+            Task { @MainActor in
+                for _ in 0..<120 { // Check every second for up to 2 minutes
+                    try? await Task.sleep(nanoseconds: 1_000_000_000)
+                    if AXIsProcessTrusted() {
+                        Logger.accessibility.info("Accessibility permissions granted by user.")
+                        SutraToastController.shared.showNotice(
+                            title: "Accessibility Granted",
+                            message: "SutraKey is ready! Hold Shift + Select any link to download.",
+                            systemImage: "checkmark.circle.fill"
+                        )
+                        break
+                    }
+                }
+            }
         }
     }
 }
