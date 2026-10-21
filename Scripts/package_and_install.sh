@@ -78,7 +78,13 @@ if [ -n "$FFMPEG_SYS" ] && [ -x "$FFMPEG_SYS" ]; then
     echo "✅ Bundled ffmpeg into $TARGET_APP/Contents/Resources/Binaries/ffmpeg"
 fi
 
-# 7. Codesign with persistent local identity or ad-hoc fallback
+# 7. Bundle custom yt-dlp plugins (e.g. Instagram story fix)
+if [ -d "$ROOT_DIR/Sources/SutraKey/Resources/yt_dlp_plugins" ]; then
+    cp -R "$ROOT_DIR/Sources/SutraKey/Resources/yt_dlp_plugins" "$TARGET_APP/Contents/Resources/"
+    echo "✅ Bundled yt-dlp plugins into $TARGET_APP/Contents/Resources/yt_dlp_plugins"
+fi
+
+# 8. Codesign with persistent local identity or ad-hoc fallback
 SIGN_IDENTITY="-"
 if security find-certificate -c "SutraKey CodeSign" ~/Library/Keychains/login.keychain-db >/dev/null 2>&1; then
     SIGN_IDENTITY="SutraKey CodeSign"

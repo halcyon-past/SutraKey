@@ -53,6 +53,10 @@ public final class YTDLPProcessRunner: Sendable {
             arguments.append(contentsOf: cookieArguments)
         }
 
+        if let pluginsDir = BinaryResolver.pluginsDirectory {
+            arguments.append(contentsOf: ["--plugin-dirs", pluginsDir.path])
+        }
+
         if let ffmpeg = BinaryResolver.ffmpegPath {
             arguments.append(contentsOf: ["--ffmpeg-location", ffmpeg])
         }

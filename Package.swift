@@ -20,7 +20,8 @@ let package = Package(
                 "Resources/Info.plist"
             ],
             resources: [
-                .process("Resources/Assets.xcassets")
+                .process("Resources/Assets.xcassets"),
+                .copy("Resources/yt_dlp_plugins")
             ],
             swiftSettings: [
                 .unsafeFlags([

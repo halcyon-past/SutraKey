@@ -59,6 +59,27 @@ public enum BinaryResolver: Sendable {
         resolveBinary(named: "ffmpeg")
     }
 
+    /// Resolves path to custom yt-dlp plugins directory (e.g. for patched Instagram extractors).
+    public static var pluginsDirectory: URL? {
+        if let resourceURL = Bundle.main.resourceURL {
+            let candidate = resourceURL.appendingPathComponent("yt_dlp_plugins")
+            if FileManager.default.fileExists(atPath: candidate.path) {
+                return candidate
+            }
+        }
+        #if SWIFT_PACKAGE
+        if let modulePlugin = Bundle.module.url(forResource: "yt_dlp_plugins", withExtension: nil),
+           FileManager.default.fileExists(atPath: modulePlugin.path) {
+            return modulePlugin
+        }
+        #endif
+        let projectPlugin = URL(fileURLWithPath: "Sources/SutraKey/Resources/yt_dlp_plugins")
+        if FileManager.default.fileExists(atPath: projectPlugin.path) {
+            return projectPlugin
+        }
+        return nil
+    }
+
     /// Executes `yt-dlp -U` to update yt-dlp in-place.
     @discardableResult
     public static func updateYTDLP() async throws -> String {
