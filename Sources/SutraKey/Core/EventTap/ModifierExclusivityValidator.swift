@@ -7,7 +7,8 @@ public enum ModifierExclusivityValidator: Sendable {
     public static let forbiddenModifiers: NSEvent.ModifierFlags = [
         .command,
         .option,
-        .control
+        .control,
+        .capsLock
     ]
 
     /// Returns `true` if and only if the Shift key is pressed and NO other modifier keys are active.

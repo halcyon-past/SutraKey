@@ -2,12 +2,16 @@ import Foundation
 import Testing
 @testable import SutraKey
 
-@Suite("EphemeralMenuBarStateTests")
+@Suite("EphemeralMenuBarStateTests", .serialized)
 struct EphemeralMenuBarStateTests {
 
     @Test("Menu bar icon is strictly hidden on launch when idle")
     @MainActor
     func testMenuBarHiddenOnLaunch() {
+        let originalPref = PreferencesManager.shared.keepStatusBarVisible
+        defer { PreferencesManager.shared.keepStatusBarVisible = originalPref }
+        PreferencesManager.shared.keepStatusBarVisible = false
+
         let controller = EphemeralStatusBarController()
         controller.hideStatusItem()
 
@@ -18,6 +22,10 @@ struct EphemeralMenuBarStateTests {
     @Test("Menu bar appears on task start and hides on finish")
     @MainActor
     func testMenuBarAppearsOnTaskStartAndHidesOnFinish() {
+        let originalPref = PreferencesManager.shared.keepStatusBarVisible
+        defer { PreferencesManager.shared.keepStatusBarVisible = originalPref }
+        PreferencesManager.shared.keepStatusBarVisible = false
+
         let controller = EphemeralStatusBarController()
         controller.hideStatusItem()
         controller.completionGracePeriodSeconds = 0.0 // Synchronous dismissal for tests

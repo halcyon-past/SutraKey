@@ -2,7 +2,7 @@ import Foundation
 import Testing
 @testable import SutraKey
 
-@Suite("PreferencesAndUpdateTests")
+@Suite("PreferencesAndUpdateTests", .serialized)
 struct PreferencesAndUpdateTests {
 
     @Test("UpdateManager semver comparison evaluates newer versions correctly")
@@ -23,6 +23,9 @@ struct PreferencesAndUpdateTests {
     func testCustomDownloadDirectory() {
         let prefs = PreferencesManager.shared
         let originalDir = prefs.downloadDirectory
+        defer {
+            prefs.downloadDirectory = originalDir
+        }
 
         let tempDir = FileManager.default.temporaryDirectory.standardizedFileURL
         prefs.downloadDirectory = tempDir
