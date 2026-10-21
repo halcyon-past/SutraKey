@@ -96,14 +96,14 @@ public actor ConversionTaskActor {
 
         do {
             if targetAction == .pdf {
-                await self.updateProgress(id: id, progress: 0.15, speed: nil, eta: nil, stage: "Loading webpage...")
+                await self.updateProgress(id: id, progress: 0.15, speed: "", eta: "", stage: "Loading webpage...")
                 let pdfService = await WebToPDFService()
                 let savedURL = try await pdfService.convertToPDF(
                     url: targetURL,
                     onStageUpdate: { [weak self] stage, prog in
                         guard let self = self else { return }
                         Task {
-                            await self.updateProgress(id: id, progress: prog, speed: nil, eta: nil, stage: stage)
+                            await self.updateProgress(id: id, progress: prog, speed: "", eta: "", stage: stage)
                         }
                     }
                 )
