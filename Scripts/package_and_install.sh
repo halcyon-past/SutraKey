@@ -90,9 +90,14 @@ chmod -R u+w "$TARGET_APP"
 # 8. Clear quarantine attributes
 xattr -cr "$TARGET_APP" 2>/dev/null || true
 
-# 9. Codesign (prefer persistent identity "SutraKey CodeSign" if present in keychain to maintain stable TCC designated requirement)
+# 9. Codesign (prefer persistent identity "SutraKey CodeSign" to maintain stable TCC designated requirement)
 SIGN_IDENTITY="-"
-if security find-certificate -c "SutraKey CodeSign" ~/Library/Keychains/login.keychain-db >/dev/null 2>&1; then
+SK_KEYCHAIN="$HOME/Library/Keychains/sutrakey.keychain-db"
+if [ -f "$SK_KEYCHAIN" ]; then
+    security unlock-keychain -p "sutrakey" "$SK_KEYCHAIN" 2>/dev/null || true
+    SIGN_IDENTITY="SutraKey CodeSign"
+    echo "🔏 Signing application bundle with persistent identity '$SIGN_IDENTITY' via dedicated keychain..."
+elif security find-certificate -c "SutraKey CodeSign" >/dev/null 2>&1; then
     SIGN_IDENTITY="SutraKey CodeSign"
     echo "🔏 Signing application bundle with persistent identity '$SIGN_IDENTITY'..."
 else
@@ -106,3 +111,7 @@ if [ -f "/System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchServ
 fi
 
 echo "✨ Successfully installed SutraKey to $TARGET_APP"
+
+# 11. Relaunch SutraKey in the background
+open "$TARGET_APP"
+echo "🚀 Relaunched SutraKey from $TARGET_APP"

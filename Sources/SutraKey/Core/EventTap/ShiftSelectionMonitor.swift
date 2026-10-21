@@ -111,6 +111,16 @@ public final class ShiftSelectionMonitor: NSObject {
                 Logger.events.info("Escape key pressed. Dismissing radial menu.")
                 RadialPanelController.shared.dismiss()
             }
+            return
+        }
+
+        // Secondary global hotkey listener for Cmd + Shift + S
+        if event.keyCode == 1 { // 1 = 'S' (kVK_ANSI_S)
+            let flags = event.modifierFlags
+            if flags.contains(.command) && flags.contains(.shift) {
+                Logger.events.info("Cmd+Shift+S hotkey detected via event monitor. Invoking trigger...")
+                attemptRadialTrigger(at: NSEvent.mouseLocation, allowClipboardFallback: true)
+            }
         }
     }
 
@@ -194,36 +204,38 @@ public final class ShiftSelectionMonitor: NSObject {
 
         guard let url = TextSelectionExtractor.extractSelectedURL(allowClipboardFallback: allowClipboardFallback) else {
             Logger.events.warning("No valid URL found in selection or clipboard [allowClipboardFallback: \(allowClipboardFallback)].")
-            
-            if allowClipboardFallback {
-                // Triggered via shortcut (Cmd+Shift+S) - Accessibility is not strictly needed if link is copied
+
+            let isTrusted = AXIsProcessTrusted()
+            let frontAppName = NSWorkspace.shared.frontmostApplication?.localizedName ?? "this application"
+
+            if !isTrusted {
+                SutraToastController.shared.showNotice(
+                    title: "Accessibility Required",
+                    message: "To capture links across \(frontAppName) and other apps, enable SutraKey in System Settings > Accessibility.",
+                    systemImage: "hand.raised.fill",
+                    actionTitle: "Open Settings",
+                    action: {
+                        let options = ["AXTrustedCheckOptionPrompt" as CFString: true] as CFDictionary
+                        _ = AXIsProcessTrustedWithOptions(options)
+                        if let prefURL = URL(string: "x-apple.systempreferences:com.apple.preference.security?Privacy_Accessibility") {
+                            NSWorkspace.shared.open(prefURL)
+                        }
+                    }
+                )
+            } else if allowClipboardFallback {
+                // Triggered via shortcut (Cmd+Shift+S)
                 SutraToastController.shared.showNotice(
                     title: "No URL Found",
                     message: "Highlight a URL or copy one to your clipboard (⌘C), then press ⌘⇧S.",
                     systemImage: "link.badge.plus"
                 )
             } else {
-                // Triggered via Shift + Drag selection - strictly requires macOS Accessibility to read text without clipboard
-                let isTrusted = AXIsProcessTrusted()
-                if !isTrusted {
-                    SutraToastController.shared.showNotice(
-                        title: "Accessibility Required",
-                        message: "In System Settings > Accessibility, remove SutraKey with [-] and re-add with [+] to refresh permissions.",
-                        systemImage: "hand.raised.fill",
-                        actionTitle: "Open Settings",
-                        action: {
-                            if let prefURL = URL(string: "x-apple.systempreferences:com.apple.preference.security?Privacy_Accessibility") {
-                                NSWorkspace.shared.open(prefURL)
-                            }
-                        }
-                    )
-                } else {
-                    SutraToastController.shared.showNotice(
-                        title: "No URL Selected",
-                        message: "Highlight a valid URL (YouTube, Instagram, or media link) with Shift held.",
-                        systemImage: "cursorarrow.and.square.on.square.dashed"
-                    )
-                }
+                // Triggered via Shift + Drag selection
+                SutraToastController.shared.showNotice(
+                    title: "No URL Selected",
+                    message: "Highlight a valid URL (YouTube, Instagram, or media link) with Shift held.",
+                    systemImage: "cursorarrow.and.square.on.square.dashed"
+                )
             }
             return
         }

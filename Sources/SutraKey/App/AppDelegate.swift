@@ -80,7 +80,13 @@ public final class AppDelegate: NSObject, NSApplicationDelegate {
         if isTrusted {
             Logger.accessibility.info("macOS Accessibility permissions verified.")
         } else {
-            Logger.accessibility.info("Accessibility permissions not granted. Running in standard mode with transient clipboard and browser active tab extraction.")
+            Logger.accessibility.info("Accessibility permissions not granted. Checking initial prompt.")
+            let hasPromptedKey = "cloud.aritro.sutrakey.hasPromptedAccessibility"
+            if !UserDefaults.standard.bool(forKey: hasPromptedKey) {
+                UserDefaults.standard.set(true, forKey: hasPromptedKey)
+                let options = ["AXTrustedCheckOptionPrompt" as CFString: true] as CFDictionary
+                _ = AXIsProcessTrustedWithOptions(options)
+            }
         }
     }
 }

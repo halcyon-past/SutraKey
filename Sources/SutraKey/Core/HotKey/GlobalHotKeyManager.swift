@@ -21,14 +21,16 @@ public final class GlobalHotKeyManager: NSObject {
     public func registerHotKeys() {
         guard hotKeyRefs.isEmpty else { return }
 
-        // 1. Install Carbon event handler
+        // 1. Install Carbon event handler on the system Event Dispatcher Target
         var eventType = EventTypeSpec(
             eventClass: OSType(kEventClassKeyboard),
             eventKind: UInt32(kEventHotKeyPressed)
         )
 
+        let target = GetEventDispatcherTarget() ?? GetApplicationEventTarget()
+
         let status = InstallEventHandler(
-            GetApplicationEventTarget(),
+            target,
             { (_, event, _) -> OSStatus in
                 Task { @MainActor in
                     GlobalHotKeyManager.shared.handleHotKeyPressed()
@@ -50,27 +52,29 @@ public final class GlobalHotKeyManager: NSObject {
         registerKey(
             keyCode: UInt32(kVK_ANSI_S),
             modifiers: UInt32(cmdKey | shiftKey),
-            id: 1
+            id: 1,
+            target: target
         )
 
         // 3. Register Option + Shift + S
         registerKey(
             keyCode: UInt32(kVK_ANSI_S),
             modifiers: UInt32(optionKey | shiftKey),
-            id: 2
+            id: 2,
+            target: target
         )
 
         Logger.events.info("GlobalHotKeyManager successfully registered Cmd+Shift+S and Option+Shift+S shortcuts.")
     }
 
-    private func registerKey(keyCode: UInt32, modifiers: UInt32, id: UInt32) {
+    private func registerKey(keyCode: UInt32, modifiers: UInt32, id: UInt32, target: EventTargetRef?) {
         let hotKeyID = EventHotKeyID(signature: 0x53555452, id: id) // 'SUTR'
         var hotKeyRef: EventHotKeyRef?
         let err = RegisterEventHotKey(
             keyCode,
             modifiers,
             hotKeyID,
-            GetApplicationEventTarget(),
+            target,
             0,
             &hotKeyRef
         )
