@@ -146,7 +146,14 @@ public final class ShiftSelectionMonitor: NSObject {
     }
 
     private func handleLeftMouseDragged(_ event: NSEvent) {
-        // Drag events inside the radial menu are tracked natively by RadialHostingView
+        // If Shift is pressed while dragging, register as active Shift selection
+        if !isDraggingWithShift {
+            let isShiftDown = ModifierExclusivityValidator.isShiftOnly(flags: event.modifierFlags) ||
+                              ModifierExclusivityValidator.isShiftOnly(flags: NSEvent.modifierFlags)
+            if isShiftDown {
+                isDraggingWithShift = true
+            }
+        }
     }
 
     private func handleLeftMouseUp(_ event: NSEvent) {
@@ -161,15 +168,18 @@ public final class ShiftSelectionMonitor: NSObject {
             return
         }
 
-        // Case B: User initiated selection with Shift held down
-        if isDraggingWithShift {
+        let isShiftDown = ModifierExclusivityValidator.isShiftOnly(flags: event.modifierFlags) ||
+                          ModifierExclusivityValidator.isShiftOnly(flags: NSEvent.modifierFlags)
+
+        // Case B: User initiated selection with Shift held down, or released mouse while holding Shift
+        if isDraggingWithShift || isShiftDown {
             isDraggingWithShift = false
             dragStartLocation = nil
 
             Logger.events.info("Shift selection finished at (\(currentLocation.x, privacy: .public), \(currentLocation.y, privacy: .public)). Attempting radial menu trigger...")
 
-            // Small delay to allow OS text selection state to settle
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) { [weak self] in
+            // Small 80ms delay to allow macOS window server to finalize text selection highlight
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.08) { [weak self] in
                 self?.attemptRadialTrigger(at: currentLocation, allowClipboardFallback: false)
             }
         } else {

@@ -64,6 +64,17 @@ public final class AppDelegate: NSObject, NSApplicationDelegate {
         GlobalHotKeyManager.shared.unregisterHotKeys()
     }
 
+    public func applicationShouldHandleReopen(_ sender: NSApplication, hasVisibleWindows flag: Bool) -> Bool {
+        Logger.app.info("Application reopened via Finder/Spotlight/Launchpad. Presenting Settings window.")
+        SettingsWindowController.shared.showSettings()
+        return true
+    }
+
+    public func applicationOpenUntitledFile(_ sender: NSApplication) -> Bool {
+        SettingsWindowController.shared.showSettings()
+        return true
+    }
+
     private func checkAccessibilityPermissions() {
         let options = ["AXTrustedCheckOptionPrompt" as CFString: true] as CFDictionary
         let isTrusted = AXIsProcessTrustedWithOptions(options)

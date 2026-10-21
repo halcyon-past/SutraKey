@@ -28,5 +28,7 @@
 	<string>NSApplication</string>
 	<key>NSAccessibilityUsageDescription</key>
 	<string>SutraKey uses Accessibility to detect selected URLs and trigger the radial conversion menu.</string>
+	<key>NSAppleEventsUsageDescription</key>
+	<string>SutraKey requires permission to send Apple Events to detect active media URLs in your web browser.</string>
 </dict>
 </plist>

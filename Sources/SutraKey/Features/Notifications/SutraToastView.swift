@@ -156,23 +156,46 @@ public struct SutraToastView: View {
             }
             .buttonStyle(.plain)
         case .failure(_, let message):
-            Button {
-                NSPasteboard.general.clearContents()
-                NSPasteboard.general.setString(message, forType: .string)
-                onDismiss()
-            } label: {
-                HStack(spacing: 4) {
-                    Image(systemName: "doc.on.doc")
-                    Text("Copy Error Log")
+            HStack(spacing: 8) {
+                if message.localizedCaseInsensitiveContains("cookie") ||
+                   message.localizedCaseInsensitiveContains("login") ||
+                   message.localizedCaseInsensitiveContains("authentication") {
+                    Button {
+                        SettingsWindowController.shared.showSettings()
+                        onDismiss()
+                    } label: {
+                        HStack(spacing: 4) {
+                            Image(systemName: "gearshape.fill")
+                            Text("Open Settings")
+                        }
+                        .font(.system(size: 11, weight: .semibold))
+                        .foregroundColor(.white)
+                        .padding(.horizontal, 8)
+                        .padding(.vertical, 3)
+                        .background(Color.orange.opacity(0.7))
+                        .cornerRadius(6)
+                    }
+                    .buttonStyle(.plain)
                 }
-                .font(.system(size: 11, weight: .semibold))
-                .foregroundColor(.white)
-                .padding(.horizontal, 8)
-                .padding(.vertical, 3)
-                .background(Color.red.opacity(0.3))
-                .cornerRadius(6)
+
+                Button {
+                    NSPasteboard.general.clearContents()
+                    NSPasteboard.general.setString(message, forType: .string)
+                    onDismiss()
+                } label: {
+                    HStack(spacing: 4) {
+                        Image(systemName: "doc.on.doc")
+                        Text("Copy Error")
+                    }
+                    .font(.system(size: 11, weight: .semibold))
+                    .foregroundColor(.white)
+                    .padding(.horizontal, 8)
+                    .padding(.vertical, 3)
+                    .background(Color.red.opacity(0.35))
+                    .cornerRadius(6)
+                }
+                .buttonStyle(.plain)
             }
-            .buttonStyle(.plain)
         case .notice(_, _, _, let actionTitle, let action):
             if let title = actionTitle, let act = action {
                 Button {

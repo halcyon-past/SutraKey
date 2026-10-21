@@ -32,6 +32,7 @@ public final class PreferencesManager: ObservableObject {
     @Published public var keepStatusBarVisible: Bool {
         didSet {
             UserDefaults.standard.set(keepStatusBarVisible, forKey: kKeepStatusBarVisible)
+            EphemeralStatusBarController.shared.updateVisibility()
         }
     }
 
@@ -106,7 +107,7 @@ public final class PreferencesManager: ObservableObject {
             self.downloadDirectory = defaultDownloads
         }
 
-        self.keepStatusBarVisible = UserDefaults.standard.bool(forKey: kKeepStatusBarVisible)
+        self.keepStatusBarVisible = UserDefaults.standard.object(forKey: kKeepStatusBarVisible) == nil ? true : UserDefaults.standard.bool(forKey: kKeepStatusBarVisible)
         self.preferredVideoCodec = UserDefaults.standard.string(forKey: kPreferredVideoCodec) ?? "h264_aac"
         self.preferredAudioBitrate = UserDefaults.standard.string(forKey: kPreferredAudioBitrate) ?? "320k"
         self.playCompletionSound = UserDefaults.standard.object(forKey: kPlayCompletionSound) == nil ? true : UserDefaults.standard.bool(forKey: kPlayCompletionSound)
