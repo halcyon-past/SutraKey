@@ -488,7 +488,13 @@ public struct SettingsView: View {
                 .frame(maxWidth: 360)
 
             HStack(spacing: 12) {
-                Button("GitHub Repository") {
+                Button("Website") {
+                    if let url = URL(string: "https://sutrakey.aritro.cloud") {
+                        NSWorkspace.shared.open(url)
+                    }
+                }
+
+                Button("GitHub") {
                     if let url = URL(string: "https://github.com/halcyon-past/SutraKey") {
                         NSWorkspace.shared.open(url)
                     }
@@ -504,9 +510,20 @@ public struct SettingsView: View {
 
             Spacer()
 
-            Text("Licensed under MIT License • Open Source")
-                .font(.system(size: 10))
-                .foregroundColor(.secondary)
+            VStack(spacing: 4) {
+                HStack(spacing: 4) {
+                    Text("Created by")
+                        .font(.system(size: 11))
+                        .foregroundColor(.secondary)
+                    Link("Aritro Saha", destination: URL(string: "https://www.aritro.cloud/")!)
+                        .font(.system(size: 11, weight: .medium))
+                        .underline()
+                }
+
+                Text("Licensed under MIT License • Open Source")
+                    .font(.system(size: 10))
+                    .foregroundColor(.secondary)
+            }
         }
         .frame(maxWidth: .infinity)
         .padding(24)

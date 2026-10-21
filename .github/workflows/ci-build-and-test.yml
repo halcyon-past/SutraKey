@@ -42,6 +42,10 @@ jobs:
           python3 Scripts/generate_icons.py
           bash Scripts/build_icns.sh
 
+      - name: Run Swift Build (Debug)
+        run: |
+          swift build
+
       - name: Run Swift Tests
         run: |
           swift test

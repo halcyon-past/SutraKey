@@ -103,10 +103,21 @@ Download the latest notarized release from [sutrakey.aritro.cloud](https://sutra
 
 ### Build from Source
 ```bash
-git clone https://github.com/aritrosaha/sutrakey.git
-cd sutrakey
-swift build -c release
+git clone https://github.com/halcyon-past/SutraKey.git
+cd SutraKey
+./Scripts/package_and_install.sh
 ```
+
+---
+
+## ✦ Documentation & Compliance
+
+- 📖 **[Support & User Guide](docs/SUPPORT.md)** — Installation, Accessibility permission guide, shortcuts, and troubleshooting.
+- 🔒 **[Privacy Policy](docs/PRIVACY_POLICY.md)** — Zero-telemetry on-device processing guarantees.
+- 📜 **[Terms of Service](docs/TERMS_OF_SERVICE.md)** — Fair use guidelines and open-source terms.
+- 🤝 **[Code of Conduct](CODE_OF_CONDUCT.md)** — Community standards and enforcement.
+- 🛡️ **[Security Policy](SECURITY.md)** — Vulnerability reporting and process isolation.
+- 📝 **[Changelog](docs/CHANGELOG.md)** — Release history and semantic versioning notes.
 
 ---
 
@@ -130,4 +141,5 @@ swift test
 ## ✦ License & Privacy
 
 - **License:** 100% Free & Open Source under the [MIT License](LICENSE).
-- **Privacy:** 0% telemetry, 0 analytics trackers, 0 cloud dependencies.
+- **Privacy:** 0% telemetry, 0 analytics trackers, 0 cloud dependencies. Read our full [Privacy Policy](docs/PRIVACY_POLICY.md).
+- **Author:** [Aritro Saha](https://www.aritro.cloud/) ([@halcyon-past](https://github.com/halcyon-past))

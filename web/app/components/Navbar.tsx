@@ -18,7 +18,7 @@ export function Navbar() {
         className="rounded-full px-6 py-2.5 flex items-center justify-between w-full"
       >
         {/* Brand Lockup */}
-        <a href="#" className="flex items-center gap-2.5 group shrink-0">
+        <a href="/" className="flex items-center gap-2.5 group shrink-0">
           <div className="relative w-7 h-7 rounded-[8px] overflow-hidden shadow-sm group-hover:scale-105 transition-transform duration-200">
             <Image
               src="/AppIcon-1024.png"
@@ -39,18 +39,21 @@ export function Navbar() {
         </a>
 
         {/* Navigation Links (Evenly spaced, clean Apple layout) */}
-        <nav className="hidden md:flex items-center gap-8 lg:gap-10 text-[13px] font-medium text-neutral-300">
-          <a href="#simulator" className="hover:text-white transition-colors">
+        <nav className="hidden md:flex items-center gap-6 lg:gap-8 text-[13px] font-medium text-neutral-300">
+          <a href="/#simulator" className="hover:text-white transition-colors">
             Experience
           </a>
-          <a href="#highlights" className="hover:text-white transition-colors">
+          <a href="/#highlights" className="hover:text-white transition-colors">
             Highlights
           </a>
-          <a href="#formats" className="hover:text-white transition-colors">
+          <a href="/#formats" className="hover:text-white transition-colors">
             Formats
           </a>
-          <a href="#installation" className="hover:text-white transition-colors">
+          <a href="/#installation" className="hover:text-white transition-colors">
             Install
+          </a>
+          <a href="/support" className="hover:text-white transition-colors">
+            Docs &amp; Support
           </a>
         </nav>
 

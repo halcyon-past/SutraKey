@@ -1,0 +1,64 @@
+# SutraKey (सूत्र) — Shift + Select Radial Media & Document Downloader for macOS
+
+> SutraKey is an open-source, 100% on-device macOS productivity utility engineered in Swift 6.0 by Aritro Saha. It connects mouse text selection directly to media downloads and clean PDF conversions: hold Shift and select any URL across macOS to summon a zero-latency, liquid frosted-glass radial pie menu directly around your cursor.
+
+- **Canonical Website**: [https://sutrakey.aritro.cloud/](https://sutrakey.aritro.cloud/)
+- **GitHub Repository**: [https://github.com/halcyon-past/SutraKey](https://github.com/halcyon-past/SutraKey)
+- **Developer**: [Aritro Saha](https://www.aritro.cloud/) ([Wikidata Q141715213](https://www.wikidata.org/wiki/Q141715213) | [ORCID](https://orcid.org/0009-0007-0861-3978) | [GitHub](https://github.com/halcyon-past))
+- **License**: MIT License (100% Free & Open Source)
+- **Architecture**: Universal macOS Binary (Apple Silicon & Intel x86_64), macOS 14.0 Sonoma or macOS 15.0+ Sequoia
+- **Telemetry & Privacy**: 0% Telemetry, 0 Analytics, 0 External Cloud Relays, 100% Local Processing
+- **Full Knowledge Base**: [https://sutrakey.aritro.cloud/llms-full.txt](https://sutrakey.aritro.cloud/llms-full.txt)
+
+---
+
+## Core Pages & Documentation
+
+- [Home](https://sutrakey.aritro.cloud/): Interactive simulator, feature highlights, format capabilities, and download links.
+- [Support & User Guide](https://sutrakey.aritro.cloud/support): Step-by-step Accessibility setup, browser Keychain cookie authorization, shortcuts, and troubleshooting.
+- [Privacy Policy](https://sutrakey.aritro.cloud/privacy): Strict zero-telemetry guarantee, permissions audit, and local sandbox documentation.
+- [Terms of Service](https://sutrakey.aritro.cloud/terms): Open-source license terms, fair-use policies, and warranty disclaimers.
+
+---
+
+## Key Capabilities
+
+1. **Shift + Select Radial Menu**:
+   - Spawns a frameless, non-activating liquid frosted-glass radial wheel directly centered under your cursor.
+   - Strict modifier exclusivity bitwise guard: ignores selections if Command, Option, or Control are held, preventing system shortcut conflicts.
+   - 28pt center dead-zone for instant flick-cancellation.
+2. **Four Native Action Slices**:
+   - **Video**: Downloads top resolution (4K/1080p 60fps) with audio streams merged to MP4 via `yt-dlp` and `ffmpeg`.
+   - **Audio**: Extracts 320kbps MP3 or lossless M4A with embedded album art and ID3 metadata tags.
+   - **Subtitles**: Direct extraction of SRT or VTT closed captions in user-configured languages.
+   - **Web to PDF**: Headless vector printing powered by Apple WebKit (`WKWebView`) with active layout stabilization and preserved hyperlinks.
+3. **Keychain-Powered Browser Authentication**:
+   - One-click Keychain decryption for Brave, Chrome, Safari, Edge, and Arc sessions.
+   - Direct support for authenticated feeds like Instagram Stories, private posts, and member-only YouTube streams.
+4. **Ephemeral Menu Bar Presence**:
+   - 0% idle CPU and invisible menu bar state until a download is queued.
+   - Live transfer rate (MB/s), circular progress indicator, and one-click task cancellation.
+
+---
+
+## Installation Quickstart
+
+### Homebrew Cask
+```bash
+brew tap halcyon-past/tap
+brew install --cask sutrakey
+```
+
+### Build from Source (Swift 6)
+```bash
+git clone https://github.com/halcyon-past/SutraKey.git
+cd SutraKey
+./Scripts/package_and_install.sh
+```
+
+---
+
+## Contact & Bug Reports
+- **Security & Support Inquiries**: [security@sutrakey.aritro.cloud](mailto:security@sutrakey.aritro.cloud)
+- **Developer Email**: [aritrosaha2025@gmail.com](mailto:aritrosaha2025@gmail.com)
+- **Issue Tracker**: [https://github.com/halcyon-past/SutraKey/issues](https://github.com/halcyon-past/SutraKey/issues)

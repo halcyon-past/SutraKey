@@ -84,9 +84,15 @@ if [ -d "$ROOT_DIR/Sources/SutraKey/Resources/yt_dlp_plugins" ]; then
     echo "✅ Bundled yt-dlp plugins into $TARGET_APP/Contents/Resources/yt_dlp_plugins"
 fi
 
-# 8. Codesign with persistent local identity or ad-hoc fallback
+# Ensure user write permissions on all bundled assets
+chmod -R u+w "$TARGET_APP"
+
+# 8. Clear quarantine attributes
+xattr -cr "$TARGET_APP" 2>/dev/null || true
+
+# 9. Codesign (ad-hoc default for rapid local dev, or persistent identity if requested)
 SIGN_IDENTITY="-"
-if security find-certificate -c "SutraKey CodeSign" ~/Library/Keychains/login.keychain-db >/dev/null 2>&1; then
+if [ "${USE_KEYCHAIN_IDENTITY:-0}" = "1" ] && security find-certificate -c "SutraKey CodeSign" ~/Library/Keychains/login.keychain-db >/dev/null 2>&1; then
     SIGN_IDENTITY="SutraKey CodeSign"
     echo "🔏 Signing application bundle with persistent identity '$SIGN_IDENTITY'..."
 else
@@ -94,10 +100,7 @@ else
 fi
 codesign --force --deep --sign "$SIGN_IDENTITY" "$TARGET_APP"
 
-# 8. Clear quarantine attributes
-xattr -cr "$TARGET_APP" 2>/dev/null || true
-
-# 9. Register with LaunchServices
+# 10. Register with LaunchServices
 if [ -f "/System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchServices.framework/Support/lsregister" ]; then
     /System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchServices.framework/Support/lsregister -f "$TARGET_APP"
 fi
