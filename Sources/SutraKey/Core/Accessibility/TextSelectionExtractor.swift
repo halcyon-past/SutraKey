@@ -122,10 +122,11 @@ public enum TextSelectionExtractor: Sendable {
         guard let frontApp = NSWorkspace.shared.frontmostApplication else { return nil }
         let appElement = AXUIElementCreateApplication(frontApp.processIdentifier)
 
-        // Priming: Chromium-based browsers (Brave, Chrome, Edge, Arc) only enable AX when requested
+        // Priming: Chromium-based apps (Brave, Chrome, Edge, Arc, Slack, VS Code, Discord) only enable AX when requested
         AXUIElementSetAttributeValue(appElement, "AXEnhancedUserInterface" as CFString, kCFBooleanTrue)
         AXUIElementSetAttributeValue(appElement, "AXManualAccessibility" as CFString, kCFBooleanTrue)
 
+        // 1. Direct focused UI element check
         var focusedElemObj: AnyObject?
         if AXUIElementCopyAttributeValue(appElement, kAXFocusedUIElementAttribute as CFString, &focusedElemObj) == .success,
            let focusedElem = focusedElemObj {
@@ -135,7 +136,21 @@ public enum TextSelectionExtractor: Sendable {
             }
         }
 
-        // Secondary check: System-wide focused element
+        // 2. Focused window check
+        var focusedWindowObj: AnyObject?
+        if AXUIElementCopyAttributeValue(appElement, kAXFocusedWindowAttribute as CFString, &focusedWindowObj) == .success,
+           let focusedWindow = focusedWindowObj {
+            let winElem = focusedWindow as! AXUIElement
+            var winFocusedElemObj: AnyObject?
+            if AXUIElementCopyAttributeValue(winElem, kAXFocusedUIElementAttribute as CFString, &winFocusedElemObj) == .success,
+               let winFocused = winFocusedElemObj {
+                if let text = checkSelectedText(in: winFocused as! AXUIElement) {
+                    return text
+                }
+            }
+        }
+
+        // 3. System-wide focused element
         let systemWide = AXUIElementCreateSystemWide()
         var sysFocusedObj: AnyObject?
         if AXUIElementCopyAttributeValue(systemWide, kAXFocusedUIElementAttribute as CFString, &sysFocusedObj) == .success,
@@ -149,42 +164,68 @@ public enum TextSelectionExtractor: Sendable {
         return nil
     }
 
-    /// Checks an element and up to 5 parent containers for selected text.
+    /// Safely extracts a string from an AX attribute value, supporting String, NSAttributedString, and URL.
+    private static func stringValue(from axObject: AnyObject?) -> String? {
+        guard let obj = axObject else { return nil }
+        if let str = obj as? String {
+            return str
+        }
+        if let attr = obj as? NSAttributedString {
+            return attr.string
+        }
+        if let url = obj as? URL {
+            return url.absoluteString
+        }
+        return nil
+    }
+
+    /// Checks an element and up to 5 parent containers for selected text or embedded link URLs.
     private static func checkSelectedText(in element: AXUIElement) -> String? {
         var current: AXUIElement? = element
         var depth = 0
 
         while let elem = current, depth < 6 {
+            // 1. Direct selected text attribute (String or NSAttributedString, e.g. Apple Notes, TextEdit, Pages)
             var selectedValue: AnyObject?
             if AXUIElementCopyAttributeValue(elem, kAXSelectedTextAttribute as CFString, &selectedValue) == .success,
-               let selectedString = selectedValue as? String {
-                let trimmed = selectedString.trimmingCharacters(in: .whitespacesAndNewlines)
+               let str = stringValue(from: selectedValue) {
+                let trimmed = str.trimmingCharacters(in: .whitespacesAndNewlines)
                 if !trimmed.isEmpty {
                     return trimmed
                 }
             }
 
-            // Check value attribute (e.g. Chromium / Safari omnibox or text fields)
-            var valObj: AnyObject?
-            if AXUIElementCopyAttributeValue(elem, kAXValueAttribute as CFString, &valObj) == .success,
-               let valString = valObj as? String {
-                let trimmed = valString.trimmingCharacters(in: .whitespacesAndNewlines)
+            // 2. Direct URL attribute (e.g. if an AXLink element is clicked or focused in Electron / Slack)
+            var urlObj: AnyObject?
+            if AXUIElementCopyAttributeValue(elem, "AXURL" as CFString, &urlObj) == .success,
+               let str = stringValue(from: urlObj) {
+                let trimmed = str.trimmingCharacters(in: .whitespacesAndNewlines)
                 if !trimmed.isEmpty, let _ = URLSanitizer.extractURL(from: trimmed) {
                     return trimmed
                 }
             }
 
-            // Check parameterized range attribute
+            // 3. Parameterized range attribute (String or NSAttributedString)
             var selectedRangeValue: AnyObject?
             if AXUIElementCopyAttributeValue(elem, kAXSelectedTextRangeAttribute as CFString, &selectedRangeValue) == .success,
                let rangeVal = selectedRangeValue {
-                var stringValue: AnyObject?
-                if AXUIElementCopyParameterizedAttributeValue(elem, kAXStringForRangeParameterizedAttribute as CFString, rangeVal, &stringValue) == .success,
-                   let rangeString = stringValue as? String {
-                    let trimmed = rangeString.trimmingCharacters(in: .whitespacesAndNewlines)
+                var stringValueObj: AnyObject?
+                if AXUIElementCopyParameterizedAttributeValue(elem, kAXStringForRangeParameterizedAttribute as CFString, rangeVal, &stringValueObj) == .success,
+                   let str = stringValue(from: stringValueObj) {
+                    let trimmed = str.trimmingCharacters(in: .whitespacesAndNewlines)
                     if !trimmed.isEmpty {
                         return trimmed
                     }
+                }
+            }
+
+            // 4. Value attribute (only if it contains a valid URL)
+            var valObj: AnyObject?
+            if AXUIElementCopyAttributeValue(elem, kAXValueAttribute as CFString, &valObj) == .success,
+               let str = stringValue(from: valObj) {
+                let trimmed = str.trimmingCharacters(in: .whitespacesAndNewlines)
+                if !trimmed.isEmpty, let _ = URLSanitizer.extractURL(from: trimmed) {
+                    return trimmed
                 }
             }
 
@@ -209,25 +250,29 @@ public enum TextSelectionExtractor: Sendable {
         guard let frontApp = NSWorkspace.shared.frontmostApplication else { return nil }
         let pasteboard = NSPasteboard.general
         let originalChangeCount = pasteboard.changeCount
+        let originalString = pasteboard.string(forType: .string)
 
-        // Backup existing clipboard items so we preserve user data
-        let originalItems = pasteboard.pasteboardItems?.map { item -> (NSPasteboard.PasteboardType, Data) in
-            for type in item.types {
-                if let data = item.data(forType: type) {
-                    return (type, data)
-                }
-            }
-            return (NSPasteboard.PasteboardType.string, Data())
+        // 1. Try AXCopy action on focused element first (clean, no keyboard events)
+        let appElement = AXUIElementCreateApplication(frontApp.processIdentifier)
+        var focusedElemObj: AnyObject?
+        if AXUIElementCopyAttributeValue(appElement, kAXFocusedUIElementAttribute as CFString, &focusedElemObj) == .success,
+           let focusedElem = focusedElemObj {
+            _ = AXUIElementPerformAction(focusedElem as! AXUIElement, "AXCopy" as CFString)
         }
 
-        // Synthesize Cmd+C using hardware event source
-        guard let source = CGEventSource(stateID: .hidSystemState) else {
+        // If AXCopy triggered a clipboard update with a valid URL, return immediately
+        if pasteboard.changeCount != originalChangeCount,
+           let text = pasteboard.string(forType: .string),
+           let url = URLSanitizer.extractURL(from: text) {
+            return url.absoluteString
+        }
+
+        // 2. Synthesize Cmd+C using isolated private event source (immune to physical Shift modifier)
+        guard let source = CGEventSource(stateID: .privateState) else {
             return nil
         }
 
-        // Explicitly synthesize Shift UP for both left shift (0x38) and right shift (0x3C).
-        // This is crucial: if user is holding Shift during drag selection or hotkey,
-        // physical Shift would turn Cmd+C into Cmd+Shift+C (which opens DevTools in Chromium).
+        // Explicitly synthesize Shift UP for both left shift (0x38) and right shift (0x3C)
         let leftShiftUp = CGEvent(keyboardEventSource: source, virtualKey: 0x38, keyDown: false)
         leftShiftUp?.flags = []
         let rightShiftUp = CGEvent(keyboardEventSource: source, virtualKey: 0x3C, keyDown: false)
@@ -238,21 +283,15 @@ public enum TextSelectionExtractor: Sendable {
         let keyUp = CGEvent(keyboardEventSource: source, virtualKey: 0x08, keyDown: false)
         keyUp?.flags = .maskCommand
 
-        // Post directly to target process PID to bypass HID physical modifier merging
+        // Post directly to target process PID to bypass WindowServer physical modifier merging
         leftShiftUp?.postToPid(frontApp.processIdentifier)
         rightShiftUp?.postToPid(frontApp.processIdentifier)
         keyDown?.postToPid(frontApp.processIdentifier)
         keyUp?.postToPid(frontApp.processIdentifier)
 
-        // Also post to session event tap
-        leftShiftUp?.post(tap: .cgSessionEventTap)
-        rightShiftUp?.post(tap: .cgSessionEventTap)
-        keyDown?.post(tap: .cgSessionEventTap)
-        keyUp?.post(tap: .cgSessionEventTap)
-
-        // Poll pasteboard for changes with RunLoop pumping (up to 300ms in 15ms increments)
+        // Poll pasteboard for changes with RunLoop pumping (up to 250ms in 15ms increments)
         var didChange = false
-        let deadline = Date().addingTimeInterval(0.30)
+        let deadline = Date().addingTimeInterval(0.25)
         while Date() < deadline {
             RunLoop.current.run(until: Date(timeIntervalSinceNow: 0.015))
             if pasteboard.changeCount != originalChangeCount {
@@ -266,19 +305,19 @@ public enum TextSelectionExtractor: Sendable {
             extractedText = pasteboard.string(forType: .string)
         }
 
-        // If nothing was copied or the text does not contain a valid URL,
-        // restore the user's previous clipboard contents
-        let validURL = extractedText != nil ? URLSanitizer.extractURL(from: extractedText!) : nil
-        if validURL == nil {
-            pasteboard.clearContents()
-            if let original = originalItems, !original.isEmpty {
-                for (type, data) in original {
-                    pasteboard.setData(data, forType: type)
-                }
-            }
-            return nil
+        // If a valid URL was copied from the active selection, return it!
+        if let text = extractedText, let _ = URLSanitizer.extractURL(from: text) {
+            return text.trimmingCharacters(in: .whitespacesAndNewlines)
         }
 
-        return extractedText?.trimmingCharacters(in: .whitespacesAndNewlines)
+        // If clipboard changed but does NOT contain a valid URL, restore original clipboard content cleanly
+        if didChange {
+            pasteboard.clearContents()
+            if let orig = originalString {
+                pasteboard.setString(orig, forType: .string)
+            }
+        }
+
+        return nil
     }
 }
