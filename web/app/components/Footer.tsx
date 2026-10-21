@@ -12,7 +12,14 @@ export function Footer() {
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <Link href="/" className="flex items-center gap-3 group">
             <div className="relative w-7 h-7 rounded-[8px] overflow-hidden shadow-sm group-hover:scale-105 transition-transform">
-              <Image src="/AppIcon-1024.png" alt="SutraKey App Icon" fill className="object-cover" />
+              <Image
+                src="/logo.webp"
+                alt="SutraKey App Icon"
+                width={28}
+                height={28}
+                className="w-7 h-7 object-cover"
+                loading="lazy"
+              />
             </div>
             <div>
               <span className="font-semibold text-neutral-900 dark:text-neutral-100 text-sm">

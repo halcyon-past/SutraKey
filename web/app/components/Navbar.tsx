@@ -32,10 +32,11 @@ export function Navbar() {
           <a href="/" className="flex items-center gap-2.5 group shrink-0">
             <div className="relative w-7 h-7 rounded-[8px] overflow-hidden shadow-sm group-hover:scale-105 transition-transform duration-200">
               <Image
-                src="/AppIcon-1024.png"
+                src="/logo.webp"
                 alt="SutraKey App Icon"
-                fill
-                className="object-cover"
+                width={28}
+                height={28}
+                className="w-7 h-7 object-cover"
                 priority
               />
             </div>

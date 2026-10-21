@@ -34,6 +34,7 @@ export const metadata: Metadata = {
     description:
       "Master the Shift+Select radial gesture, grant Accessibility permissions, configure browser cookies for private media, and troubleshoot downloads.",
     url: "https://sutrakey.aritro.cloud/support",
+    images: ["/og-image.jpg"],
   },
 };
 

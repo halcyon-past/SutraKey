@@ -18,6 +18,7 @@ export const metadata: Metadata = {
     description:
       "Open-source MIT license details and acceptable fair use guidelines for the SutraKey macOS utility.",
     url: "https://sutrakey.aritro.cloud/terms",
+    images: ["/og-image.jpg"],
   },
 };
 

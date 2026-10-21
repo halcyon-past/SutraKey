@@ -18,6 +18,7 @@ export const metadata: Metadata = {
     description:
       "100% on-device media and document conversion. Zero telemetry, zero analytics, and zero external proxy servers.",
     url: "https://sutrakey.aritro.cloud/privacy",
+    images: ["/og-image.jpg"],
   },
 };
 

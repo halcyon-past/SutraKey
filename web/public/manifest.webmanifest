@@ -1,20 +1,53 @@
 {
   "name": "SutraKey — macOS Radial Media & Document Downloader",
   "short_name": "SutraKey",
-  "description": "Hold Shift + Select any URL to summon a zero-latency liquid radial wheel that downloads video, audio, subtitles, or clean PDFs straight to ~/Downloads. 100% Native, Free & Open Source.",
+  "description": "Hold Shift + Select any URL to summon a zero-latency liquid radial wheel that downloads video, audio, subtitles, or clean PDFs straight to ~/Downloads. 100% Native Swift 6, Free & Open Source.",
   "start_url": "/",
+  "scope": "/",
   "display": "standalone",
   "background_color": "#0a0a0c",
   "theme_color": "#0a0a0c",
+  "lang": "en",
+  "categories": ["utilities", "productivity", "multimedia"],
   "icons": [
     {
-      "src": "/MenuBarIcon-Black@2x.png",
-      "sizes": "44x44",
+      "src": "/favicon-32x32.png",
+      "sizes": "32x32",
       "type": "image/png"
     },
     {
-      "src": "/AppIcon-1024.png",
-      "sizes": "1024x1024",
+      "src": "/favicon-48x48.png",
+      "sizes": "48x48",
+      "type": "image/png"
+    },
+    {
+      "src": "/apple-touch-icon.png",
+      "sizes": "180x180",
+      "type": "image/png"
+    },
+    {
+      "src": "/icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/icon-192x192.webp",
+      "sizes": "192x192",
+      "type": "image/webp"
+    },
+    {
+      "src": "/icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    },
+    {
+      "src": "/icon-512x512.webp",
+      "sizes": "512x512",
+      "type": "image/webp"
+    },
+    {
+      "src": "/icon-512x512.png",
+      "sizes": "512x512",
       "type": "image/png",
       "purpose": "any maskable"
     }

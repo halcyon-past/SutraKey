@@ -78,10 +78,18 @@ export const metadata: Metadata = {
       "Hold Shift + Select any URL to summon a zero-latency liquid radial wheel. Downloads video, audio, subtitles, or clean PDFs straight to ~/Downloads. 100% Native, Free & Open Source.",
     images: [
       {
-        url: "/AppIcon-1024.png",
-        width: 1024,
-        height: 1024,
-        alt: "SutraKey App Icon",
+        url: "/og-image.jpg",
+        width: 1200,
+        height: 630,
+        type: "image/jpeg",
+        alt: "SutraKey — Shift + Select Radial Media & Document Downloader for macOS",
+      },
+      {
+        url: "/og-image.webp",
+        width: 1200,
+        height: 630,
+        type: "image/webp",
+        alt: "SutraKey — Shift + Select Radial Media & Document Downloader for macOS",
       },
     ],
   },
@@ -91,14 +99,26 @@ export const metadata: Metadata = {
     description:
       "Hold Shift + Select any URL to summon a zero-latency liquid radial wheel that downloads straight to ~/Downloads. 100% Native Swift 6.",
     creator: "@halcyon_past",
-    images: ["/AppIcon-1024.png"],
+    images: ["/og-image.jpg"],
   },
   icons: {
     icon: [
-      { url: "/MenuBarIcon-Black@2x.png", type: "image/png" },
+      { url: "/favicon.ico", sizes: "any" },
+      { url: "/favicon-16x16.png", type: "image/png", sizes: "16x16" },
+      { url: "/favicon-32x32.png", type: "image/png", sizes: "32x32" },
+      { url: "/favicon-48x48.png", type: "image/png", sizes: "48x48" },
+      { url: "/icon-192x192.png", type: "image/png", sizes: "192x192" },
+      { url: "/icon-512x512.png", type: "image/png", sizes: "512x512" },
     ],
     apple: [
-      { url: "/AppIcon-1024.png", type: "image/png" },
+      { url: "/apple-touch-icon.png", sizes: "180x180", type: "image/png" },
+      { url: "/apple-touch-icon-precomposed.png", sizes: "180x180", type: "image/png" },
+    ],
+    other: [
+      {
+        rel: "apple-touch-icon-precomposed",
+        url: "/apple-touch-icon-precomposed.png",
+      },
     ],
   },
   manifest: "/manifest.webmanifest",
@@ -151,7 +171,12 @@ const jsonLd = {
       programmingLanguage: "Swift 6.0",
       installUrl: `${SITE_URL}/#installation`,
       releaseNotes: "https://github.com/halcyon-past/SutraKey/blob/main/docs/CHANGELOG.md",
-      image: `${SITE_URL}/AppIcon-1024.png`,
+      image: [
+        `${SITE_URL}/og-image.jpg`,
+        `${SITE_URL}/icon-512x512.png`,
+        `${SITE_URL}/logo.webp`,
+      ],
+      screenshot: `${SITE_URL}/og-image.jpg`,
       description:
         "Hold Shift + Select any URL to summon a zero-latency liquid radial wheel that downloads video (4K/1080p MP4), audio (320kbps MP3/M4A), subtitles (SRT/VTT), or clean vector PDFs directly to ~/Downloads. 100% Native Swift 6, Free & Open Source.",
       featureList: [
@@ -224,6 +249,36 @@ const jsonLd = {
       },
     },
     {
+      "@type": "BreadcrumbList",
+      "@id": `${SITE_URL}/#breadcrumb`,
+      itemListElement: [
+        {
+          "@type": "ListItem",
+          position: 1,
+          name: "Home",
+          item: SITE_URL,
+        },
+        {
+          "@type": "ListItem",
+          position: 2,
+          name: "Support & Docs",
+          item: `${SITE_URL}/support`,
+        },
+        {
+          "@type": "ListItem",
+          position: 3,
+          name: "Privacy Policy",
+          item: `${SITE_URL}/privacy`,
+        },
+        {
+          "@type": "ListItem",
+          position: 4,
+          name: "Terms of Service",
+          item: `${SITE_URL}/terms`,
+        },
+      ],
+    },
+    {
       "@type": "FAQPage",
       "@id": `${SITE_URL}/#faq`,
       mainEntity: [
@@ -272,6 +327,16 @@ export default function RootLayout({
   return (
     <html lang="en" className="dark scroll-smooth">
       <head>
+        {/* Preconnect & Performance Hints for Core Web Vitals */}
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+
+        {/* Direct Favicon and Touch Icon Links */}
+        <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+        <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+        <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+
         <link rel="author" href="https://www.aritro.cloud/" />
         <link rel="me" href="https://www.aritro.cloud/" />
         <link rel="me" href="https://www.wikidata.org/wiki/Q141715213" />
