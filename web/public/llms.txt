@@ -59,6 +59,5 @@ cd SutraKey
 ---
 
 ## Contact & Bug Reports
-- **Security & Support Inquiries**: [security@sutrakey.aritro.cloud](mailto:security@sutrakey.aritro.cloud)
-- **Developer Email**: [aritrosaha2025@gmail.com](mailto:aritrosaha2025@gmail.com)
+- **Support & Developer Inquiries**: [aritrosaha2025@gmail.com](mailto:aritrosaha2025@gmail.com)
 - **Issue Tracker**: [https://github.com/halcyon-past/SutraKey/issues](https://github.com/halcyon-past/SutraKey/issues)

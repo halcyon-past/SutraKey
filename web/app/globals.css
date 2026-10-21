@@ -27,27 +27,39 @@ body {
 
 /* Ambient Apple-style soft pastel lighting pools (iPad Air inspired) */
 .ambient-glow-pink {
-  background: radial-gradient(circle at 50% 50%, rgba(251, 207, 232, 0.55) 0%, rgba(244, 114, 182, 0.25) 45%, rgba(251, 207, 232, 0) 75%);
+  background: radial-gradient(circle at 50% 50%, rgba(251, 207, 232, 0.45) 0%, rgba(244, 114, 182, 0.18) 45%, rgba(251, 207, 232, 0) 75%);
+  transform: translateZ(0);
+  will-change: transform;
 }
 
 .ambient-glow-green {
-  background: radial-gradient(circle at 50% 50%, rgba(167, 243, 208, 0.55) 0%, rgba(52, 211, 153, 0.22) 45%, rgba(167, 243, 208, 0) 75%);
+  background: radial-gradient(circle at 50% 50%, rgba(167, 243, 208, 0.45) 0%, rgba(52, 211, 153, 0.16) 45%, rgba(167, 243, 208, 0) 75%);
+  transform: translateZ(0);
+  will-change: transform;
 }
 
 .ambient-glow-iris {
-  background: radial-gradient(circle at 50% 50%, rgba(224, 231, 255, 0.5) 0%, rgba(199, 210, 254, 0.2) 50%, rgba(224, 231, 255, 0) 80%);
+  background: radial-gradient(circle at 50% 50%, rgba(224, 231, 255, 0.4) 0%, rgba(199, 210, 254, 0.15) 50%, rgba(224, 231, 255, 0) 80%);
+  transform: translateZ(0);
+  will-change: transform;
 }
 
 .dark .ambient-glow-pink {
-  background: radial-gradient(circle at 50% 50%, rgba(244, 114, 182, 0.22) 0%, rgba(219, 39, 119, 0.08) 50%, rgba(244, 114, 182, 0) 75%);
+  background: radial-gradient(circle at 50% 50%, rgba(244, 114, 182, 0.16) 0%, rgba(219, 39, 119, 0.05) 50%, rgba(244, 114, 182, 0) 75%);
+  transform: translateZ(0);
+  will-change: transform;
 }
 
 .dark .ambient-glow-green {
-  background: radial-gradient(circle at 50% 50%, rgba(52, 211, 153, 0.18) 0%, rgba(16, 185, 129, 0.06) 50%, rgba(52, 211, 153, 0) 75%);
+  background: radial-gradient(circle at 50% 50%, rgba(52, 211, 153, 0.14) 0%, rgba(16, 185, 129, 0.04) 50%, rgba(52, 211, 153, 0) 75%);
+  transform: translateZ(0);
+  will-change: transform;
 }
 
 .dark .ambient-glow-iris {
-  background: radial-gradient(circle at 50% 50%, rgba(129, 140, 248, 0.14) 0%, rgba(99, 102, 241, 0.04) 50%, rgba(129, 140, 248, 0) 80%);
+  background: radial-gradient(circle at 50% 50%, rgba(129, 140, 248, 0.1) 0%, rgba(99, 102, 241, 0.03) 50%, rgba(129, 140, 248, 0) 80%);
+  transform: translateZ(0);
+  will-change: transform;
 }
 
 /* Subtle Organic Drifting Animations */

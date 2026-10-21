@@ -4,7 +4,7 @@
 **Developer:** Aritro Saha  
 **Website:** [https://sutrakey.aritro.cloud](https://sutrakey.aritro.cloud)  
 **Effective Date:** October 21, 2026  
-**Contact:** [security@sutrakey.aritro.cloud](mailto:security@sutrakey.aritro.cloud) | [aritrosaha2025@gmail.com](mailto:aritrosaha2025@gmail.com)
+**Contact:** [aritrosaha2025@gmail.com](mailto:aritrosaha2025@gmail.com)
 
 ---
 
@@ -70,5 +70,5 @@ These Terms shall be governed by and construed in accordance with the laws of th
 
 For questions regarding these Terms of Service:
 - **Developer:** Aritro Saha
-- **Email:** [security@sutrakey.aritro.cloud](mailto:security@sutrakey.aritro.cloud) / [aritrosaha2025@gmail.com](mailto:aritrosaha2025@gmail.com)
+- **Email:** [aritrosaha2025@gmail.com](mailto:aritrosaha2025@gmail.com)
 - **Website:** [https://sutrakey.aritro.cloud](https://sutrakey.aritro.cloud)

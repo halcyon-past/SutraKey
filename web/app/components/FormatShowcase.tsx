@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import { Film, Music, FileText, Image as ImageIcon, BookOpen, Terminal } from "lucide-react";
+import { motion, AnimatePresence } from "motion/react";
 import { LiquidGlass } from "./LiquidGlass";
 
 const FORMAT_TABS = [
@@ -78,7 +79,7 @@ const FORMAT_TABS = [
       { label: "Stripping", value: "Removes ads, cookie banners, tracking scripts" },
       { label: "Offline", value: "Fully self-contained vector PDF with selectable text" },
     ],
-    cli: "WebToPDFService.shared.convertToPDF(url: targetURL)",
+    cli: "headless WebKit -> printToPDF -> ~/Downloads",
   },
 ];
 
@@ -87,31 +88,44 @@ export function FormatShowcase() {
 
   return (
     <section id="formats" className="py-16 md:py-24 px-4 max-w-5xl mx-auto">
-      {/* Apple-style Section Header */}
-      <div className="text-center max-w-2xl mx-auto mb-10">
+      {/* Section Header */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, margin: "-80px" }}
+        transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+        className="text-center max-w-2xl mx-auto mb-10"
+      >
         <h2 className="text-3xl sm:text-4xl md:text-5xl font-semibold tracking-tight text-[#1d1d1f] dark:text-white mb-3">
-          Take a closer look.
+          Five formats. Pure quality.
         </h2>
         <p className="text-base sm:text-lg text-neutral-600 dark:text-neutral-300">
           Five specialized media engines. Built directly into a single zero-latency pie menu.
         </p>
-      </div>
+      </motion.div>
 
-      {/* Segmented Glass Tab Bar */}
+      {/* Segmented Glass Tab Bar with Sliding Indicator */}
       <div className="flex items-center justify-center mb-10 overflow-x-auto pb-2">
-        <div className="p-1 rounded-full bg-black/[0.04] dark:bg-white/[0.06] border border-black/[0.06] dark:border-white/[0.1] backdrop-blur-xl flex items-center gap-1">
+        <div className="p-1 rounded-full bg-black/[0.04] dark:bg-white/[0.06] border border-black/[0.06] dark:border-white/[0.1] backdrop-blur-xl flex items-center gap-1 relative">
           {FORMAT_TABS.map((tab) => {
             const isActive = activeTab.id === tab.id;
             return (
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab)}
-                className={`flex items-center gap-2 px-4 py-2 rounded-full text-xs font-semibold transition-all duration-200 whitespace-nowrap cursor-pointer ${
+                className={`relative flex items-center gap-2 px-4 py-2 rounded-full text-xs font-semibold transition-colors duration-200 whitespace-nowrap cursor-pointer z-10 ${
                   isActive
-                    ? "bg-white dark:bg-[#1d1d24] text-[#1d1d1f] dark:text-white shadow-sm"
+                    ? "text-[#1d1d1f] dark:text-white"
                     : "text-neutral-500 dark:text-neutral-400 hover:text-black dark:hover:text-white"
                 }`}
               >
+                {isActive && (
+                  <motion.div
+                    layoutId="activeTabBadge"
+                    className="absolute inset-0 rounded-full bg-white dark:bg-[#1d1d24] shadow-sm -z-10"
+                    transition={{ type: "spring", stiffness: 450, damping: 35 }}
+                  />
+                )}
                 <tab.icon size={14} style={{ color: isActive ? tab.accent : "currentColor" }} />
                 <span>{tab.label}</span>
               </button>
@@ -120,56 +134,58 @@ export function FormatShowcase() {
         </div>
       </div>
 
-      {/* Active Format Glass Card */}
-      <LiquidGlass
-        radius={28}
-        depth={1.5}
-        blur={10}
-        dispersion={0.7}
-        specular={0.6}
-        className="p-8 sm:p-12 rounded-[28px]"
-      >
-        <div className="grid grid-cols-1 md:grid-cols-12 gap-8 items-center">
-          {/* Left Column: Headline and Description */}
-          <div className="md:col-span-7">
-            <div
-              className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-bold mb-4"
-              style={{ backgroundColor: `${activeTab.accent}18`, color: activeTab.accent }}
-            >
-              <activeTab.icon size={14} />
-              <span>{activeTab.label}</span>
+      {/* Active Format Glass Card with Fluid Content Animation */}
+      <LiquidGlass radius={28} className="p-8 sm:p-12 rounded-[28px] overflow-hidden">
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={activeTab.id}
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -12 }}
+            transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
+            className="grid grid-cols-1 md:grid-cols-12 gap-8 items-center"
+          >
+            {/* Left Column: Headline and Description */}
+            <div className="md:col-span-7">
+              <div
+                className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-bold mb-4"
+                style={{ backgroundColor: `${activeTab.accent}18`, color: activeTab.accent }}
+              >
+                <activeTab.icon size={14} />
+                <span>{activeTab.label}</span>
+              </div>
+
+              <h3 className="text-2xl sm:text-3xl md:text-4xl font-semibold tracking-tight text-[#1d1d1f] dark:text-white mb-4">
+                {activeTab.headline}
+              </h3>
+
+              <p className="text-base text-neutral-600 dark:text-neutral-300 leading-relaxed mb-6 font-normal">
+                {activeTab.subtitle}
+              </p>
+
+              {/* Terminal Command Peek */}
+              <div className="flex items-center gap-2 px-4 py-3 rounded-xl bg-black/[0.04] dark:bg-white/[0.05] border border-black/[0.04] dark:border-white/[0.08] font-mono text-xs text-neutral-600 dark:text-neutral-300">
+                <Terminal size={14} className="shrink-0 text-neutral-400" />
+                <span className="truncate">{activeTab.cli}</span>
+              </div>
             </div>
 
-            <h3 className="text-2xl sm:text-3xl md:text-4xl font-semibold tracking-tight text-[#1d1d1f] dark:text-white mb-4">
-              {activeTab.headline}
-            </h3>
-
-            <p className="text-base text-neutral-600 dark:text-neutral-300 leading-relaxed mb-6 font-normal">
-              {activeTab.subtitle}
-            </p>
-
-            {/* Terminal Command Peek */}
-            <div className="flex items-center gap-2 px-4 py-3 rounded-xl bg-black/[0.04] dark:bg-white/[0.05] border border-black/[0.04] dark:border-white/[0.08] font-mono text-xs text-neutral-600 dark:text-neutral-300">
-              <Terminal size={14} className="shrink-0 text-neutral-400" />
-              <span className="truncate">{activeTab.cli}</span>
+            {/* Right Column: Spec Sheet */}
+            <div className="md:col-span-5 bg-black/[0.02] dark:bg-white/[0.03] p-6 rounded-2xl border border-black/[0.04] dark:border-white/[0.06]">
+              <h4 className="text-xs font-bold uppercase tracking-wider text-neutral-400 mb-4">
+                Pipeline Specifications
+              </h4>
+              <div className="space-y-3">
+                {activeTab.specs.map((spec) => (
+                  <div key={spec.label} className="flex flex-col text-xs pb-2.5 border-b border-black/[0.04] dark:border-white/[0.04] last:border-0 last:pb-0">
+                    <span className="text-neutral-500 dark:text-neutral-400 mb-0.5">{spec.label}</span>
+                    <span className="font-semibold text-[#1d1d1f] dark:text-neutral-100">{spec.value}</span>
+                  </div>
+                ))}
+              </div>
             </div>
-          </div>
-
-          {/* Right Column: Spec Sheet */}
-          <div className="md:col-span-5 bg-black/[0.02] dark:bg-white/[0.03] p-6 rounded-2xl border border-black/[0.04] dark:border-white/[0.06]">
-            <h4 className="text-xs font-bold uppercase tracking-wider text-neutral-400 mb-4">
-              Pipeline Specifications
-            </h4>
-            <div className="space-y-3">
-              {activeTab.specs.map((spec) => (
-                <div key={spec.label} className="flex flex-col text-xs pb-2.5 border-b border-black/[0.04] dark:border-white/[0.04] last:border-0 last:pb-0">
-                  <span className="text-neutral-500 dark:text-neutral-400 mb-0.5">{spec.label}</span>
-                  <span className="font-semibold text-[#1d1d1f] dark:text-neutral-100">{spec.value}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
+          </motion.div>
+        </AnimatePresence>
       </LiquidGlass>
     </section>
   );

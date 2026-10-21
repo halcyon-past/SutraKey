@@ -24,6 +24,6 @@ SutraKey runs natively on macOS with access to system input events via `CGEventT
 
 If you discover a security vulnerability within SutraKey:
 
-1. **Email Us Privately:** Please email **[security@sutrakey.aritro.cloud](mailto:security@sutrakey.aritro.cloud)** with a CC to **[aritrosaha2025@gmail.com](mailto:aritrosaha2025@gmail.com)**.
+1. **Email Privately:** Please email **[aritrosaha2025@gmail.com](mailto:aritrosaha2025@gmail.com)**.
 2. **Include Reproduction Details:** Provide step-by-step instructions, a proof-of-concept, and expected impact.
 3. **Coordinated Disclosure:** Please allow up to 48 hours for an initial response and acknowledgment before disclosing any details publicly. We will collaborate with you to release a patched build promptly.

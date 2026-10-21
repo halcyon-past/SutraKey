@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useRef } from "react";
 import { Film, Music, FileText, Image as ImageIcon, BookOpen, Check, X, ArrowUpRight } from "lucide-react";
+import { motion } from "motion/react";
 
 interface Slice {
   id: string;
@@ -226,7 +227,14 @@ export function RadialSimulator() {
   const rMid = 88;
 
   return (
-    <section id="simulator" className="py-16 md:py-24 px-4 max-w-5xl mx-auto">
+    <motion.section
+      id="simulator"
+      initial={{ opacity: 0, y: 25 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: "-80px" }}
+      transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+      className="py-16 md:py-24 px-4 max-w-5xl mx-auto"
+    >
       {/* Section Header */}
       <div className="text-center max-w-2xl mx-auto mb-12">
         <h2 className="text-3xl sm:text-4xl md:text-5xl font-semibold tracking-tight text-[#1d1d1f] dark:text-white mb-4">
@@ -310,10 +318,10 @@ export function RadialSimulator() {
 
         {/* Radial Menu Playground Area */}
         <div className="relative h-[480px] flex items-center justify-center overflow-hidden p-6 select-none">
-          {/* Subtle background ambient reflections (gives liquid glass something rich to refract) */}
-          <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
-            <div className="w-[340px] h-[340px] rounded-full ambient-glow-pink blur-[70px] opacity-60 dark:opacity-40 animate-float-slow -z-10" />
-            <div className="w-[340px] h-[340px] rounded-full ambient-glow-green blur-[80px] opacity-55 dark:opacity-35 animate-float-reverse -z-10 translate-x-12 translate-y-10" />
+          {/* Subtle background ambient reflections (hardware-isolated) */}
+          <div className="pointer-events-none absolute inset-0 flex items-center justify-center contain-paint">
+            <div className="w-[340px] h-[340px] rounded-full ambient-glow-pink opacity-50 dark:opacity-30 -z-10" />
+            <div className="w-[340px] h-[340px] rounded-full ambient-glow-green opacity-45 dark:opacity-25 -z-10 translate-x-12 translate-y-10" />
           </div>
 
           {/* Genuine 360° Contiguous Radial Pie Wheel */}
@@ -514,6 +522,6 @@ export function RadialSimulator() {
           </div>
         </div>
       </div>
-    </section>
+    </motion.section>
   );
 }

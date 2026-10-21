@@ -3,6 +3,7 @@ import Link from "next/link";
 import { Navbar } from "../components/Navbar";
 import { Footer } from "../components/Footer";
 import { LiquidGlass } from "../components/LiquidGlass";
+import { SmoothScrollProvider } from "../components/SmoothScrollProvider";
 import {
   HelpCircle,
   Keyboard,
@@ -92,18 +93,19 @@ const FAQS = [
 
 export default function SupportPage() {
   return (
-    <div className="relative min-h-screen flex flex-col bg-[#fafafc] text-[#1d1d1f] dark:bg-[#0b0b0f] dark:text-[#f5f5f7] transition-colors duration-400 overflow-x-hidden">
-      {/* Ambient Glows */}
-      <div className="pointer-events-none fixed inset-0 overflow-hidden z-0">
-        <div className="absolute top-[10%] right-[-10%] w-[500px] h-[500px] rounded-full ambient-glow-pink blur-[120px] opacity-40 dark:opacity-20 animate-float-slow" />
-        <div className="absolute top-[45%] left-[-10%] w-[550px] h-[550px] rounded-full ambient-glow-green blur-[130px] opacity-40 dark:opacity-15 animate-float-reverse" />
-        <div className="absolute top-[80%] right-[10%] w-[600px] h-[600px] rounded-full ambient-glow-iris blur-[140px] opacity-30 dark:opacity-10" />
-      </div>
+    <SmoothScrollProvider>
+      <div className="relative min-h-screen flex flex-col bg-[#fafafc] text-[#1d1d1f] dark:bg-[#0b0b0f] dark:text-[#f5f5f7] transition-colors duration-400 overflow-x-hidden">
+        {/* Ambient Glows */}
+        <div className="pointer-events-none fixed inset-0 overflow-hidden z-0 contain-paint">
+          <div className="absolute top-[10%] right-[-10%] w-[500px] h-[500px] rounded-full ambient-glow-pink opacity-40 dark:opacity-20" />
+          <div className="absolute top-[45%] left-[-10%] w-[550px] h-[550px] rounded-full ambient-glow-green opacity-40 dark:opacity-15" />
+          <div className="absolute top-[80%] right-[10%] w-[600px] h-[600px] rounded-full ambient-glow-iris opacity-30 dark:opacity-10" />
+        </div>
 
-      <div className="relative z-10 flex flex-col min-h-screen">
-        <Navbar />
+        <div className="relative z-10 flex flex-col min-h-screen">
+          <Navbar />
 
-        <main className="flex-1 max-w-5xl mx-auto px-6 pt-12 pb-24 w-full">
+          <main className="flex-1 max-w-5xl mx-auto px-6 pt-12 pb-24 w-full">
           {/* Back link */}
           <Link
             href="/"
@@ -334,7 +336,7 @@ export default function SupportPage() {
                   GitHub Issues <ExternalLink size={12} />
                 </a>
                 <a
-                  href="mailto:security@sutrakey.aritro.cloud"
+                  href="mailto:aritrosaha2025@gmail.com"
                   className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full text-xs font-semibold bg-black/[0.05] dark:bg-white/[0.08] text-neutral-800 dark:text-neutral-200 hover:bg-black/[0.08] dark:hover:bg-white/[0.12] transition-colors"
                 >
                   Email Support
@@ -345,7 +347,8 @@ export default function SupportPage() {
         </main>
 
         <Footer />
+        </div>
       </div>
-    </div>
+    </SmoothScrollProvider>
   );
 }

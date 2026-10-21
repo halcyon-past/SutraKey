@@ -2,6 +2,7 @@
 
 import React from "react";
 import { ShieldCheck, EyeOff, FolderDown, Zap } from "lucide-react";
+import { motion } from "motion/react";
 import { LiquidGlass } from "./LiquidGlass";
 
 const HIGHLIGHTS = [
@@ -47,52 +48,65 @@ export function Highlights() {
   return (
     <section id="highlights" className="py-16 md:py-24 px-4 max-w-5xl mx-auto">
       {/* Apple-style Section Header */}
-      <div className="mb-12 md:mb-16">
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, margin: "-80px" }}
+        transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+        className="mb-12 md:mb-16"
+      >
         <h2 className="text-3xl sm:text-4xl md:text-5xl font-semibold tracking-tight text-[#1d1d1f] dark:text-white mb-3">
           Get the highlights.
         </h2>
         <p className="text-base sm:text-lg text-neutral-600 dark:text-neutral-300 max-w-xl">
           Crafted to feel like an organic extension of macOS Sonoma and Sequoia.
         </p>
-      </div>
+      </motion.div>
 
       {/* Highlights Grid with Layered Depth & Liquid Glass */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {HIGHLIGHTS.map((item, index) => (
-          <LiquidGlass
+          <motion.div
             key={item.title}
-            radius={28}
-            depth={1.4}
-            blur={8}
-            dispersion={0.6}
-            specular={0.5}
-            interactive
-            tint={item.accent as "default" | "pink" | "green" | "mono"}
-            className="p-8 sm:p-10 flex flex-col justify-between rounded-[28px] min-h-[280px]"
+            initial={{ opacity: 0, y: 25 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-40px" }}
+            transition={{
+              duration: 0.5,
+              delay: index * 0.1,
+              ease: [0.16, 1, 0.3, 1],
+            }}
           >
-            <div>
-              <div className="flex items-center justify-between mb-6">
-                <span className="text-xs font-semibold uppercase tracking-wider text-neutral-500 dark:text-neutral-400">
-                  {item.tag}
-                </span>
-                <span className="font-mono text-xs text-neutral-400 dark:text-neutral-500">
-                  0{index + 1}
-                </span>
+            <LiquidGlass
+              radius={28}
+              interactive
+              tint={item.accent as "default" | "pink" | "green" | "mono"}
+              className="p-8 sm:p-10 flex flex-col justify-between rounded-[28px] min-h-[280px] h-full"
+            >
+              <div>
+                <div className="flex items-center justify-between mb-6">
+                  <span className="text-xs font-semibold uppercase tracking-wider text-neutral-500 dark:text-neutral-400">
+                    {item.tag}
+                  </span>
+                  <span className="font-mono text-xs text-neutral-400 dark:text-neutral-500">
+                    0{index + 1}
+                  </span>
+                </div>
+
+                <h3 className="text-2xl sm:text-3xl font-semibold tracking-tight text-[#1d1d1f] dark:text-white mb-3">
+                  {item.title}
+                </h3>
+                <p className="text-sm sm:text-base text-neutral-600 dark:text-neutral-300 leading-relaxed font-normal">
+                  {item.description}
+                </p>
               </div>
 
-              <h3 className="text-2xl sm:text-3xl font-semibold tracking-tight text-[#1d1d1f] dark:text-white mb-3">
-                {item.title}
-              </h3>
-              <p className="text-sm sm:text-base text-neutral-600 dark:text-neutral-300 leading-relaxed font-normal">
-                {item.description}
-              </p>
-            </div>
-
-            <div className="mt-8 pt-4 border-t border-black/[0.04] dark:border-white/[0.08] flex items-center justify-between text-xs font-mono text-neutral-500 dark:text-neutral-400">
-              <span>{item.detail}</span>
-              <item.icon size={16} className="text-neutral-400 dark:text-neutral-500" />
-            </div>
-          </LiquidGlass>
+              <div className="mt-8 pt-4 border-t border-black/[0.04] dark:border-white/[0.08] flex items-center justify-between text-xs font-mono text-neutral-500 dark:text-neutral-400">
+                <span>{item.detail}</span>
+                <item.icon size={16} className="text-neutral-400 dark:text-neutral-500" />
+              </div>
+            </LiquidGlass>
+          </motion.div>
         ))}
       </div>
     </section>

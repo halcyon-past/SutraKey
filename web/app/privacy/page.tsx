@@ -3,6 +3,7 @@ import Link from "next/link";
 import { Navbar } from "../components/Navbar";
 import { Footer } from "../components/Footer";
 import { LiquidGlass } from "../components/LiquidGlass";
+import { SmoothScrollProvider } from "../components/SmoothScrollProvider";
 import { ShieldCheck, Lock, EyeOff, HardDrive, KeyRound, Globe, ArrowLeft } from "lucide-react";
 
 export const metadata: Metadata = {
@@ -22,17 +23,18 @@ export const metadata: Metadata = {
 
 export default function PrivacyPage() {
   return (
-    <div className="relative min-h-screen flex flex-col bg-[#fafafc] text-[#1d1d1f] dark:bg-[#0b0b0f] dark:text-[#f5f5f7] transition-colors duration-400 overflow-x-hidden">
-      {/* Ambient Glows */}
-      <div className="pointer-events-none fixed inset-0 overflow-hidden z-0">
-        <div className="absolute top-[10%] right-[-10%] w-[500px] h-[500px] rounded-full ambient-glow-pink blur-[120px] opacity-40 dark:opacity-20 animate-float-slow" />
-        <div className="absolute top-[50%] left-[-10%] w-[550px] h-[550px] rounded-full ambient-glow-green blur-[130px] opacity-40 dark:opacity-15 animate-float-reverse" />
-      </div>
+    <SmoothScrollProvider>
+      <div className="relative min-h-screen flex flex-col bg-[#fafafc] text-[#1d1d1f] dark:bg-[#0b0b0f] dark:text-[#f5f5f7] transition-colors duration-400 overflow-x-hidden">
+        {/* Ambient Glows */}
+        <div className="pointer-events-none fixed inset-0 overflow-hidden z-0 contain-paint">
+          <div className="absolute top-[10%] right-[-10%] w-[500px] h-[500px] rounded-full ambient-glow-pink opacity-40 dark:opacity-20" />
+          <div className="absolute top-[50%] left-[-10%] w-[550px] h-[550px] rounded-full ambient-glow-green opacity-40 dark:opacity-15" />
+        </div>
 
-      <div className="relative z-10 flex flex-col min-h-screen">
-        <Navbar />
+        <div className="relative z-10 flex flex-col min-h-screen">
+          <Navbar />
 
-        <main className="flex-1 max-w-4xl mx-auto px-6 pt-12 pb-24 w-full">
+          <main className="flex-1 max-w-4xl mx-auto px-6 pt-12 pb-24 w-full">
           {/* Back link */}
           <Link
             href="/"
@@ -187,8 +189,7 @@ export default function PrivacyPage() {
               </p>
               <div className="p-4 rounded-xl bg-black/[0.02] dark:bg-white/[0.02] border border-black/[0.04] dark:border-white/[0.05] text-xs space-y-1 font-mono">
                 <div><strong className="text-neutral-900 dark:text-white font-sans">Developer:</strong> Aritro Saha</div>
-                <div><strong className="text-neutral-900 dark:text-white font-sans">Security Inquiries:</strong> <a href="mailto:security@sutrakey.aritro.cloud" className="text-pink-500 hover:underline">security@sutrakey.aritro.cloud</a></div>
-                <div><strong className="text-neutral-900 dark:text-white font-sans">Personal:</strong> <a href="mailto:aritrosaha2025@gmail.com" className="text-pink-500 hover:underline">aritrosaha2025@gmail.com</a></div>
+                <div><strong className="text-neutral-900 dark:text-white font-sans">Contact:</strong> <a href="mailto:aritrosaha2025@gmail.com" className="text-pink-500 hover:underline">aritrosaha2025@gmail.com</a></div>
                 <div><strong className="text-neutral-900 dark:text-white font-sans">Website:</strong> <a href="https://sutrakey.aritro.cloud" className="text-pink-500 hover:underline">https://sutrakey.aritro.cloud</a></div>
               </div>
             </section>
@@ -196,7 +197,8 @@ export default function PrivacyPage() {
         </main>
 
         <Footer />
+        </div>
       </div>
-    </div>
+    </SmoothScrollProvider>
   );
 }

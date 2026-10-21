@@ -3,7 +3,7 @@
 **App:** SutraKey (सूत्र)  
 **Developer:** Aritro Saha  
 **Website:** [https://sutrakey.aritro.cloud/support](https://sutrakey.aritro.cloud/support)  
-**Support Email:** [security@sutrakey.aritro.cloud](mailto:security@sutrakey.aritro.cloud) | [aritrosaha2025@gmail.com](mailto:aritrosaha2025@gmail.com)  
+**Support Email:** [aritrosaha2025@gmail.com](mailto:aritrosaha2025@gmail.com)  
 **GitHub Issues:** [https://github.com/halcyon-past/SutraKey/issues](https://github.com/halcyon-past/SutraKey/issues)
 
 ---
@@ -128,4 +128,4 @@ SutraKey leverages local `yt-dlp` integration supporting over 1,500+ domains, in
 
 - **Open a Bug Report:** [https://github.com/halcyon-past/SutraKey/issues/new?template=bug_report.md](https://github.com/halcyon-past/SutraKey/issues/new?template=bug_report.md)
 - **Request a Feature:** [https://github.com/halcyon-past/SutraKey/issues/new?template=feature_request.md](https://github.com/halcyon-past/SutraKey/issues/new?template=feature_request.md)
-- **Email Developer:** [security@sutrakey.aritro.cloud](mailto:security@sutrakey.aritro.cloud)
+- **Email Developer:** [aritrosaha2025@gmail.com](mailto:aritrosaha2025@gmail.com)

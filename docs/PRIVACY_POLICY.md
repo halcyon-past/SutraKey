@@ -4,7 +4,7 @@
 **Developer:** Aritro Saha  
 **Website:** [https://sutrakey.aritro.cloud](https://sutrakey.aritro.cloud)  
 **Effective Date:** October 21, 2026  
-**Contact:** [security@sutrakey.aritro.cloud](mailto:security@sutrakey.aritro.cloud) | [aritrosaha2025@gmail.com](mailto:aritrosaha2025@gmail.com)
+**Contact:** [aritrosaha2025@gmail.com](mailto:aritrosaha2025@gmail.com)
 
 ---
 
@@ -89,6 +89,5 @@ If we modify this Privacy Policy, the revised version will be published here wit
 If you have questions, feedback, or security vulnerability reports regarding this Privacy Policy, please contact:
 
 - **Developer:** Aritro Saha
-- **Security Inquiries:** [security@sutrakey.aritro.cloud](mailto:security@sutrakey.aritro.cloud)
-- **Personal Email:** [aritrosaha2025@gmail.com](mailto:aritrosaha2025@gmail.com)
+- **Contact Email:** [aritrosaha2025@gmail.com](mailto:aritrosaha2025@gmail.com)
 - **Project Repository:** [https://github.com/halcyon-past/SutraKey](https://github.com/halcyon-past/SutraKey)
