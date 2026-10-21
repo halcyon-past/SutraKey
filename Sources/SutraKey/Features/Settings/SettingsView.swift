@@ -7,8 +7,6 @@ public struct SettingsView: View {
     @ObservedObject public var updater: UpdateManager
 
     @State private var selectedTab: SettingsTab = .general
-    @State private var keychainTesting: Bool = false
-    @State private var keychainTestResult: (success: Bool, message: String)? = nil
 
     public enum SettingsTab: String, CaseIterable, Identifiable {
         case general = "General"
@@ -62,20 +60,20 @@ public struct SettingsView: View {
                 }
                 .tag(SettingsTab.about)
         }
-        .padding(20)
-        .frame(width: 520, height: 380)
+        .frame(width: 560, height: 500)
     }
 
     // MARK: - General Tab
 
     private var generalTab: some View {
-        Form {
-            Section {
+        ScrollView(.vertical, showsIndicators: false) {
+            VStack(alignment: .leading, spacing: 20) {
+                // Section: Download Location
                 VStack(alignment: .leading, spacing: 8) {
                     Text("Download Location")
-                        .font(.system(size: 13, weight: .semibold))
+                        .font(.system(size: 13, weight: .bold))
 
-                    HStack {
+                    HStack(spacing: 10) {
                         Image(systemName: "folder.fill")
                             .foregroundColor(.accentColor)
                             .font(.system(size: 16))
@@ -84,7 +82,7 @@ public struct SettingsView: View {
                             .font(.system(size: 11, design: .monospaced))
                             .lineLimit(1)
                             .truncationMode(.middle)
-                            .foregroundColor(.secondary)
+                            .foregroundColor(.primary)
 
                         Spacer()
 
@@ -99,12 +97,21 @@ public struct SettingsView: View {
                         }
                         .help("Reveal in Finder")
                     }
-                    .padding(8)
-                    .background(Color(NSColor.controlBackgroundColor).opacity(0.6))
+                    .padding(10)
+                    .background(Color(NSColor.controlBackgroundColor))
                     .cornerRadius(8)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 8)
+                            .stroke(Color(NSColor.separatorColor).opacity(0.35), lineWidth: 1)
+                    )
 
                     HStack {
+                        Text("Downloaded videos and audio will be saved here.")
+                            .font(.system(size: 11))
+                            .foregroundColor(.secondary)
+
                         Spacer()
+
                         Button("Reset to ~/Downloads") {
                             prefs.resetDownloadDirectory()
                         }
@@ -112,15 +119,13 @@ public struct SettingsView: View {
                         .buttonStyle(.link)
                     }
                 }
-            }
 
-            Divider()
-                .padding(.vertical, 4)
+                Divider()
 
-            Section {
-                VStack(alignment: .leading, spacing: 8) {
+                // Section: Menu Bar Appearance
+                VStack(alignment: .leading, spacing: 6) {
                     Text("Menu Bar Appearance")
-                        .font(.system(size: 13, weight: .semibold))
+                        .font(.system(size: 13, weight: .bold))
 
                     Toggle("Keep menu bar icon always visible", isOn: $prefs.keepStatusBarVisible)
                         .font(.system(size: 12))
@@ -128,93 +133,66 @@ public struct SettingsView: View {
                     Text("When disabled, the menu bar icon appears strictly during active downloads and automatically hides when idle.")
                         .font(.system(size: 11))
                         .foregroundColor(.secondary)
+                        .fixedSize(horizontal: false, vertical: true)
                 }
-            }
 
-            Divider()
-                .padding(.vertical, 4)
+                Divider()
 
-            Section {
+                // Section: Notifications & Feedback
                 VStack(alignment: .leading, spacing: 8) {
                     Text("Notifications & Feedback")
-                        .font(.system(size: 13, weight: .semibold))
+                        .font(.system(size: 13, weight: .bold))
 
                     Toggle("Play completion chime when media finishes", isOn: $prefs.playCompletionSound)
                         .font(.system(size: 12))
 
-                    Toggle("Show frosted toast HUD banner on complete", isOn: $prefs.showCompletionToast)
+                    Toggle("Show frosted toast HUD banner on completion", isOn: $prefs.showCompletionToast)
                         .font(.system(size: 12))
                 }
-            }
 
-            Divider()
-                .padding(.vertical, 4)
+                Divider()
 
-            Section {
-                VStack(alignment: .leading, spacing: 8) {
+                // Section: Authentication & Browser Cookies
+                VStack(alignment: .leading, spacing: 10) {
                     Text("Authentication & Browser Cookies")
-                        .font(.system(size: 13, weight: .semibold))
+                        .font(.system(size: 13, weight: .bold))
 
-                    Text("Instagram Stories and age-restricted media require an active authenticated session.")
+                    Text("Instagram Stories, private accounts, and age-restricted media require an active authenticated session.")
                         .font(.system(size: 11))
                         .foregroundColor(.secondary)
 
-                    Picker("Import Cookies from:", selection: $prefs.browserCookiesSource) {
-                        Text("Brave Browser").tag("brave")
-                        Text("Google Chrome").tag("chrome")
-                        Text("Safari").tag("safari")
-                        Text("Microsoft Edge").tag("edge")
-                        Text("Firefox").tag("firefox")
-                        Text("Custom cookies.txt File").tag("custom")
-                        Text("None (Public Media Only)").tag("none")
-                    }
-                    .pickerStyle(.menu)
-                    .frame(width: 260)
+                    HStack(spacing: 12) {
+                        Text("Import Cookies from:")
+                            .font(.system(size: 12, weight: .medium))
 
-                    if ["brave", "chrome", "edge"].contains(prefs.browserCookiesSource) {
-                        VStack(alignment: .leading, spacing: 6) {
-                            HStack(spacing: 8) {
-                                Button {
-                                    keychainTesting = true
-                                    Task {
-                                        let res = await prefs.testBrowserKeychainAccess()
-                                        keychainTestResult = res
-                                        keychainTesting = false
-                                    }
-                                } label: {
-                                    if keychainTesting {
-                                        ProgressView().controlSize(.small)
-                                    } else {
-                                        Text("Authorize & Test Keychain Access")
-                                    }
-                                }
-                                .disabled(keychainTesting)
-
-                                if let res = keychainTestResult {
-                                    HStack(spacing: 4) {
-                                        Image(systemName: res.success ? "checkmark.circle.fill" : "exclamationmark.triangle.fill")
-                                            .foregroundColor(res.success ? .green : .red)
-                                        Text(res.message)
-                                            .font(.system(size: 11))
-                                            .foregroundColor(res.success ? .green : .red)
-                                    }
-                                }
-                            }
-
-                            Text("Tip: When macOS prompts for Keychain access to 'Safe Storage', click 'Always Allow' so downloads authenticate automatically.")
-                                .font(.system(size: 11))
-                                .foregroundColor(.secondary)
+                        Picker("", selection: $prefs.browserCookiesSource) {
+                            Text("Custom cookies.txt File (Zero Prompts)").tag("custom")
+                            Divider()
+                            Text("Brave Browser").tag("brave")
+                            Text("Google Chrome").tag("chrome")
+                            Text("Safari").tag("safari")
+                            Text("Microsoft Edge").tag("edge")
+                            Text("Firefox").tag("firefox")
+                            Divider()
+                            Text("None (Public Media Only)").tag("none")
                         }
-                        .padding(.top, 2)
+                        .labelsHidden()
+                        .pickerStyle(.menu)
+                        .frame(width: 280)
+
+                        Spacer()
                     }
 
                     if prefs.browserCookiesSource == "custom" {
-                        HStack {
-                            Text(prefs.customCookiesPath.isEmpty ? "No cookies.txt selected" : prefs.customCookiesPath)
+                        HStack(spacing: 10) {
+                            Image(systemName: "doc.text.fill")
+                                .foregroundColor(.accentColor)
+
+                            Text(prefs.customCookiesPath.isEmpty ? "No cookies.txt file selected" : prefs.customCookiesPath)
                                 .font(.system(size: 11, design: .monospaced))
                                 .lineLimit(1)
                                 .truncationMode(.middle)
-                                .foregroundColor(.secondary)
+                                .foregroundColor(prefs.customCookiesPath.isEmpty ? .secondary : .primary)
 
                             Spacer()
 
@@ -228,62 +206,126 @@ public struct SettingsView: View {
                                 }
                             }
                         }
+                        .padding(10)
+                        .background(Color(NSColor.controlBackgroundColor))
+                        .cornerRadius(8)
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 8)
+                                .stroke(Color(NSColor.separatorColor).opacity(0.35), lineWidth: 1)
+                        )
                     }
+
+                    // Guidance Banner
+                    HStack(alignment: .top, spacing: 10) {
+                        Image(systemName: prefs.browserCookiesSource == "custom" ? "checkmark.shield.fill" : "info.circle.fill")
+                            .font(.system(size: 15))
+                            .foregroundColor(.accentColor)
+                            .padding(.top, 1)
+
+                        VStack(alignment: .leading, spacing: 4) {
+                            if prefs.browserCookiesSource == "custom" {
+                                Text("Zero Password Prompts Forever")
+                                    .font(.system(size: 12, weight: .semibold))
+                                Text("A cookies.txt file is read directly from disk without touching macOS Keychain. Export your cookies once from your browser using an extension like 'Get cookies.txt LOCALLY'.")
+                                    .font(.system(size: 11))
+                                    .foregroundColor(.secondary)
+                                    .fixedSize(horizontal: false, vertical: true)
+                            } else if ["brave", "chrome", "edge"].contains(prefs.browserCookiesSource) {
+                                Text("Why macOS Prompts for Passwords")
+                                    .font(.system(size: 12, weight: .semibold))
+                                Text("Chromium browsers encrypt cookies with macOS Keychain Safe Storage. To download without entering your password every time, switch to 'Custom cookies.txt File' above, or open Keychain Access.app, find '\(prefs.browserCookiesSource.capitalized) Safe Storage', and set Access Control to 'Allow all applications'.")
+                                    .font(.system(size: 11))
+                                    .foregroundColor(.secondary)
+                                    .fixedSize(horizontal: false, vertical: true)
+                            } else if ["safari", "firefox"].contains(prefs.browserCookiesSource) {
+                                Text("Keychain Free")
+                                    .font(.system(size: 12, weight: .semibold))
+                                Text("\(prefs.browserCookiesSource.capitalized) session cookies are accessed directly without Chromium Keychain Safe Storage.")
+                                    .font(.system(size: 11))
+                                    .foregroundColor(.secondary)
+                            } else {
+                                Text("Public Media Mode")
+                                    .font(.system(size: 12, weight: .semibold))
+                                Text("Downloads will operate without browser authentication. Stories and private content will not be accessible.")
+                                    .font(.system(size: 11))
+                                    .foregroundColor(.secondary)
+                            }
+                        }
+                    }
+                    .padding(10)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .background(Color(NSColor.controlBackgroundColor).opacity(0.6))
+                    .cornerRadius(8)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 8)
+                            .stroke(Color(NSColor.separatorColor).opacity(0.2), lineWidth: 1)
+                    )
                 }
             }
+            .padding(24)
         }
     }
 
     // MARK: - Quality & Formats Tab
 
     private var qualityTab: some View {
-        Form {
-            Section {
-                VStack(alignment: .leading, spacing: 6) {
+        ScrollView(.vertical, showsIndicators: false) {
+            VStack(alignment: .leading, spacing: 20) {
+                // Video Pipeline
+                VStack(alignment: .leading, spacing: 10) {
                     Text("Video Pipeline (MP4)")
-                        .font(.system(size: 13, weight: .semibold))
+                        .font(.system(size: 13, weight: .bold))
 
-                    Picker("Codec & Container:", selection: $prefs.preferredVideoCodec) {
+                    Picker("", selection: $prefs.preferredVideoCodec) {
                         Text("QuickTime Native H.264 + AAC (Recommended)").tag("h264_aac")
                         Text("Maximum Resolution (Highest Available Bitrate)").tag("best")
                     }
+                    .labelsHidden()
                     .pickerStyle(.radioGroup)
                     .font(.system(size: 12))
 
                     Text("QuickTime Native merges H.264 video with AAC stereo audio to guarantee zero playback or audio sync errors in QuickTime, iOS, and Final Cut Pro.")
                         .font(.system(size: 11))
                         .foregroundColor(.secondary)
+                        .fixedSize(horizontal: false, vertical: true)
                 }
-            }
 
-            Divider()
-                .padding(.vertical, 4)
+                Divider()
 
-            Section {
-                VStack(alignment: .leading, spacing: 6) {
+                // Audio Pipeline
+                VStack(alignment: .leading, spacing: 10) {
                     Text("Audio Pipeline (MP3)")
-                        .font(.system(size: 13, weight: .semibold))
+                        .font(.system(size: 13, weight: .bold))
 
-                    Picker("Bitrate:", selection: $prefs.preferredAudioBitrate) {
-                        Text("320 kbps (Maximum Fidelity CBR)").tag("320k")
-                        Text("256 kbps (High Quality)").tag("256k")
-                        Text("192 kbps (Standard)").tag("192k")
+                    HStack(spacing: 12) {
+                        Text("Target Bitrate:")
+                            .font(.system(size: 12, weight: .medium))
+
+                        Picker("", selection: $prefs.preferredAudioBitrate) {
+                            Text("320 kbps (Maximum Fidelity CBR)").tag("320k")
+                            Text("256 kbps (High Quality)").tag("256k")
+                            Text("192 kbps (Standard)").tag("192k")
+                        }
+                        .labelsHidden()
+                        .pickerStyle(.menu)
+                        .frame(width: 280)
+
+                        Spacer()
                     }
-                    .pickerStyle(.menu)
-                    .frame(width: 280)
 
                     Text("Extracts audio with embedded high-resolution album artwork and ID3 metadata.")
                         .font(.system(size: 11))
                         .foregroundColor(.secondary)
                 }
             }
+            .padding(24)
         }
     }
 
     // MARK: - Updates Tab (GitHub Releases Auto-Updater)
 
     private var updatesTab: some View {
-        VStack(alignment: .leading, spacing: 14) {
+        VStack(alignment: .leading, spacing: 16) {
             HStack(spacing: 12) {
                 Image(systemName: "arrow.triangle.2.circlepath.circle.fill")
                     .font(.system(size: 32))
@@ -348,10 +390,14 @@ public struct SettingsView: View {
                     Text("SutraKey v\(version) is the latest version available.")
                         .font(.system(size: 12, weight: .medium))
                 }
-                .padding(10)
+                .padding(12)
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .background(Color.green.opacity(0.1))
                 .cornerRadius(8)
+                .overlay(
+                    RoundedRectangle(cornerRadius: 8)
+                        .stroke(Color.green.opacity(0.2), lineWidth: 1)
+                )
 
             case .updateAvailable(let version, let release):
                 VStack(alignment: .leading, spacing: 8) {
@@ -376,7 +422,7 @@ public struct SettingsView: View {
                                 .frame(maxWidth: .infinity, alignment: .leading)
                         }
                         .frame(height: 80)
-                        .padding(6)
+                        .padding(8)
                         .background(Color(NSColor.textBackgroundColor))
                         .cornerRadius(6)
                     }
@@ -384,6 +430,10 @@ public struct SettingsView: View {
                 .padding(12)
                 .background(Color.orange.opacity(0.12))
                 .cornerRadius(10)
+                .overlay(
+                    RoundedRectangle(cornerRadius: 10)
+                        .stroke(Color.orange.opacity(0.25), lineWidth: 1)
+                )
 
             case .failed(let message):
                 HStack(spacing: 8) {
@@ -404,6 +454,7 @@ public struct SettingsView: View {
             Toggle("Automatically check for updates on launch", isOn: $prefs.autoCheckUpdates)
                 .font(.system(size: 12))
         }
+        .padding(24)
         .onAppear {
             if updater.status == .idle && prefs.autoCheckUpdates {
                 Task {
@@ -416,12 +467,12 @@ public struct SettingsView: View {
     // MARK: - About Tab
 
     private var aboutTab: some View {
-        VStack(spacing: 12) {
+        VStack(spacing: 14) {
             Image(nsImage: NSImage(named: "AppIcon") ?? NSImage())
                 .resizable()
                 .frame(width: 64, height: 64)
                 .cornerRadius(14)
-                .shadow(radius: 4)
+                .shadow(color: .black.opacity(0.15), radius: 4, x: 0, y: 2)
 
             Text("SutraKey (सूत्र)")
                 .font(.system(size: 16, weight: .bold))
@@ -458,6 +509,6 @@ public struct SettingsView: View {
                 .foregroundColor(.secondary)
         }
         .frame(maxWidth: .infinity)
-        .padding(.vertical, 8)
+        .padding(24)
     }
 }
