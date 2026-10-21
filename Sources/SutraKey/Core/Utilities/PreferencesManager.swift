@@ -19,6 +19,7 @@ public final class PreferencesManager: ObservableObject {
     private let kLastUpdateCheck = "cloud.aritro.sutrakey.lastUpdateCheck"
     private let kBrowserCookiesSource = "cloud.aritro.sutrakey.browserCookiesSource"
     private let kCustomCookiesPath = "cloud.aritro.sutrakey.customCookiesPath"
+    private let kCookiesOnlyForAuthSites = "cloud.aritro.sutrakey.cookiesOnlyForAuthSites"
 
     // MARK: - Published Properties
 
@@ -84,6 +85,12 @@ public final class PreferencesManager: ObservableObject {
         }
     }
 
+    @Published public var cookiesOnlyForAuthRequiredSites: Bool {
+        didSet {
+            UserDefaults.standard.set(cookiesOnlyForAuthRequiredSites, forKey: kCookiesOnlyForAuthSites)
+        }
+    }
+
     // MARK: - Init
 
     public init() {
@@ -126,16 +133,42 @@ public final class PreferencesManager: ObservableObject {
         }()
         self.browserCookiesSource = UserDefaults.standard.string(forKey: kBrowserCookiesSource) ?? defaultBrowser
         self.customCookiesPath = UserDefaults.standard.string(forKey: kCustomCookiesPath) ?? ""
+        self.cookiesOnlyForAuthRequiredSites = UserDefaults.standard.object(forKey: kCookiesOnlyForAuthSites) == nil ? true : UserDefaults.standard.bool(forKey: kCookiesOnlyForAuthSites)
+    }
+
+    /// Determines whether a target URL requires authenticated browser cookies (e.g. Instagram login walls).
+    public static func domainRequiresCookies(url: URL) -> Bool {
+        guard let host = url.host?.lowercased() else { return false }
+        let authHosts = [
+            "instagram.com",
+            "instagr.am",
+            "threads.net",
+            "facebook.com",
+            "fb.watch",
+            "patreon.com"
+        ]
+        return authHosts.contains { host == $0 || host.hasSuffix("." + $0) }
     }
 
     /// Resolves yt-dlp arguments for cookies based on user preferences.
     public func resolveCookieArguments(for url: URL? = nil) -> [String] {
         if browserCookiesSource == "custom", !customCookiesPath.isEmpty {
             return ["--cookies", customCookiesPath]
-        } else if browserCookiesSource != "none", !browserCookiesSource.isEmpty {
+        }
+        guard browserCookiesSource != "none", !browserCookiesSource.isEmpty else {
+            return []
+        }
+
+        if cookiesOnlyForAuthRequiredSites {
+            if let target = url, PreferencesManager.domainRequiresCookies(url: target) {
+                return ["--cookies-from-browser", browserCookiesSource]
+            }
+            // Public platforms (YouTube, Reddit, Twitter, TikTok, etc.) do NOT receive browser cookies
+            // to eliminate macOS Keychain prompts and prevent YouTube bot-detection blocks.
+            return []
+        } else {
             return ["--cookies-from-browser", browserCookiesSource]
         }
-        return []
     }
 
     // MARK: - Actions

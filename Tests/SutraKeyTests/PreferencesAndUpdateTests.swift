@@ -53,4 +53,45 @@ struct PreferencesAndUpdateTests {
         #expect(parsedMerger?.isPostProcessing == true)
         #expect(parsedMerger?.stage.contains("Merging") == true)
     }
+
+    @Test("PreferencesManager scopes browser cookies strictly to login-walled domains")
+    @MainActor
+    func testCookieScopingByDomain() {
+        let prefs = PreferencesManager.shared
+        let originalSource = prefs.browserCookiesSource
+        let originalScoping = prefs.cookiesOnlyForAuthRequiredSites
+        defer {
+            prefs.browserCookiesSource = originalSource
+            prefs.cookiesOnlyForAuthRequiredSites = originalScoping
+        }
+
+        prefs.browserCookiesSource = "brave"
+        prefs.cookiesOnlyForAuthRequiredSites = true
+
+        // YouTube should receive ZERO cookie arguments to avoid Keychain prompts and bot blocks
+        let youtubeURL = URL(string: "https://www.youtube.com/watch?v=wYbDxLp0dao")!
+        #expect(prefs.resolveCookieArguments(for: youtubeURL).isEmpty)
+
+        let redditURL = URL(string: "https://www.reddit.com/r/funny/comments/abc123/funny_video/")!
+        #expect(prefs.resolveCookieArguments(for: redditURL).isEmpty)
+
+        // Instagram MUST receive browser cookie arguments
+        let instaURL = URL(string: "https://www.instagram.com/p/Dc_U1XRpWEI/")!
+        let instaArgs = prefs.resolveCookieArguments(for: instaURL)
+        #expect(instaArgs == ["--cookies-from-browser", "brave"])
+
+        // When scoping is disabled, all domains receive cookies
+        prefs.cookiesOnlyForAuthRequiredSites = false
+        #expect(prefs.resolveCookieArguments(for: youtubeURL) == ["--cookies-from-browser", "brave"])
+    }
+
+    @Test("BinaryResolver discovers local JavaScript runtime when available")
+    func testJSRuntimeResolution() {
+        // If a JS runtime (node, deno, bun, quickjs) is present on system, jsRuntime resolves correctly
+        let runtime = BinaryResolver.jsRuntime
+        if let runtime = runtime {
+            #expect(!runtime.name.isEmpty)
+            #expect(FileManager.default.isExecutableFile(atPath: runtime.executablePath))
+        }
+    }
 }

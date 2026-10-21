@@ -61,6 +61,10 @@ public final class YTDLPProcessRunner: Sendable {
             arguments.append(contentsOf: ["--ffmpeg-location", ffmpeg])
         }
 
+        if let jsRuntime = BinaryResolver.jsRuntime {
+            arguments.append(contentsOf: ["--js-runtimes", "\(jsRuntime.name):\(jsRuntime.executablePath)"])
+        }
+
         switch action {
         case .video:
             // Prefer native H.264 / AAC so macOS QuickTime Player and iOS can play the video natively with zero corruption.
@@ -105,6 +109,31 @@ public final class YTDLPProcessRunner: Sendable {
         let proc = Process()
         proc.executableURL = URL(fileURLWithPath: ytdlpExecutable)
         proc.arguments = arguments
+
+        // Ensure subprocess PATH includes detected JavaScript runtime and standard tool directories
+        var environment = ProcessInfo.processInfo.environment
+        var pathSegments: [String] = []
+
+        if let jsRuntime = BinaryResolver.jsRuntime {
+            let jsDir = URL(fileURLWithPath: jsRuntime.executablePath).deletingLastPathComponent().path
+            pathSegments.append(jsDir)
+        }
+        if let ffmpeg = BinaryResolver.ffmpegPath {
+            let ffmpegDir = URL(fileURLWithPath: ffmpeg).deletingLastPathComponent().path
+            pathSegments.append(ffmpegDir)
+        }
+        pathSegments.append(contentsOf: [
+            "/opt/homebrew/bin",
+            "/usr/local/bin",
+            "/usr/bin",
+            "/bin",
+            "/usr/sbin",
+            "/sbin"
+        ])
+
+        let existingPath = environment["PATH"] ?? ""
+        environment["PATH"] = (pathSegments + [existingPath]).joined(separator: ":")
+        proc.environment = environment
 
         let stdoutPipe = Pipe()
         let stderrPipe = Pipe()
@@ -167,6 +196,10 @@ public final class YTDLPProcessRunner: Sendable {
                 } else {
                     userFriendlyMsg = "Instagram Story unreachable with current cookies. Make sure you are logged into Instagram in your configured browser, and that the story has not expired (24h limit) or is from a private account."
                 }
+            } else if rawError.contains("The page needs to be reloaded") || rawError.contains("n challenge solving failed") {
+                userFriendlyMsg = "YouTube challenge verification failed. Ensure you have Node.js, Deno, or Bun installed, or update yt-dlp in SutraKey Settings."
+            } else if rawError.contains("Sign in to confirm your age") {
+                userFriendlyMsg = "This YouTube video is age-restricted. You can download it by importing a cookies.txt file in SutraKey Settings > General."
             }
 
             throw NSError(

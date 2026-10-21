@@ -183,6 +183,19 @@ public struct SettingsView: View {
                         Spacer()
                     }
 
+                    if prefs.browserCookiesSource != "none" && prefs.browserCookiesSource != "custom" {
+                        VStack(alignment: .leading, spacing: 4) {
+                            Toggle("Only inject cookies for login-walled sites (Instagram, Facebook)", isOn: $prefs.cookiesOnlyForAuthRequiredSites)
+                                .font(.system(size: 12))
+
+                            Text("When enabled, public platforms like YouTube and Reddit are downloaded directly without touching macOS Keychain.")
+                                .font(.system(size: 11))
+                                .foregroundColor(.secondary)
+                                .fixedSize(horizontal: false, vertical: true)
+                        }
+                        .padding(.vertical, 2)
+                    }
+
                     if prefs.browserCookiesSource == "custom" {
                         HStack(spacing: 10) {
                             Image(systemName: "doc.text.fill")

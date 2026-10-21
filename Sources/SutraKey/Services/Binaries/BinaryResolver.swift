@@ -59,6 +59,88 @@ public enum BinaryResolver: Sendable {
         resolveBinary(named: "ffmpeg")
     }
 
+    public struct JSRuntime: Sendable, Equatable {
+        public let name: String
+        public let executablePath: String
+
+        public init(name: String, executablePath: String) {
+            self.name = name
+            self.executablePath = executablePath
+        }
+    }
+
+    /// Resolves available JavaScript runtime (deno, node, bun, quickjs) for yt-dlp EJS challenge solving.
+    public static var jsRuntime: JSRuntime? {
+        resolveJSRuntime()
+    }
+
+    private static func resolveJSRuntime() -> JSRuntime? {
+        let fileManager = FileManager.default
+        let home = fileManager.homeDirectoryForCurrentUser
+
+        // 1. Direct candidate paths
+        let directCandidates: [(name: String, path: String)] = [
+            ("deno", "/opt/homebrew/bin/deno"),
+            ("node", "/opt/homebrew/bin/node"),
+            ("bun", "/opt/homebrew/bin/bun"),
+            ("quickjs", "/opt/homebrew/bin/quickjs"),
+            ("deno", "/usr/local/bin/deno"),
+            ("node", "/usr/local/bin/node"),
+            ("bun", "/usr/local/bin/bun"),
+            ("deno", home.appendingPathComponent(".deno/bin/deno").path),
+            ("bun", home.appendingPathComponent(".bun/bin/bun").path),
+            ("node", home.appendingPathComponent(".volta/bin/node").path)
+        ]
+
+        for candidate in directCandidates {
+            if fileManager.isExecutableFile(atPath: candidate.path) {
+                return JSRuntime(name: candidate.name, executablePath: candidate.path)
+            }
+        }
+
+        // 2. Scan NVM versions (~/.nvm/versions/node/v*.*.*/bin/node)
+        let nvmDir = home.appendingPathComponent(".nvm/versions/node")
+        if let versions = try? fileManager.contentsOfDirectory(atPath: nvmDir.path).sorted().reversed() {
+            for v in versions {
+                let candidate = nvmDir.appendingPathComponent("\(v)/bin/node").path
+                if fileManager.isExecutableFile(atPath: candidate) {
+                    return JSRuntime(name: "node", executablePath: candidate)
+                }
+            }
+        }
+
+        // 3. Scan FNM (~/.local/share/fnm/current/bin/node or ~/.fnm/current/bin/node)
+        let fnmCandidates = [
+            home.appendingPathComponent(".local/share/fnm/current/bin/node").path,
+            home.appendingPathComponent(".fnm/current/bin/node").path
+        ]
+        for fnmPath in fnmCandidates {
+            if fileManager.isExecutableFile(atPath: fnmPath) {
+                return JSRuntime(name: "node", executablePath: fnmPath)
+            }
+        }
+
+        // 4. Scan asdf shims (~/.asdf/shims/node)
+        let asdfNode = home.appendingPathComponent(".asdf/shims/node").path
+        if fileManager.isExecutableFile(atPath: asdfNode) {
+            return JSRuntime(name: "node", executablePath: asdfNode)
+        }
+
+        // 5. Check system PATH
+        if let pathEnv = ProcessInfo.processInfo.environment["PATH"] {
+            for segment in pathEnv.split(separator: ":") {
+                for name in ["deno", "node", "bun", "quickjs"] {
+                    let candidate = URL(fileURLWithPath: String(segment)).appendingPathComponent(name).path
+                    if fileManager.isExecutableFile(atPath: candidate) {
+                        return JSRuntime(name: name, executablePath: candidate)
+                    }
+                }
+            }
+        }
+
+        return nil
+    }
+
     /// Resolves path to custom yt-dlp plugins directory (e.g. for patched Instagram extractors).
     public static var pluginsDirectory: URL? {
         if let resourceURL = Bundle.main.resourceURL {
