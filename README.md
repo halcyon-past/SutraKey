@@ -95,9 +95,23 @@ flowchart TD
 
 ### Homebrew (Recommended)
 ```bash
-brew tap halcyon-past/sutrakey
+brew install --cask halcyon-past/tap/sutrakey
+```
+
+Or tap first and install:
+```bash
+brew tap halcyon-past/tap
 brew install --cask sutrakey
 ```
+
+To upgrade:
+```bash
+brew upgrade --cask sutrakey
+```
+
+### Direct Download
+- 🍏 **Universal DMG:** [SutraKey.dmg (Latest)](https://github.com/halcyon-past/SutraKey/releases/latest/download/SutraKey.dmg)
+- 📦 **In-Place Auto-Updater ZIP:** [SutraKey.zip (Latest)](https://github.com/halcyon-past/SutraKey/releases/latest/download/SutraKey.zip)
 
 ### Direct Download (.dmg)
 Download the latest notarized release from [sutrakey.aritro.cloud](https://sutrakey.aritro.cloud) or GitHub Releases.

@@ -60,12 +60,12 @@ export function Installation() {
 
             <motion.button
               whileTap={{ scale: 0.98 }}
-              onClick={() => copyText("brew tap halcyon-past/sutrakey && brew install --cask sutrakey", 1)}
+              onClick={() => copyText("brew install --cask halcyon-past/tap/sutrakey", 1)}
               className="w-full flex items-center justify-between p-3 rounded-2xl bg-black/[0.04] dark:bg-white/[0.06] border border-black/[0.04] dark:border-white/[0.08] font-mono text-xs text-neutral-800 dark:text-neutral-200 hover:bg-black/[0.06] dark:hover:bg-white/[0.1] transition-colors cursor-pointer group"
             >
               <div className="flex items-center gap-2 truncate">
                 <span className="text-neutral-400 dark:text-neutral-500 select-none">$</span>
-                <span className="truncate">brew install --cask sutrakey</span>
+                <span className="truncate">brew install --cask halcyon-past/tap/sutrakey</span>
               </div>
               {copiedIndex === 1 ? <Check size={14} className="text-emerald-500 shrink-0 ml-2" /> : <Copy size={14} className="text-neutral-400 group-hover:text-white shrink-0 ml-2" />}
             </motion.button>

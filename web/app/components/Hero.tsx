@@ -10,7 +10,7 @@ export function Hero() {
   const [copied, setCopied] = useState(false);
 
   const copyHomebrew = () => {
-    navigator.clipboard.writeText("brew tap halcyon-past/sutrakey && brew install --cask sutrakey");
+    navigator.clipboard.writeText("brew install --cask halcyon-past/tap/sutrakey");
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
@@ -86,7 +86,7 @@ export function Hero() {
             >
               <div className="flex items-center gap-2 font-mono text-xs text-neutral-800 dark:text-neutral-200">
                 <span className="text-neutral-400 dark:text-neutral-500 select-none">$</span>
-                <span>brew install --cask sutrakey</span>
+                <span>brew install --cask halcyon-past/tap/sutrakey</span>
               </div>
               <div className="w-5 h-5 rounded-full flex items-center justify-center text-neutral-500 group-hover:text-black dark:group-hover:text-white transition-colors shrink-0">
                 {copied ? <Check size={13} className="text-emerald-500" /> : <Copy size={13} />}

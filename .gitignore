@@ -9,6 +9,8 @@ DerivedData/
 
 # Output and temporary directories
 .build/assets/
+build/
+RELEASE_NOTES.md
 *.dmg
 dist/
 

@@ -53,7 +53,7 @@ public final class UpdateManager: ObservableObject {
         if let version = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String, !version.isEmpty {
             return version
         }
-        return "1.0.0"
+        return AppConstants.version
     }()
 
     public let repoReleasesAPI = URL(string: "https://api.github.com/repos/halcyon-past/SutraKey/releases/latest")!
