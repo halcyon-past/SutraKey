@@ -41,8 +41,8 @@ PRs with branch names violating these patterns will be rejected by our automated
 ### Setup
 ```bash
 # Clone the repository
-git clone https://github.com/aritrosaha/sutrakey.git
-cd sutrakey
+git clone https://github.com/halcyon-past/SutraKey.git
+cd SutraKey
 
 # Initialize branches and git hooks
 bash Scripts/setup_git_branches.sh

@@ -31,3 +31,17 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
   - Dark-glass landing page built with React 19, Tailwind CSS, and interactive SVG radial simulator.
   - Complete SEO and LLMO documentation endpoints (`/llms.txt`, `/llms-full.txt`, `/ai.txt`, `/robots.txt`, `/sitemap.xml`).
   - Production legal pages (`/privacy`, `/terms`, `/support`).
+- **Workspace-Wide Hotkey Architecture:**
+  - Global `⌘⇧S` (`Cmd + Shift + S`) and `⌥⇧S` (`Option + Shift + S`) hotkey triggers registered on `GetEventDispatcherTarget()`.
+  - Works across Terminal, WhatsApp, Slack, Apple Notes, VS Code, and Electron workspaces.
+  - Isolated synthetic keystroke dispatcher with Shift-UP to prevent physical modifier leakage (`Cmd + Shift + C`).
+  - Enhanced selection parsing for `NSAttributedString`, `CFAttributedString`, and native `AXURL` attributes.
+- **Persistent Code Signing & TCC Retention:**
+  - Automated developer keychain provisioning for `SutraKey CodeSign`.
+  - Stable designated requirement bound to certificate leaf, eliminating recurring macOS Accessibility prompts on rebuild.
+- **Asset Optimization & Instant Search Engine Indexing:**
+  - Next-gen WebP image pipeline (`logo.webp`, `icon-192x192.webp`, `icon-512x512.webp`, `AppIcon.webp`) yielding 97% asset weight reduction.
+  - Multi-resolution icon suite (16, 32, 48, 180, 192, 512px) for iOS Safari, macOS, and PWA manifest.
+  - High-resolution 1200x630 vector OpenGraph and Twitter social share cards (`og-image.jpg`, `banner-social.jpg`, `og-image.webp`).
+  - Automated IndexNow protocol integration (`ping-indexnow.mjs`) for real-time Bing, Yandex, Seznam, and Naver crawling.
+  - Dual-keyword SEO optimization targeting both `"SutraKey"` and `"Sutra Key"`.

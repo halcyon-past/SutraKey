@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: 📖 User Documentation & Troubleshooting
+    url: https://sutrakey.aritro.cloud/support
+    about: Read our setup guide, permission instructions, and FAQ before filing an issue.
+  - name: 🔒 Report a Security Vulnerability
+    url: https://github.com/halcyon-past/SutraKey/security/policy
+    about: Please report security vulnerabilities privately via aritrosaha2025@gmail.com.

@@ -54,9 +54,10 @@ flowchart TD
 
 ## ✦ Core Features
 
-### 1. Exclusive Shift + Select Trigger (Zero Modifier Pollution)
-- Monitors global mouse + keyboard events via `CGEventTap`.
-- **Strict Exclusivity Guard:** A bitwise evaluation (`NSEvent.modifierFlags.intersection(.deviceIndependentFlagsMask)`) guarantees that if **any** other modifier is pressed (`⌘ Command`, `⌥ Option`, `⌃ Control`, `⇪ Caps Lock`, `fn Function`), the radial menu **never** appears.
+### 1. Dual Trigger Architecture (Gesture & Global Shortcut)
+- **Mouse Gesture:** Hold `Shift` + click-and-drag to select any URL or link across macOS.
+- **Global Hotkey:** Press **`⌘⇧S`** (`Cmd + Shift + S`) or **`⌥⇧S`** (`Option + Shift + S`) anywhere in your workspace (Terminal, WhatsApp, Slack, Apple Notes, VS Code) to capture highlighted text or clipboard URLs instantly.
+- **Strict Exclusivity Guard:** A bitwise evaluation (`NSEvent.modifierFlags.intersection(.deviceIndependentFlagsMask)`) guarantees that mouse triggers ignore extraneous modifiers to avoid collision with standard system shortcuts.
 - If you hit `Esc` or press another modifier key while the radial wheel is open, it dismisses instantly without stealing focus.
 
 ### 2. Under-Cursor Radial Pie Menu

@@ -85,7 +85,9 @@ Some platforms (such as Instagram Stories, YouTube private playlists, or subscri
 
 | Gesture / Shortcut | Action | Description |
 |---|---|---|
-| **Hold `Shift` + Mouse Drag** | Summon Radial Menu | Select any URL text in any app to spawn the interactive liquid wheel. |
+| **`⌘ ⇧ S` (Cmd + Shift + S)** | Workspace-Wide Radial HUD | Global shortcut that captures any highlighted URL or copied clipboard link across Terminal, WhatsApp, Slack, Notes, etc. |
+| **`⌥ ⇧ S` (Option + Shift + S)** | Secondary Global Shortcut | Alternative global hotkey trigger for rapid radial invocation. |
+| **Hold `Shift` + Mouse Drag** | Summon Radial Menu | Select any URL text in any app to spawn the interactive liquid wheel under your cursor. |
 | **`Esc`** | Dismiss Radial Menu | Instantly hides the active radial menu without executing any download. |
 | **`⌘ ,`** | Open Preferences | Opens the SutraKey Settings window from the menu bar or active window. |
 | **Click Menu Bar Icon** | Status & Menu | View active download tasks, download speed, and recent conversion history. |
