@@ -76,37 +76,11 @@ public final class AppDelegate: NSObject, NSApplicationDelegate {
     }
 
     private func checkAccessibilityPermissions() {
-        let options = ["AXTrustedCheckOptionPrompt" as CFString: true] as CFDictionary
-        let isTrusted = AXIsProcessTrustedWithOptions(options)
-        if !isTrusted {
-            Logger.accessibility.warning("SutraKey requires macOS Accessibility permissions to read selected text.")
-            SutraToastController.shared.showNotice(
-                title: "Accessibility Required",
-                message: "Please toggle SutraKey ON in System Settings > Privacy & Security > Accessibility.",
-                systemImage: "hand.raised.fill",
-                actionTitle: "Open Settings",
-                action: {
-                    if let url = URL(string: "x-apple.systempreferences:com.apple.preference.security?Privacy_Accessibility") {
-                        NSWorkspace.shared.open(url)
-                    }
-                }
-            )
-
-            // Actively observe until user grants accessibility in System Settings
-            Task { @MainActor in
-                for _ in 0..<120 { // Check every second for up to 2 minutes
-                    try? await Task.sleep(nanoseconds: 1_000_000_000)
-                    if AXIsProcessTrusted() {
-                        Logger.accessibility.info("Accessibility permissions granted by user.")
-                        SutraToastController.shared.showNotice(
-                            title: "Accessibility Granted",
-                            message: "SutraKey is ready! Hold Shift + Select any link to download.",
-                            systemImage: "checkmark.circle.fill"
-                        )
-                        break
-                    }
-                }
-            }
+        let isTrusted = AXIsProcessTrusted()
+        if isTrusted {
+            Logger.accessibility.info("macOS Accessibility permissions verified.")
+        } else {
+            Logger.accessibility.info("Accessibility permissions not granted. Running in standard mode with transient clipboard and browser active tab extraction.")
         }
     }
 }

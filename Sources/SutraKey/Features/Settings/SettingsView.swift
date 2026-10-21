@@ -274,6 +274,50 @@ public struct SettingsView: View {
                             .stroke(Color(NSColor.separatorColor).opacity(0.2), lineWidth: 1)
                     )
                 }
+
+                Divider()
+
+                // Section: Accessibility Permissions
+                VStack(alignment: .leading, spacing: 8) {
+                    Text("Accessibility Permissions")
+                        .font(.system(size: 13, weight: .bold))
+
+                    HStack(spacing: 10) {
+                        Image(systemName: AXIsProcessTrusted() ? "checkmark.circle.fill" : "info.circle.fill")
+                            .font(.system(size: 16))
+                            .foregroundColor(AXIsProcessTrusted() ? .green : .accentColor)
+
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text(AXIsProcessTrusted() ? "Accessibility Access Granted" : "Standard Mode Active (Accessibility Optional)")
+                                .font(.system(size: 12, weight: .semibold))
+
+                            Text(AXIsProcessTrusted()
+                                ? "SutraKey has full permission to read text selections directly across macOS applications."
+                                : "SutraKey is fully functional using global key events and clipboard extraction. Granting Accessibility allows reading highlighted text without clipboard fallbacks.")
+                                .font(.system(size: 11))
+                                .foregroundColor(.secondary)
+                                .fixedSize(horizontal: false, vertical: true)
+                        }
+
+                        Spacer()
+
+                        Button(AXIsProcessTrusted() ? "Settings..." : "Grant Permission...") {
+                            let options = ["AXTrustedCheckOptionPrompt" as CFString: true] as CFDictionary
+                            _ = AXIsProcessTrustedWithOptions(options)
+                            if let url = URL(string: "x-apple.systempreferences:com.apple.preference.security?Privacy_Accessibility") {
+                                NSWorkspace.shared.open(url)
+                            }
+                        }
+                        .font(.system(size: 11))
+                    }
+                    .padding(10)
+                    .background(Color(NSColor.controlBackgroundColor))
+                    .cornerRadius(8)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 8)
+                            .stroke(Color(NSColor.separatorColor).opacity(0.35), lineWidth: 1)
+                    )
+                }
             }
             .padding(24)
         }
