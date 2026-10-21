@@ -70,6 +70,11 @@ while read local_ref local_sha remote_ref remote_sha; do
         continue
     fi
 
+    # Allow pushing tags
+    if [[ "$local_ref" =~ ^refs/tags/ ]]; then
+        continue
+    fi
+
     # Check Core branches
     if [[ "$branch_name" =~ ^(main|uat|dev)$ ]]; then
         continue
