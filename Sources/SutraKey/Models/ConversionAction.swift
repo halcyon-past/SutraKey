@@ -22,7 +22,7 @@ public enum ConversionAction: String, CaseIterable, Identifiable, Sendable {
         case .gallery:
             return "Images / Gallery"
         case .pdf:
-            return "Clean PDF"
+            return "Save as PDF"
         }
     }
 
