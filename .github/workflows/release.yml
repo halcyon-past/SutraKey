@@ -186,7 +186,7 @@ jobs:
             git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
             git add Casks/sutrakey.rb
             git commit -m "chore(release): auto-sync v$CURRENT_VERSION DMG SHA-256 [skip ci]"
-            git push origin HEAD:main
+            git push origin HEAD:main || true
             git fetch origin uat dev
             git push origin HEAD:uat || true
             git push origin HEAD:dev || true
