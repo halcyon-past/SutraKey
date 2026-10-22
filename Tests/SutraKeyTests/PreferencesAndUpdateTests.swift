@@ -37,6 +37,23 @@ struct PreferencesAndUpdateTests {
         #expect(URLSanitizer.downloadsDirectory.path == originalDir.path)
     }
 
+    @Test("PreferencesManager shortcutsEnabled toggle flips and persists state")
+    @MainActor
+    func testShortcutsEnabledToggle() {
+        let prefs = PreferencesManager.shared
+        let original = prefs.shortcutsEnabled
+        defer { prefs.shortcutsEnabled = original }
+
+        prefs.shortcutsEnabled = true
+        #expect(prefs.shortcutsEnabled == true)
+
+        prefs.toggleShortcuts()
+        #expect(prefs.shortcutsEnabled == false)
+
+        prefs.toggleShortcuts()
+        #expect(prefs.shortcutsEnabled == true)
+    }
+
     @Test("YTDLPProgressParser identifies extraction stages to prevent sticking at 0%")
     func testExtractionStageRecognition() {
         let extractLine = "[youtube] Extracting URL: https://www.youtube.com/watch?v=2u19wN1tDT4"

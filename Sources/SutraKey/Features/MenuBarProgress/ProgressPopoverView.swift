@@ -5,6 +5,7 @@ import SwiftUI
 /// recent download history, and direct access to Settings.
 public struct ProgressPopoverView: View {
     @ObservedObject public var controller: EphemeralStatusBarController
+    @ObservedObject private var prefs: PreferencesManager = .shared
     public let onCancelJob: (UUID) -> Void
 
     public init(controller: EphemeralStatusBarController = .shared, onCancelJob: @escaping (UUID) -> Void) {
@@ -50,6 +51,25 @@ public struct ProgressPopoverView: View {
                 }
 
                 Spacer()
+
+                // Shortcuts Quick Toggle Button
+                Button {
+                    PreferencesManager.shared.toggleShortcuts()
+                } label: {
+                    HStack(spacing: 3) {
+                        Image(systemName: prefs.shortcutsEnabled ? "command" : "command.slash")
+                            .font(.system(size: 10))
+                        Text(prefs.shortcutsEnabled ? "⌘⇧0" : "Paused")
+                            .font(.system(size: 10, weight: .semibold, design: .monospaced))
+                    }
+                    .foregroundColor(prefs.shortcutsEnabled ? .secondary : .orange)
+                    .padding(.horizontal, 5)
+                    .padding(.vertical, 2)
+                    .background(prefs.shortcutsEnabled ? Color(NSColor.quaternaryLabelColor).opacity(0.5) : Color.orange.opacity(0.15))
+                    .cornerRadius(4)
+                }
+                .buttonStyle(.plain)
+                .help(prefs.shortcutsEnabled ? "Shortcuts Active: ⌘⇧0 to pause" : "Shortcuts Paused: ⌘⇧0 to resume")
 
                 // Settings Gear Button
                 Button {

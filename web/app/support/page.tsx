@@ -52,6 +52,18 @@ const SHORTCUTS = [
     description: "Instantly closes the radial HUD without triggering any download action.",
   },
   {
+    action: "Toggle App Shortcuts",
+    keys: ["⌘", "⇧", "0"],
+    badge: "Quick Pause / Resume",
+    description: "Instantly pause or re-enable all SutraKey global hotkeys and mouse selection gestures from anywhere in macOS.",
+  },
+  {
+    action: "Hotkey Radial Summon",
+    keys: ["⌘", "⇧", "S"],
+    badge: "Keyboard Trigger",
+    description: "Directly summons the radial wheel under the cursor or using the system clipboard URL without dragging.",
+  },
+  {
     action: "Open Settings / Preferences",
     keys: ["⌘", ","],
     badge: "Configuration",

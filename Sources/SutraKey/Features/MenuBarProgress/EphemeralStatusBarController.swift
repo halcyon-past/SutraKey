@@ -244,6 +244,15 @@ public final class EphemeralStatusBarController: NSObject, ObservableObject {
         // Handle right-click context menu
         if let currentEvent = NSApp.currentEvent, currentEvent.type == .rightMouseUp {
             let menu = NSMenu()
+            let isEnabled = PreferencesManager.shared.shortcutsEnabled
+            let toggleItem = NSMenuItem(
+                title: isEnabled ? "Shortcuts: Active (⌘⇧0 to pause)" : "Shortcuts: Paused (⌘⇧0 to resume)",
+                action: #selector(toggleShortcuts),
+                keyEquivalent: ""
+            )
+            toggleItem.state = isEnabled ? .on : .off
+            menu.addItem(toggleItem)
+            menu.addItem(NSMenuItem.separator())
             menu.addItem(NSMenuItem(title: "Settings...", action: #selector(openSettings), keyEquivalent: ","))
             menu.addItem(NSMenuItem(title: "Check for Updates...", action: #selector(checkForUpdates), keyEquivalent: "u"))
             menu.addItem(NSMenuItem(title: "Open Downloads Folder", action: #selector(openDownloadsFolder), keyEquivalent: "o"))
@@ -281,6 +290,10 @@ public final class EphemeralStatusBarController: NSObject, ObservableObject {
         pop.contentViewController = NSHostingController(rootView: contentView)
         self.popover = pop
         pop.show(relativeTo: button.bounds, of: button, preferredEdge: .minY)
+    }
+
+    @objc private func toggleShortcuts() {
+        PreferencesManager.shared.toggleShortcuts()
     }
 
     @objc private func openSettings() {

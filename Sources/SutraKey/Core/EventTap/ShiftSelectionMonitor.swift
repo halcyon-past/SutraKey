@@ -78,6 +78,12 @@ public final class ShiftSelectionMonitor: NSObject {
     }
 
     private func handleFlagsChanged(_ event: NSEvent) {
+        guard PreferencesManager.shared.shortcutsEnabled else {
+            isDraggingWithShift = false
+            dragStartLocation = nil
+            return
+        }
+
         // Strict Exclusivity Guard:
         // If another modifier is pressed while radial menu is open, dismiss immediately.
         if ModifierExclusivityValidator.hasConflictingModifiers(flags: event.modifierFlags) {
@@ -114,6 +120,18 @@ public final class ShiftSelectionMonitor: NSObject {
             return
         }
 
+        // Cmd + Shift + 0 (or Option + Shift + 0) shortcut toggle fallback
+        if event.keyCode == 29 { // 29 = '0' (kVK_ANSI_0)
+            let flags = event.modifierFlags
+            if flags.contains(.shift) && (flags.contains(.command) || flags.contains(.option)) {
+                Logger.events.info("Toggle shortcuts hotkey detected via event monitor. Toggling state...")
+                PreferencesManager.shared.toggleShortcuts()
+                return
+            }
+        }
+
+        guard PreferencesManager.shared.shortcutsEnabled else { return }
+
         // Secondary global hotkey listener for Cmd + Shift + S
         if event.keyCode == 1 { // 1 = 'S' (kVK_ANSI_S)
             let flags = event.modifierFlags
@@ -141,6 +159,12 @@ public final class ShiftSelectionMonitor: NSObject {
             }
         }
 
+        guard PreferencesManager.shared.shortcutsEnabled else {
+            isDraggingWithShift = false
+            dragStartLocation = nil
+            return
+        }
+
         // Detect if user initiates click/drag while holding ONLY Shift
         let isShiftDown = ModifierExclusivityValidator.isShiftOnly(flags: event.modifierFlags) ||
                           ModifierExclusivityValidator.isShiftOnly(flags: NSEvent.modifierFlags)
@@ -156,6 +180,12 @@ public final class ShiftSelectionMonitor: NSObject {
     }
 
     private func handleLeftMouseDragged(_ event: NSEvent) {
+        guard PreferencesManager.shared.shortcutsEnabled else {
+            isDraggingWithShift = false
+            dragStartLocation = nil
+            return
+        }
+
         // If Shift is pressed while dragging, register as active Shift selection
         if !isDraggingWithShift {
             let isShiftDown = ModifierExclusivityValidator.isShiftOnly(flags: event.modifierFlags) ||
@@ -173,6 +203,12 @@ public final class ShiftSelectionMonitor: NSObject {
         if RadialPanelController.shared.isVisible {
             // Keep the menu open; do not dismiss on mouse up.
             // Menu remains accessible until the user clicks a slice, clicks cancel, or clicks outside.
+            isDraggingWithShift = false
+            dragStartLocation = nil
+            return
+        }
+
+        guard PreferencesManager.shared.shortcutsEnabled else {
             isDraggingWithShift = false
             dragStartLocation = nil
             return
@@ -200,6 +236,11 @@ public final class ShiftSelectionMonitor: NSObject {
 
     /// Attempts to extract URL from selection/clipboard and summon the radial menu.
     public func attemptRadialTrigger(at screenPoint: CGPoint, allowClipboardFallback: Bool = false) {
+        guard PreferencesManager.shared.shortcutsEnabled else {
+            Logger.events.info("Shortcuts disabled by user preference. Skipping radial trigger.")
+            return
+        }
+
         Logger.events.info("Attempting radial trigger at (\(screenPoint.x, privacy: .public), \(screenPoint.y, privacy: .public)) [allowClipboard: \(allowClipboardFallback)]...")
 
         guard let url = TextSelectionExtractor.extractSelectedURL(allowClipboardFallback: allowClipboardFallback) else {

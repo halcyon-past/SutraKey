@@ -11,6 +11,7 @@ public final class PreferencesManager: ObservableObject {
     // MARK: - Keys
     private let kDownloadPath = "cloud.aritro.sutrakey.downloadPath"
     private let kKeepStatusBarVisible = "cloud.aritro.sutrakey.keepStatusBarVisible"
+    private let kShortcutsEnabled = "cloud.aritro.sutrakey.shortcutsEnabled"
     private let kPreferredVideoCodec = "cloud.aritro.sutrakey.preferredVideoCodec"
     private let kPreferredAudioBitrate = "cloud.aritro.sutrakey.preferredAudioBitrate"
     private let kPlayCompletionSound = "cloud.aritro.sutrakey.playCompletionSound"
@@ -34,6 +35,13 @@ public final class PreferencesManager: ObservableObject {
         didSet {
             UserDefaults.standard.set(keepStatusBarVisible, forKey: kKeepStatusBarVisible)
             EphemeralStatusBarController.shared.updateVisibility()
+        }
+    }
+
+    @Published public var shortcutsEnabled: Bool {
+        didSet {
+            UserDefaults.standard.set(shortcutsEnabled, forKey: kShortcutsEnabled)
+            Logger.app.info("Application shortcuts toggled to: \(self.shortcutsEnabled)")
         }
     }
 
@@ -115,6 +123,7 @@ public final class PreferencesManager: ObservableObject {
         }
 
         self.keepStatusBarVisible = UserDefaults.standard.object(forKey: kKeepStatusBarVisible) == nil ? true : UserDefaults.standard.bool(forKey: kKeepStatusBarVisible)
+        self.shortcutsEnabled = UserDefaults.standard.object(forKey: kShortcutsEnabled) == nil ? true : UserDefaults.standard.bool(forKey: kShortcutsEnabled)
         self.preferredVideoCodec = UserDefaults.standard.string(forKey: kPreferredVideoCodec) ?? "h264_aac"
         self.preferredAudioBitrate = UserDefaults.standard.string(forKey: kPreferredAudioBitrate) ?? "320k"
         self.playCompletionSound = UserDefaults.standard.object(forKey: kPlayCompletionSound) == nil ? true : UserDefaults.standard.bool(forKey: kPlayCompletionSound)
@@ -251,6 +260,24 @@ public final class PreferencesManager: ObservableObject {
                     continuation.resume(returning: (false, "Failed to test security: \(error.localizedDescription)"))
                 }
             }
+        }
+    }
+
+    /// Toggles the shortcutsEnabled state and displays an informative HUD toast notification.
+    public func toggleShortcuts() {
+        self.shortcutsEnabled.toggle()
+        if self.shortcutsEnabled {
+            SutraToastController.shared.showNotice(
+                title: "Shortcuts Enabled",
+                message: "Press ⌘⇧S or Shift+Select to summon radial menu.",
+                systemImage: "command"
+            )
+        } else {
+            SutraToastController.shared.showNotice(
+                title: "Shortcuts Paused",
+                message: "Press ⌘⇧0 anytime to re-enable shortcuts.",
+                systemImage: "command.slash"
+            )
         }
     }
 }

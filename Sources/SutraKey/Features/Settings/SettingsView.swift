@@ -138,6 +138,39 @@ public struct SettingsView: View {
 
                 Divider()
 
+                // Section: App Shortcuts
+                VStack(alignment: .leading, spacing: 8) {
+                    HStack {
+                        Text("Application Shortcuts")
+                            .font(.system(size: 13, weight: .bold))
+
+                        Spacer()
+
+                        // Keyboard Badge
+                        HStack(spacing: 4) {
+                            Text("Toggle:")
+                                .font(.system(size: 11))
+                                .foregroundColor(.secondary)
+                            Text("⌘⇧0")
+                                .font(.system(size: 11, weight: .semibold, design: .monospaced))
+                                .padding(.horizontal, 6)
+                                .padding(.vertical, 2)
+                                .background(Color(NSColor.quaternaryLabelColor))
+                                .cornerRadius(4)
+                        }
+                    }
+
+                    Toggle("Enable application shortcuts & gestures", isOn: $prefs.shortcutsEnabled)
+                        .font(.system(size: 12))
+
+                    Text("Controls radial triggers: ⌘⇧S (Cmd+Shift+S), ⌥⇧S (Option+Shift+S), and Shift+Select mouse text selection across macOS. Press ⌘⇧0 anytime to toggle.")
+                        .font(.system(size: 11))
+                        .foregroundColor(.secondary)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+
+                Divider()
+
                 // Section: Notifications & Feedback
                 VStack(alignment: .leading, spacing: 8) {
                     Text("Notifications & Feedback")

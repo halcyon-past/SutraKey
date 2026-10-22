@@ -12,12 +12,13 @@ public final class GlobalHotKeyManager: NSObject {
     private var eventHandler: EventHandlerRef?
 
     public var onTrigger: (@MainActor () -> Void)?
+    public var onToggleShortcuts: (@MainActor () -> Void)?
 
     public override init() {
         super.init()
     }
 
-    /// Registers global shortcut keys (Cmd+Shift+S, Option+Shift+S).
+    /// Registers global shortcut keys (Cmd+Shift+S, Option+Shift+S, Cmd+Shift+0).
     public func registerHotKeys() {
         guard hotKeyRefs.isEmpty else { return }
 
@@ -32,8 +33,20 @@ public final class GlobalHotKeyManager: NSObject {
         let status = InstallEventHandler(
             target,
             { (_, event, _) -> OSStatus in
+                guard let event = event else { return noErr }
+                var hotKeyID = EventHotKeyID()
+                let paramStatus = GetEventParameter(
+                    event,
+                    EventParamName(kEventParamDirectObject),
+                    EventParamType(typeEventHotKeyID),
+                    nil,
+                    MemoryLayout<EventHotKeyID>.size,
+                    nil,
+                    &hotKeyID
+                )
+                let id = (paramStatus == noErr) ? hotKeyID.id : 1
                 Task { @MainActor in
-                    GlobalHotKeyManager.shared.handleHotKeyPressed()
+                    GlobalHotKeyManager.shared.handleHotKeyPressed(id: id)
                 }
                 return noErr
             },
@@ -64,7 +77,23 @@ public final class GlobalHotKeyManager: NSObject {
             target: target
         )
 
-        Logger.events.info("GlobalHotKeyManager successfully registered Cmd+Shift+S and Option+Shift+S shortcuts.")
+        // 4. Register Cmd + Shift + 0 (Toggle Shortcuts)
+        registerKey(
+            keyCode: UInt32(kVK_ANSI_0),
+            modifiers: UInt32(cmdKey | shiftKey),
+            id: 3,
+            target: target
+        )
+
+        // 5. Register Option + Shift + 0 (Toggle Shortcuts fallback)
+        registerKey(
+            keyCode: UInt32(kVK_ANSI_0),
+            modifiers: UInt32(optionKey | shiftKey),
+            id: 4,
+            target: target
+        )
+
+        Logger.events.info("GlobalHotKeyManager successfully registered Cmd+Shift+S, Option+Shift+S, and Cmd+Shift+0 shortcuts.")
     }
 
     private func registerKey(keyCode: UInt32, modifiers: UInt32, id: UInt32, target: EventTargetRef?) {
@@ -85,7 +114,19 @@ public final class GlobalHotKeyManager: NSObject {
         }
     }
 
-    private func handleHotKeyPressed() {
+    private func handleHotKeyPressed(id: UInt32) {
+        if id == 3 || id == 4 {
+            Logger.events.info("Toggle shortcuts shortcut key pressed (id: \(id)). Toggling shortcuts...")
+            PreferencesManager.shared.toggleShortcuts()
+            onToggleShortcuts?()
+            return
+        }
+
+        guard PreferencesManager.shared.shortcutsEnabled else {
+            Logger.events.info("Global shortcut key pressed (id: \(id)), but shortcuts are currently disabled in Preferences.")
+            return
+        }
+
         Logger.events.info("Global shortcut key pressed. Invoking trigger...")
         onTrigger?()
     }
