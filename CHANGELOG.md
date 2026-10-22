@@ -9,9 +9,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+---
+
+## [1.0.1] - 2026-10-22
+
+### Fixed
+- **Web-to-PDF Engine:** Resolved blank and dark background PDF generation on single-page apps and complex dynamic documentation sites (e.g. GitHub). In background daemons (`LSUIElement = 1`), WebKit's WebContent process was throttled by macOS `RunningBoardServices`. We now host `WKWebView` in an offscreen `NSWindow` to retain active display links, dynamically measure full DOM scroll height via JavaScript (`measureAndCapture()`), apply standard desktop Safari user-agent, and clip CoreGraphics A4 pagination cleanly.
+- **Frontend Footer Cleanup:** Removed the "Machine Endpoints" column from the human-facing footer layout while preserving all crawler discovery files (`/llms.txt`, `/llms-full.txt`, `/ai.txt`, `/sitemap.xml`) for AI agents and search bots.
+
 ### Added
-- Automated release workflow strictly gated on PR merges to `main` and version increments.
-- Root `CHANGELOG.md` release notes verification step in CI/CD pipeline.
+- **Automated Release Workflow:** Release pipeline now automatically validates version increments against existing GitHub releases and verifies `CHANGELOG.md` documentation before publishing DMGs and syncing the Homebrew tap.
+- **Account Sponsorship:** Enabled repository and organization-wide GitHub Sponsors support (`.github/FUNDING.yml`).
+
+### Changed
+- **CI/CD Workflows:** Upgraded GitHub Actions to `actions/checkout@v7`, `actions/setup-python@v7`, and `actions/setup-node@v7`.
+- **Branch Governance Policy:** Whitelisted `dependabot/*` branches in branch-guard CI checks and pre-push hooks to permit automated dependency updates.
+- **Dependencies:** Grouped and bumped `react` & `react-dom` to `19.3.1`, `@types/node` to `26.6.5`, and pinned TypeScript/ESLint for Next.js 16 tooling stability.
 
 ---
 
