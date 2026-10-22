@@ -88,7 +88,7 @@ export function Navbar() {
             <motion.a
               whileHover={{ scale: 1.03 }}
               whileTap={{ scale: 0.97 }}
-              href="https://github.com/halcyon-past/SutraKey/releases/latest"
+              href="https://github.com/halcyon-past/SutraKey/releases/latest/download/SutraKey.dmg"
               target="_blank"
               rel="noopener noreferrer"
               className="flex items-center gap-1.5 bg-[#1d1d1f] text-white dark:bg-white dark:text-[#0a0a0c] text-xs font-semibold px-4 py-2 rounded-full shadow-sm whitespace-nowrap cursor-pointer"

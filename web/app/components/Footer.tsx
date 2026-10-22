@@ -119,12 +119,28 @@ export function Footer() {
               GitHub Repository
             </a>
             <a
-              href="https://github.com/halcyon-past/SutraKey/releases/latest"
+              href="https://github.com/halcyon-past/homebrew-tap"
               target="_blank"
               rel="noopener noreferrer"
               className="hover:text-black dark:hover:text-white transition-colors"
             >
-              Release Downloads
+              Homebrew Tap
+            </a>
+            <a
+              href="https://github.com/halcyon-past/SutraKey/releases"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hover:text-black dark:hover:text-white transition-colors"
+            >
+              Releases &amp; Changelog
+            </a>
+            <a
+              href="https://github.com/halcyon-past/SutraKey/releases/latest/download/SutraKey.dmg"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hover:text-black dark:hover:text-white transition-colors"
+            >
+              Download SutraKey.dmg
             </a>
             <a
               href="https://github.com/halcyon-past/SutraKey/blob/main/LICENSE"

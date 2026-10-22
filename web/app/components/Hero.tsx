@@ -66,7 +66,7 @@ export function Hero() {
           <motion.a
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
-            href="https://github.com/halcyon-past/SutraKey/releases/latest"
+            href="https://github.com/halcyon-past/SutraKey/releases/latest/download/SutraKey.dmg"
             target="_blank"
             rel="noopener noreferrer"
             className="w-full sm:w-auto h-12 px-6 rounded-full bg-[#1d1d1f] text-white dark:bg-white dark:text-[#1d1d1f] font-semibold text-sm shadow-md flex items-center justify-center gap-2.5 cursor-pointer whitespace-nowrap"

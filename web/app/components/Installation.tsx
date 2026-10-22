@@ -100,7 +100,7 @@ export function Installation() {
             <motion.a
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
-              href="https://github.com/halcyon-past/SutraKey/releases/latest"
+              href="https://github.com/halcyon-past/SutraKey/releases/latest/download/SutraKey.dmg"
               target="_blank"
               rel="noopener noreferrer"
               className="w-full inline-flex items-center justify-center gap-2 py-3 rounded-2xl bg-[#1d1d1f] text-white dark:bg-white dark:text-[#1d1d1f] font-semibold text-xs shadow-sm transition-all"
@@ -163,9 +163,7 @@ export function Installation() {
           SutraKey requests macOS Accessibility permission solely to read your active text highlight via Apple’s native AXUIElement API. It runs entirely on-device, never polls keystrokes, and never records your screen.
         </div>
         <a
-          href="https://github.com/halcyon-past/SutraKey#accessibility"
-          target="_blank"
-          rel="noopener noreferrer"
+          href="/support#accessibility"
           className="inline-flex items-center gap-1 font-semibold text-neutral-900 dark:text-white hover:underline shrink-0"
         >
           <span>Read Audit</span>

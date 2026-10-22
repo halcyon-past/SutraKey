@@ -172,7 +172,7 @@ export default function SupportPage() {
             </section>
 
             {/* Accessibility Permissions Guide */}
-            <section className="space-y-4">
+            <section id="accessibility" className="space-y-4 scroll-mt-24">
               <div className="flex items-center gap-2.5">
                 <ShieldCheck className="w-5 h-5 text-emerald-500" />
                 <h2 className="text-xl font-bold text-neutral-900 dark:text-white">

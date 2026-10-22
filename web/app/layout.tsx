@@ -187,11 +187,11 @@ const jsonLd = {
       softwareVersion: "1.0.0",
       license: "https://opensource.org/licenses/MIT",
       url: SITE_URL,
-      downloadUrl: "https://github.com/halcyon-past/SutraKey/releases/latest",
+      downloadUrl: "https://github.com/halcyon-past/SutraKey/releases/latest/download/SutraKey.dmg",
       codeRepository: "https://github.com/halcyon-past/SutraKey",
       programmingLanguage: "Swift 6.0",
       installUrl: `${SITE_URL}/#installation`,
-      releaseNotes: "https://github.com/halcyon-past/SutraKey/blob/main/docs/CHANGELOG.md",
+      releaseNotes: "https://github.com/halcyon-past/SutraKey/releases/tag/v1.0.0",
       image: [
         `${SITE_URL}/og-image.jpg`,
         `${SITE_URL}/icon-512x512.png`,
@@ -250,6 +250,7 @@ const jsonLd = {
       ],
       sameAs: [
         "https://github.com/halcyon-past/SutraKey",
+        "https://github.com/halcyon-past/homebrew-tap",
       ],
     },
     {

@@ -15,6 +15,31 @@ const nextConfig: NextConfig = {
       },
     },
   },
+  async redirects() {
+    return [
+      {
+        source: "/download",
+        destination:
+          "https://github.com/halcyon-past/SutraKey/releases/latest/download/SutraKey.dmg",
+        permanent: false,
+      },
+      {
+        source: "/github",
+        destination: "https://github.com/halcyon-past/SutraKey",
+        permanent: false,
+      },
+      {
+        source: "/releases",
+        destination: "https://github.com/halcyon-past/SutraKey/releases",
+        permanent: false,
+      },
+      {
+        source: "/tap",
+        destination: "https://github.com/halcyon-past/homebrew-tap",
+        permanent: false,
+      },
+    ];
+  },
   async headers() {
     return [
       {

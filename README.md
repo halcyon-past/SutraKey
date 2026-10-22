@@ -112,9 +112,7 @@ brew upgrade --cask sutrakey
 ### Direct Download
 - 🍏 **Universal DMG:** [SutraKey.dmg (Latest)](https://github.com/halcyon-past/SutraKey/releases/latest/download/SutraKey.dmg)
 - 📦 **In-Place Auto-Updater ZIP:** [SutraKey.zip (Latest)](https://github.com/halcyon-past/SutraKey/releases/latest/download/SutraKey.zip)
-
-### Direct Download (.dmg)
-Download the latest notarized release from [sutrakey.aritro.cloud](https://sutrakey.aritro.cloud) or GitHub Releases.
+- 🍺 **Homebrew Tap:** [halcyon-past/homebrew-tap](https://github.com/halcyon-past/homebrew-tap)
 
 ### Build from Source
 ```bash
