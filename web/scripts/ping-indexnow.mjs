@@ -18,6 +18,7 @@ const URL_LIST = [
   `https://${HOST}/llms.txt`,
   `https://${HOST}/llms-full.txt`,
   `https://${HOST}/ai.txt`,
+  `https://${HOST}/.well-known/ai.txt`,
   `https://${HOST}/sitemap.xml`,
 ];
 

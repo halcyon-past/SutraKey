@@ -131,6 +131,9 @@ cd SutraKey
 - 🤝 **[Code of Conduct](CODE_OF_CONDUCT.md)** — Community standards and enforcement.
 - 🛡️ **[Security Policy](SECURITY.md)** — Vulnerability reporting and process isolation.
 - 📝 **[Changelog](CHANGELOG.md)** — Release history and semantic versioning notes.
+- 🤖 **[LLM Summary (llms.txt)](https://sutrakey.aritro.cloud/llms.txt)** — Machine-readable project overview for LLM agents.
+- 🧠 **[Full Technical Knowledge Base (llms-full.txt)](https://sutrakey.aritro.cloud/llms-full.txt)** — Complete system architecture for AI search.
+- 📡 **[AI Crawler Policy (ai.txt)](https://sutrakey.aritro.cloud/ai.txt)** — Permissions and verified entity identities.
 
 ---
 

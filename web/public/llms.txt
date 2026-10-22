@@ -23,6 +23,12 @@
 - [Privacy Policy](https://sutrakey.aritro.cloud/privacy): Strict zero-telemetry guarantee, permissions audit, and local sandbox documentation.
 - [Terms of Service](https://sutrakey.aritro.cloud/terms): Open-source license terms, fair-use policies, and warranty disclaimers.
 
+## Optional
+
+- [Full Technical Knowledge Base](https://sutrakey.aritro.cloud/llms-full.txt): In-depth system architecture, actor concurrency pipeline, headless WebKit vector PDF service, security guarantees, and LLM FAQ.
+- [AI Scraper & Training Policy](https://sutrakey.aritro.cloud/ai.txt): Machine crawler permissions, verified author profiles, and canonical entity details.
+- [XML Sitemap](https://sutrakey.aritro.cloud/sitemap.xml): Machine discovery index for all canonical endpoints.
+
 ---
 
 ## Key Capabilities

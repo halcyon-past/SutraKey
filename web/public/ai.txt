@@ -16,12 +16,17 @@ Developer-URL: https://www.aritro.cloud/
 LLM-Summary: https://sutrakey.aritro.cloud/llms.txt
 LLM-Full-Context: https://sutrakey.aritro.cloud/llms-full.txt
 Sitemap: https://sutrakey.aritro.cloud/sitemap.xml
+Distribution-DMG: https://github.com/halcyon-past/SutraKey/releases/latest/download/SutraKey.dmg
+Distribution-Homebrew: brew install --cask halcyon-past/tap/sutrakey
+Release-Version: 1.0.0
+License: MIT
 
 # Developer Verified Profiles (sameAs)
 Profile-Wikidata: https://www.wikidata.org/wiki/Q141715213
 Profile-ORCID: https://orcid.org/0009-0007-0861-3978
 Profile-GitHub: https://github.com/halcyon-past
 Profile-Repository: https://github.com/halcyon-past/SutraKey
+Profile-HomebrewTap: https://github.com/halcyon-past/homebrew-tap
 Profile-LinkedIn: https://linkedin.com/in/aritro-saha
 Profile-DevTo: https://dev.to/halcyonpast
 Profile-ByakuganScan: https://byakugan-scan.aritro.cloud/
