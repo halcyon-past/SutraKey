@@ -16,6 +16,7 @@
   <a href="https://developer.apple.com/macos/"><img src="https://img.shields.io/badge/macOS-14.0%2B%20Sonoma-black.svg?style=flat-square&logo=apple" alt="macOS"></a>
   <a href="https://swift.org"><img src="https://img.shields.io/badge/Swift-6.0-F05138.svg?style=flat-square&logo=swift" alt="Swift 6"></a>
   <a href="https://sutrakey.aritro.cloud"><img src="https://img.shields.io/badge/Website-sutrakey.aritro.cloud-orange.svg?style=flat-square" alt="Website"></a>
+  <a href="https://github.com/sponsors/halcyon-past"><img src="https://img.shields.io/badge/Sponsor-%E2%99%A5-ea4aaa.svg?style=flat-square&logo=githubsponsors" alt="Sponsor"></a>
   <img src="https://img.shields.io/badge/Telemetry-0%25-green.svg?style=flat-square" alt="Zero Telemetry">
 </p>
 

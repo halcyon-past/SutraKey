@@ -38,6 +38,11 @@ const nextConfig: NextConfig = {
         destination: "https://github.com/halcyon-past/homebrew-tap",
         permanent: false,
       },
+      {
+        source: "/sponsor",
+        destination: "https://github.com/sponsors/halcyon-past",
+        permanent: false,
+      },
     ];
   },
   async rewrites() {

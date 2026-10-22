@@ -158,6 +158,14 @@ export function Footer() {
             >
               Issue Tracker
             </a>
+            <a
+              href="https://github.com/sponsors/halcyon-past"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1.5 text-pink-500 hover:text-pink-600 dark:hover:text-pink-400 font-medium transition-colors"
+            >
+              <span>♥ Sponsor Project</span>
+            </a>
           </div>
         </div>
 
