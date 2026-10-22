@@ -2,11 +2,20 @@
 
 All notable changes to **SutraKey** will be documented in this file.
 
-This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) and follows the [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) format.
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
+and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
-## [1.0.0] — 2026-10-21
+## [Unreleased]
+
+### Added
+- Automated release workflow strictly gated on PR merges to `main` and version increments.
+- Root `CHANGELOG.md` release notes verification step in CI/CD pipeline.
+
+---
+
+## [1.0.0] - 2026-10-21
 
 ### Added
 - **Radial Selection HUD:**

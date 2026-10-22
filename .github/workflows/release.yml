@@ -1,13 +1,11 @@
 name: Publish Release & DMG Installer
 
 on:
-  push:
+  pull_request:
     branches:
       - main
-    paths:
-      - 'Sources/SutraKey/Models/AppConstants.swift'
-      - 'Casks/sutrakey.rb'
-      - 'Package.swift'
+    types:
+      - closed
   workflow_dispatch:
     inputs:
       custom_message:
@@ -28,32 +26,17 @@ jobs:
   release:
     name: Build, Package & Publish Release
     runs-on: macos-14
+    if: |
+      (github.event_name == 'pull_request' && github.event.pull_request.merged == true) ||
+      (github.event_name == 'workflow_dispatch')
 
     steps:
-      - name: Checkout Code
+      - name: Checkout Merged Main Branch
         uses: actions/checkout@v4
         with:
+          ref: main
           fetch-depth: 0
           token: ${{ secrets.HOMEBREW_TAP_TOKEN || secrets.GITHUB_TOKEN }}
-
-      - name: Select Xcode 16 (Swift 6)
-        run: |
-          XCODE_LATEST=$(ls -d /Applications/Xcode_16*.app 2>/dev/null | sort -V | tail -n 1)
-          if [ -n "$XCODE_LATEST" ]; then
-            echo "Selecting $XCODE_LATEST"
-            sudo xcode-select -s "$XCODE_LATEST"
-          fi
-          swift --version
-
-      - name: Set Up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.12"
-
-      - name: Install Python Dependencies
-        run: |
-          pip install --upgrade pip
-          pip install pillow numpy
 
       - name: Extract Current App Version
         id: version
@@ -77,34 +60,72 @@ jobs:
           echo "🔍 Checking if release $TAG_NAME already exists in ${{ github.repository }}..."
 
           if gh release view "$TAG_NAME" --repo "${{ github.repository }}" >/dev/null 2>&1; then
-            if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
-              echo "::warning::Release $TAG_NAME already exists on GitHub, will update assets."
-            fi
             echo "ℹ️ Release $TAG_NAME already exists on GitHub."
+            echo "🛑 The version in AppConstants.swift ($CURRENT_VERSION) has NOT been changed."
+            echo "⏭️ Skipping release creation. No new release will take place until the version is incremented."
             echo "is_new_release=false" >> $GITHUB_OUTPUT
           else
-            echo "✅ Verified: $TAG_NAME is a new version. Proceeding with full release build."
+            echo "✅ Verified: $TAG_NAME is a new, unpublished version! Proceeding with full release build."
             echo "is_new_release=true" >> $GITHUB_OUTPUT
           fi
 
+      - name: Validate CHANGELOG.md Entry for Version
+        if: steps.check-version.outputs.is_new_release == 'true'
+        shell: bash
+        run: |
+          echo "🔍 Checking that CHANGELOG.md documents version $CURRENT_VERSION..."
+          if ! grep -q "## \[${CURRENT_VERSION}\]" CHANGELOG.md; then
+            echo "::error::Release notes for version $CURRENT_VERSION are missing from CHANGELOG.md!"
+            echo "❌ THE RELEASE WAS HALTED: CHANGELOG.md does not contain a '## [$CURRENT_VERSION]' entry."
+            echo "Please add '## [$CURRENT_VERSION] - YYYY-MM-DD' with release notes in CHANGELOG.md before releasing."
+            exit 1
+          fi
+          echo "✅ Verified: CHANGELOG.md contains release notes for version $CURRENT_VERSION."
+
+      - name: Select Xcode 16 (Swift 6)
+        if: steps.check-version.outputs.is_new_release == 'true'
+        run: |
+          XCODE_LATEST=$(ls -d /Applications/Xcode_16*.app 2>/dev/null | sort -V | tail -n 1)
+          if [ -n "$XCODE_LATEST" ]; then
+            echo "Selecting $XCODE_LATEST"
+            sudo xcode-select -s "$XCODE_LATEST"
+          fi
+          swift --version
+
+      - name: Set Up Python
+        if: steps.check-version.outputs.is_new_release == 'true'
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install Python Dependencies
+        if: steps.check-version.outputs.is_new_release == 'true'
+        run: |
+          pip install --upgrade pip
+          pip install pillow numpy
+
       - name: Verify Icons & Build ICNS
+        if: steps.check-version.outputs.is_new_release == 'true'
         shell: bash
         run: |
           python3 Scripts/generate_icons.py
           bash Scripts/build_icns.sh
 
       - name: Execute Automated Test Suites
+        if: steps.check-version.outputs.is_new_release == 'true'
         shell: bash
         run: |
           swift test
 
       - name: Build Signed App & Package Installer DMG
+        if: steps.check-version.outputs.is_new_release == 'true'
         shell: bash
         run: |
           chmod +x ./Scripts/package_dmg.sh
           ./Scripts/package_dmg.sh
 
       - name: Verify Release Artifacts & Compute DMG SHA-256
+        if: steps.check-version.outputs.is_new_release == 'true'
         shell: bash
         run: |
           for file in "build/SutraKey.dmg" "build/SutraKey-v$CURRENT_VERSION.dmg" "build/SutraKey.zip" "build/SutraKey-v$CURRENT_VERSION.zip"; do
@@ -119,6 +140,7 @@ jobs:
           echo "🔐 Computed DMG SHA-256: $DMG_SHA256"
 
       - name: Generate Formatted Release Notes
+        if: steps.check-version.outputs.is_new_release == 'true'
         shell: bash
         env:
           CUSTOM_MESSAGE: ${{ github.event.inputs.custom_message }}
@@ -127,35 +149,27 @@ jobs:
           python3 Scripts/generate_release_notes.py \
             --version "$CURRENT_VERSION" \
             --custom-message "$CUSTOM_MESSAGE" \
-            --changelog "docs/CHANGELOG.md" \
+            --changelog "CHANGELOG.md" \
             --output "RELEASE_NOTES.md" \
             --repo "${{ github.repository }}"
 
       - name: Publish GitHub Release & Upload Assets
+        if: steps.check-version.outputs.is_new_release == 'true'
         shell: bash
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           echo "🚀 Publishing GitHub Release $TAG_NAME and attaching DMG and ZIP installers..."
-          if gh release view "$TAG_NAME" >/dev/null 2>&1; then
-            echo "ℹ️ Release $TAG_NAME already exists, updating assets with --clobber..."
-            gh release upload "$TAG_NAME" \
-              "build/SutraKey.dmg#SutraKey.dmg (Latest Direct Download)" \
-              "build/SutraKey-v$CURRENT_VERSION.dmg#SutraKey-v$CURRENT_VERSION.dmg" \
-              "build/SutraKey.zip#SutraKey.zip (In-Place Auto-Updater)" \
-              "build/SutraKey-v$CURRENT_VERSION.zip#SutraKey-v$CURRENT_VERSION.zip" \
-              --clobber
-          else
-            gh release create "$TAG_NAME" \
-              "build/SutraKey.dmg#SutraKey.dmg (Latest Direct Download)" \
-              "build/SutraKey-v$CURRENT_VERSION.dmg#SutraKey-v$CURRENT_VERSION.dmg" \
-              "build/SutraKey.zip#SutraKey.zip (In-Place Auto-Updater)" \
-              "build/SutraKey-v$CURRENT_VERSION.zip#SutraKey-v$CURRENT_VERSION.zip" \
-              --title "SutraKey v$CURRENT_VERSION" \
-              --notes-file "RELEASE_NOTES.md"
-          fi
+          gh release create "$TAG_NAME" \
+            "build/SutraKey.dmg#SutraKey.dmg (Latest Direct Download)" \
+            "build/SutraKey-v$CURRENT_VERSION.dmg#SutraKey-v$CURRENT_VERSION.dmg" \
+            "build/SutraKey.zip#SutraKey.zip (In-Place Auto-Updater)" \
+            "build/SutraKey-v$CURRENT_VERSION.zip#SutraKey-v$CURRENT_VERSION.zip" \
+            --title "SutraKey v$CURRENT_VERSION" \
+            --notes-file "RELEASE_NOTES.md"
 
       - name: Synchronize Homebrew Cask (Local + halcyon-past/homebrew-tap)
+        if: steps.check-version.outputs.is_new_release == 'true'
         shell: bash
         env:
           HOMEBREW_TAP_TOKEN: ${{ secrets.HOMEBREW_TAP_TOKEN }}

@@ -130,7 +130,7 @@ cd SutraKey
 - 📜 **[Terms of Service](docs/TERMS_OF_SERVICE.md)** — Fair use guidelines and open-source terms.
 - 🤝 **[Code of Conduct](CODE_OF_CONDUCT.md)** — Community standards and enforcement.
 - 🛡️ **[Security Policy](SECURITY.md)** — Vulnerability reporting and process isolation.
-- 📝 **[Changelog](docs/CHANGELOG.md)** — Release history and semantic versioning notes.
+- 📝 **[Changelog](CHANGELOG.md)** — Release history and semantic versioning notes.
 
 ---
 
