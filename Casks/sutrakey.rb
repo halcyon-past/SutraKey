@@ -1,6 +1,6 @@
 cask "sutrakey" do
-  version "1.0.1"
-  sha256 "9edffa490831e2be948739745722b813fe28b3870f5473fc76e6880e80a92db1"
+  version "1.0.2"
+  sha256 "7c5dfee73ec884aa90e0d4654738b3ed3763252d9d8b20129f768b44424b81ed"
 
   url "https://github.com/halcyon-past/SutraKey/releases/download/v#{version}/SutraKey-v#{version}.dmg"
   name "SutraKey"

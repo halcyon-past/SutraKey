@@ -11,6 +11,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [1.0.2] - 2026-10-23
+
+### Added
+- **Application Shortcuts Toggle in Settings:** Added a dedicated "Application Shortcuts" toggle in Settings → General allowing users to turn global shortcuts, gestures, and selection menus ON or OFF at any time without quitting the app.
+- **Global Master Hotkey (`⌘⇧0` / `Cmd + Shift + 0`):** Added a system-wide hotkey (`kVK_ANSI_0` with `cmdKey | shiftKey`, plus `⌥⇧0` fallback) that instantly pauses or resumes all SutraKey shortcuts and gesture monitors from any macOS application.
+- **System HUD Toast Notifications:** Integrated HUD toast feedback via `SutraToastController` displaying an immediate visual status badge (*"Shortcuts Enabled"* / *"Shortcuts Paused"*) whenever shortcuts are toggled via hotkey, settings, or menu bar.
+- **Menu Bar & Popover Status Indicators:** Added active shortcut state display and quick-toggle action directly in the menu bar right-click context menu and the Progress Popover header.
+- **In-App & Web Documentation:** Updated support documentation table in both the web support portal (`/support`) and documentation with the new `⌘⇧0` master toggle shortcut.
+
+### Fixed
+- **Menu Bar Icon Visibility on Launch:** Resolved an issue where the menu bar icon could fail to display or render as an empty placeholder on cold application start. Ensured that `MenuBarIcon.templateImage` is properly initialized as a template image with fixed dimensions (18x18pt) before binding to `NSStatusBar.system.statusItem`.
+
+### Changed
+- **Packaging Script Flexibility:** Added `--no-launch` flag support to `package_and_install.sh` to allow rebuilding and deploying local application updates without forcibly launching the application process.
+- **Automated Test Coverage:** Added unit test suite `testShortcutsEnabledToggle` in `PreferencesAndUpdateTests.swift` validating setting toggle logic, persistence, and state flipping.
+
+---
+
 ## [1.0.1] - 2026-10-22
 
 ### Fixed
