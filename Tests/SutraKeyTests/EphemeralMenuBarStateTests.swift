@@ -19,6 +19,19 @@ struct EphemeralMenuBarStateTests {
         #expect(controller.isIconVisible == false)
     }
 
+    @Test("Menu bar icon is visible on launch when keepStatusBarVisible is true")
+    @MainActor
+    func testMenuBarVisibleWhenPreferenceEnabled() {
+        let originalPref = PreferencesManager.shared.keepStatusBarVisible
+        defer { PreferencesManager.shared.keepStatusBarVisible = originalPref }
+        PreferencesManager.shared.keepStatusBarVisible = true
+
+        let controller = EphemeralStatusBarController()
+        controller.updateVisibility()
+
+        #expect(controller.isIconVisible == true)
+    }
+
     @Test("Menu bar appears on task start and hides on finish")
     @MainActor
     func testMenuBarAppearsOnTaskStartAndHidesOnFinish() {

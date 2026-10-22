@@ -144,10 +144,11 @@ public final class EphemeralStatusBarController: NSObject, ObservableObject {
 
     public func updateVisibility() {
         let shouldBeVisible = !activeTasks.isEmpty || PreferencesManager.shared.keepStatusBarVisible
-        if shouldBeVisible && !isIconVisible {
+        if shouldBeVisible {
             isIconVisible = true
             setupStatusItemIfNeeded()
-        } else if !shouldBeVisible && isIconVisible {
+            updateStatusItemDisplay()
+        } else {
             hideStatusItem()
         }
     }
@@ -156,6 +157,7 @@ public final class EphemeralStatusBarController: NSObject, ObservableObject {
         guard allowsSystemStatusItem else { return }
         guard statusItem == nil else {
             statusItem?.isVisible = true
+            updateStatusItemDisplay()
             return
         }
 
@@ -169,14 +171,57 @@ public final class EphemeralStatusBarController: NSObject, ObservableObject {
         }
 
         self.statusItem = item
+        updateStatusItemDisplay()
+    }
+
+    private func loadMenuBarIcon() -> NSImage? {
+        #if SWIFT_PACKAGE
+        if let img = Bundle.module.image(forResource: "MenuBarIcon") {
+            img.size = NSSize(width: 18, height: 18)
+            img.isTemplate = true
+            return img
+        }
+        if let url = Bundle.module.url(forResource: "MenuBarIcon@2x", withExtension: "png", subdirectory: "Assets.xcassets/MenuBarIcon.imageset") ??
+                     Bundle.module.url(forResource: "MenuBarIcon@1x", withExtension: "png", subdirectory: "Assets.xcassets/MenuBarIcon.imageset"),
+           let img = NSImage(contentsOf: url) {
+            img.size = NSSize(width: 18, height: 18)
+            img.isTemplate = true
+            return img
+        }
+        #endif
+
+        if let img = Bundle.main.image(forResource: "MenuBarIcon") {
+            img.size = NSSize(width: 18, height: 18)
+            img.isTemplate = true
+            return img
+        }
+
+        if let path = Bundle.main.path(forResource: "MenuBarIcon", ofType: "png") ?? Bundle.main.path(forResource: "MenuBarIcon@2x", ofType: "png"),
+           let img = NSImage(contentsOfFile: path) {
+            img.size = NSSize(width: 18, height: 18)
+            img.isTemplate = true
+            return img
+        }
+
+        if let img = NSImage(named: "MenuBarIcon") {
+            img.size = NSSize(width: 18, height: 18)
+            img.isTemplate = true
+            return img
+        }
+
+        if let sfImage = NSImage(systemSymbolName: "arrow.down.circle.fill", accessibilityDescription: "SutraKey") {
+            sfImage.isTemplate = true
+            return sfImage
+        }
+
+        return nil
     }
 
     private func updateStatusItemDisplay() {
         guard allowsSystemStatusItem, let item = statusItem, let button = item.button else { return }
 
         // Load custom template image if available
-        if let image = NSImage(named: "MenuBarIcon") ?? NSImage(systemSymbolName: "arrow.down.circle.fill", accessibilityDescription: "SutraKey") {
-            image.isTemplate = true
+        if let image = loadMenuBarIcon() {
             button.image = image
             button.imagePosition = .imageLeading
         }

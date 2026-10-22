@@ -68,6 +68,7 @@ ASSETS_DIR="$ROOT_DIR/Sources/SutraKey/Resources/Assets.xcassets"
 if [ -d "$ASSETS_DIR/MenuBarIcon.imageset" ]; then
     cp "$ASSETS_DIR/MenuBarIcon.imageset/MenuBarIcon@1x.png" "$APP_BUNDLE/Contents/Resources/MenuBarIcon.png" 2>/dev/null || true
     cp "$ASSETS_DIR/MenuBarIcon.imageset/MenuBarIcon@2x.png" "$APP_BUNDLE/Contents/Resources/MenuBarIcon@2x.png" 2>/dev/null || true
+    cp "$ASSETS_DIR/MenuBarIcon.imageset/MenuBarIcon@1x.png" "$APP_BUNDLE/Contents/Resources/MenuBarIcon@1x.png" 2>/dev/null || true
 fi
 
 # Bundle yt-dlp & ffmpeg if available

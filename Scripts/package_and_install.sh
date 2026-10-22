@@ -62,6 +62,7 @@ ASSETS_DIR="$ROOT_DIR/Sources/SutraKey/Resources/Assets.xcassets"
 if [ -d "$ASSETS_DIR/MenuBarIcon.imageset" ]; then
     cp "$ASSETS_DIR/MenuBarIcon.imageset/MenuBarIcon@1x.png" "$TARGET_APP/Contents/Resources/MenuBarIcon.png" 2>/dev/null || true
     cp "$ASSETS_DIR/MenuBarIcon.imageset/MenuBarIcon@2x.png" "$TARGET_APP/Contents/Resources/MenuBarIcon@2x.png" 2>/dev/null || true
+    cp "$ASSETS_DIR/MenuBarIcon.imageset/MenuBarIcon@1x.png" "$TARGET_APP/Contents/Resources/MenuBarIcon@1x.png" 2>/dev/null || true
 fi
 
 # 6. Bundle yt-dlp & ffmpeg if available locally
@@ -112,6 +113,8 @@ fi
 
 echo "✨ Successfully installed SutraKey to $TARGET_APP"
 
-# 11. Relaunch SutraKey in the background
-open "$TARGET_APP"
-echo "🚀 Relaunched SutraKey from $TARGET_APP"
+# 11. Relaunch SutraKey in the background (unless --no-launch passed)
+if [ "${1:-}" != "--no-launch" ]; then
+    open "$TARGET_APP"
+    echo "🚀 Relaunched SutraKey from $TARGET_APP"
+fi
