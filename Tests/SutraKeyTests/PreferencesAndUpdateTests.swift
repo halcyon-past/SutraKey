@@ -48,10 +48,10 @@ struct PreferencesAndUpdateTests {
         prefs.shortcutsEnabled = true
         #expect(prefs.shortcutsEnabled == true)
 
-        prefs.toggleShortcuts()
+        prefs.toggleShortcuts(showToast: false)
         #expect(prefs.shortcutsEnabled == false)
 
-        prefs.toggleShortcuts()
+        prefs.toggleShortcuts(showToast: false)
         #expect(prefs.shortcutsEnabled == true)
     }
 

@@ -264,8 +264,9 @@ public final class PreferencesManager: ObservableObject {
     }
 
     /// Toggles the shortcutsEnabled state and displays an informative HUD toast notification.
-    public func toggleShortcuts() {
+    public func toggleShortcuts(showToast: Bool = true) {
         self.shortcutsEnabled.toggle()
+        guard showToast else { return }
         if self.shortcutsEnabled {
             SutraToastController.shared.showNotice(
                 title: "Shortcuts Enabled",

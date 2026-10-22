@@ -17,7 +17,13 @@ public final class SutraToastController: NSObject {
         setupSystemNotificationPermissions()
     }
 
+    private var isRunningInApp: Bool {
+        guard let bundleId = Bundle.main.bundleIdentifier, !bundleId.isEmpty else { return false }
+        return Bundle.main.bundleURL.pathExtension == "app"
+    }
+
     private func setupSystemNotificationPermissions() {
+        guard isRunningInApp else { return }
         UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound]) { _, _ in }
     }
 
@@ -67,7 +73,7 @@ public final class SutraToastController: NSObject {
     private func showToast(type: ToastType) {
         dismissToast()
 
-        guard let screen = NSScreen.main else { return }
+        guard isRunningInApp, let screen = NSScreen.main else { return }
         let screenFrame = screen.visibleFrame
         let panelWidth: CGFloat = 340.0
         let panelHeight: CGFloat = 90.0
@@ -121,6 +127,7 @@ public final class SutraToastController: NSObject {
     // MARK: - Native Notifications
 
     private func postSystemNotification(title: String, subtitle: String, body: String) {
+        guard isRunningInApp else { return }
         let content = UNMutableNotificationContent()
         content.title = title
         content.subtitle = subtitle
