@@ -47,7 +47,8 @@ def generate_notes(version: str, custom_message: str = "", changelog_path: str =
         clean_msg = custom_message.strip()
         lines.append(f"> **Announcement:**\n> {clean_msg}\n")
 
-    lines.append(changelog_content)
+    clean_changelog = re.sub(r"\n---\s*$", "", changelog_content.strip()).strip()
+    lines.append(clean_changelog)
     lines.append("\n---\n")
     lines.append("### 📦 Installation Options\n")
     lines.append("#### Homebrew Cask (Recommended)\n")
