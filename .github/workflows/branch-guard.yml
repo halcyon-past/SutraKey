@@ -33,7 +33,13 @@ jobs:
             exit 0
           fi
 
-          # 3. Non-core branches (local or forked) must match feature/<env>/<name> or hotfix/<name>
+          # 3. Dependabot automated dependency update branches are permitted
+          if [[ "$HEAD_REF" =~ ^dependabot/.*$ ]]; then
+            echo "✅ Valid Dependabot branch: '$HEAD_REF'"
+            exit 0
+          fi
+
+          # 4. Non-core branches (local or forked) must match feature/<env>/<name> or hotfix/<name>
           if [[ "$HEAD_REF" =~ ^feature/(dev|uat|main)/[a-z0-9-]+$ ]] || [[ "$HEAD_REF" =~ ^hotfix/[a-z0-9-]+$ ]]; then
             echo "✅ Valid feature/hotfix branch naming convention: '$HEAD_REF'"
             exit 0
@@ -44,4 +50,5 @@ jobs:
           echo "  - Core branches: dev, uat, main"
           echo "  - Feature branches: feature/<dev|uat|main>/<feature-name> (lowercase alphanumeric & hyphens)"
           echo "  - Hotfix branches:  hotfix/<feature-name>"
+          echo "  - Dependabot branches: dependabot/*"
           exit 1

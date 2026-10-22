@@ -37,7 +37,7 @@ export function Footer() {
         </div>
 
         {/* Link Columns */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-6 pt-2">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-8 pt-2">
           {/* Column 1: Product & Docs */}
           <div className="flex flex-col gap-2">
             <span className="font-semibold text-neutral-900 dark:text-white text-xs uppercase tracking-wider">
@@ -86,26 +86,7 @@ export function Footer() {
             </a>
           </div>
 
-          {/* Column 3: AI & Machine Endpoints */}
-          <div className="flex flex-col gap-2">
-            <span className="font-semibold text-neutral-900 dark:text-white text-xs uppercase tracking-wider">
-              Machine Endpoints
-            </span>
-            <a href="/llms.txt" className="hover:text-black dark:hover:text-white font-mono text-[11px] transition-colors">
-              llms.txt (LLM Summary)
-            </a>
-            <a href="/llms-full.txt" className="hover:text-black dark:hover:text-white font-mono text-[11px] transition-colors">
-              llms-full.txt (Full KB)
-            </a>
-            <a href="/ai.txt" className="hover:text-black dark:hover:text-white font-mono text-[11px] transition-colors">
-              ai.txt (Crawler Policy)
-            </a>
-            <a href="/sitemap.xml" className="hover:text-black dark:hover:text-white font-mono text-[11px] transition-colors">
-              sitemap.xml
-            </a>
-          </div>
-
-          {/* Column 4: Community & Source */}
+          {/* Column 3: Community & Source */}
           <div className="flex flex-col gap-2">
             <span className="font-semibold text-neutral-900 dark:text-white text-xs uppercase tracking-wider">
               Open Source

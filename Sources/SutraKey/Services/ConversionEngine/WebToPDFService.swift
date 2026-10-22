@@ -10,6 +10,7 @@ import WebKit
 @MainActor
 public final class WebToPDFService: NSObject, WKNavigationDelegate {
     private var webView: WKWebView?
+    private var offscreenWindow: NSWindow?
     private var continuation: CheckedContinuation<URL, Error>?
     private var sourceURL: URL?
     private var onStageUpdate: ((String, Double) -> Void)?
@@ -34,7 +35,6 @@ public final class WebToPDFService: NSObject, WKNavigationDelegate {
             onStageUpdate?("Loading webpage...", 0.2)
 
             let config = WKWebViewConfiguration()
-            config.suppressesIncrementalRendering = true
             config.mediaTypesRequiringUserActionForPlayback = .all
 
             // Inject CSS to suppress floating cookie consent popups and GDPR banners
@@ -53,16 +53,30 @@ public final class WebToPDFService: NSObject, WKNavigationDelegate {
             config.userContentController.addUserScript(userScript)
 
             // Desktop viewport dimensions for full desktop layout fidelity
-            let view = WKWebView(frame: CGRect(x: 0, y: 0, width: 1280, height: 900), configuration: config)
+            let initialRect = CGRect(x: 0, y: 0, width: 1280, height: 900)
+            let view = WKWebView(frame: initialRect, configuration: config)
+            view.customUserAgent = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.0 Safari/605.1.15"
             view.navigationDelegate = self
             self.webView = view
 
-            // Safety timeout (20 seconds) in case of hanging scripts
+            // Attach to an offscreen NSWindow so WebKit assigns a display link and RunningBoard does not throttle/suspend WebContent
+            let window = NSWindow(
+                contentRect: CGRect(x: -10000, y: -10000, width: 1280, height: 900),
+                styleMask: [.borderless],
+                backing: .buffered,
+                defer: false
+            )
+            window.isReleasedWhenClosed = false
+            window.contentView = view
+            window.orderBack(nil)
+            self.offscreenWindow = window
+
+            // Safety timeout (25 seconds) in case of hanging scripts
             self.timeoutTask = Task { [weak self] in
-                try? await Task.sleep(nanoseconds: 20_000_000_000)
+                try? await Task.sleep(nanoseconds: 25_000_000_000)
                 guard let self = self, self.continuation != nil, !self.isGenerating else { return }
                 Logger.conversion.warning("WebToPDF navigation reached timeout. Generating PDF with currently loaded state.")
-                self.captureAndPaginate()
+                self.measureAndCapture()
             }
 
             let request = URLRequest(url: url)
@@ -76,10 +90,10 @@ public final class WebToPDFService: NSObject, WKNavigationDelegate {
         guard !isGenerating else { return }
         onStageUpdate?("Rendering layout & graphics...", 0.6)
 
-        // Allow dynamic JavaScript, fonts, and graphics to settle
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.8) { [weak self] in
+        // Allow dynamic JavaScript hydration, web fonts, and graphics to settle
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.2) { [weak self] in
             guard let self = self, self.continuation != nil, !self.isGenerating else { return }
-            self.captureAndPaginate()
+            self.measureAndCapture()
         }
     }
 
@@ -97,13 +111,53 @@ public final class WebToPDFService: NSObject, WKNavigationDelegate {
 
     // MARK: - Asynchronous Capture & Slicing
 
-    private func captureAndPaginate() {
-        guard let webView = self.webView, let continuation = self.continuation, !isGenerating else { return }
+    private func measureAndCapture() {
+        guard let webView = self.webView, self.continuation != nil, !isGenerating else { return }
         self.isGenerating = true
 
         self.timeoutTask?.cancel()
         self.timeoutTask = nil
 
+        let measureJS = """
+        (function() {
+            var body = document.body;
+            var html = document.documentElement;
+            return Math.max(
+                body ? body.scrollHeight : 0,
+                body ? body.offsetHeight : 0,
+                html ? html.clientHeight : 0,
+                html ? html.scrollHeight : 0,
+                html ? html.offsetHeight : 0,
+                window.innerHeight
+            );
+        })();
+        """
+
+        webView.evaluateJavaScript(measureJS) { [weak self] result, error in
+            guard let self = self else { return }
+            let contentHeight: CGFloat
+            if let h = result as? CGFloat, h > 100 {
+                contentHeight = h
+            } else if let num = result as? NSNumber, num.doubleValue > 100 {
+                contentHeight = CGFloat(num.doubleValue)
+            } else {
+                contentHeight = 900
+            }
+
+            // Adjust webview and window to match true content height for full page rendering
+            let fullRect = CGRect(x: 0, y: 0, width: 1280, height: contentHeight)
+            webView.frame = fullRect
+            self.offscreenWindow?.setContentSize(CGSize(width: 1280, height: contentHeight))
+
+            // Allow layout pass at new dimensions before capturing PDF
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                self.performCapture(fullHeight: contentHeight)
+            }
+        }
+    }
+
+    private func performCapture(fullHeight: CGFloat) {
+        guard let webView = self.webView, let continuation = self.continuation else { return }
         onStageUpdate?("Capturing document...", 0.75)
 
         // Resolve document title
@@ -121,6 +175,8 @@ public final class WebToPDFService: NSObject, WKNavigationDelegate {
 
         // Use modern asynchronous WKPDFConfiguration (100% non-blocking)
         let pdfConfig = WKPDFConfiguration()
+        pdfConfig.rect = CGRect(x: 0, y: 0, width: 1280, height: fullHeight)
+
         webView.createPDF(configuration: pdfConfig) { [weak self] result in
             guard let self = self else { return }
             switch result {
@@ -180,6 +236,9 @@ public final class WebToPDFService: NSObject, WKNavigationDelegate {
             pdfContext.beginPage(mediaBox: &mediaBox)
             pdfContext.saveGState()
 
+            // Clip strictly to A4 page dimensions to prevent overflow leakage across page bounds
+            pdfContext.clip(to: CGRect(x: 0, y: 0, width: a4Width, height: a4Height))
+
             // Scale coordinates to fit A4 width
             pdfContext.scaleBy(x: scale, y: scale)
 
@@ -204,6 +263,9 @@ public final class WebToPDFService: NSObject, WKNavigationDelegate {
         self.onStageUpdate = nil
         self.webView?.navigationDelegate = nil
         self.webView = nil
+        self.offscreenWindow?.orderOut(nil)
+        self.offscreenWindow?.contentView = nil
+        self.offscreenWindow = nil
         self.isGenerating = false
     }
 }

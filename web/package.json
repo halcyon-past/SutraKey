@@ -15,13 +15,13 @@
     "lucide-react": "^1.60.0",
     "motion": "^14.4.0",
     "next": "16.4.2",
-    "react": "19.3.0",
-    "react-dom": "19.3.0",
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1",
     "vaso": "^1.0.2"
   },
   "devDependencies": {
     "@tailwindcss/turbopack": "^4",
-    "@types/node": "^20",
+    "@types/node": "^26.6.5",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "eslint": "^9",

@@ -80,8 +80,8 @@ while read local_ref local_sha remote_ref remote_sha; do
         continue
     fi
 
-    # Check Feature / Hotfix branch patterns
-    if [[ "$branch_name" =~ ^feature/(main|uat|dev)/[a-z0-9-]+$ ]] || [[ "$branch_name" =~ ^hotfix/[a-z0-9-]+$ ]]; then
+    # Check Feature / Hotfix / Dependabot branch patterns
+    if [[ "$branch_name" =~ ^feature/(main|uat|dev)/[a-z0-9-]+$ ]] || [[ "$branch_name" =~ ^hotfix/[a-z0-9-]+$ ]] || [[ "$branch_name" =~ ^dependabot/.*$ ]]; then
         continue
     fi
 

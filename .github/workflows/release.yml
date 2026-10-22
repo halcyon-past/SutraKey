@@ -32,7 +32,7 @@ jobs:
 
     steps:
       - name: Checkout Merged Main Branch
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           ref: main
           fetch-depth: 0
@@ -94,7 +94,7 @@ jobs:
 
       - name: Set Up Python
         if: steps.check-version.outputs.is_new_release == 'true'
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v7
         with:
           python-version: "3.12"
 
