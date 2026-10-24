@@ -81,6 +81,17 @@ public struct ProgressPopoverView: View {
                 }
                 .buttonStyle(.plain)
                 .help("Settings (⌘,)")
+
+                // Quit Button
+                Button {
+                    NSApp.terminate(nil)
+                } label: {
+                    Image(systemName: "power")
+                        .font(.system(size: 11))
+                        .foregroundColor(.secondary)
+                }
+                .buttonStyle(.plain)
+                .help("Quit SutraKey")
             }
             .padding(.horizontal, 2)
 

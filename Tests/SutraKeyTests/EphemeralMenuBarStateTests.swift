@@ -81,4 +81,26 @@ struct EphemeralMenuBarStateTests {
         #expect(controller.activeTasks.isEmpty)
         #expect(controller.isIconVisible == false)
     }
+
+    @Test("Status bar right-click menu items are all enabled and wired to targets")
+    @MainActor
+    func testContextMenuItemsEnabled() {
+        let controller = EphemeralStatusBarController.shared
+        let menu = controller.createContextMenu()
+        menu.update()
+
+        #expect(menu.autoenablesItems == false)
+        #expect(menu.items.count >= 5)
+
+        for item in menu.items where !item.isSeparatorItem {
+            #expect(item.target === controller)
+            #expect(item.isEnabled == true)
+            #expect(controller.validateMenuItem(item) == true)
+        }
+
+        let quitItem = menu.items.first { $0.title.contains("Quit") }
+        #expect(quitItem != nil)
+        #expect(quitItem?.action == #selector(controller.quitApp(_:)))
+        #expect(quitItem?.isEnabled == true)
+    }
 }

@@ -238,33 +238,21 @@ public final class EphemeralStatusBarController: NSObject, ObservableObject {
         }
     }
 
-    @objc private func statusItemClicked() {
+    @objc public func statusItemClicked() {
         guard let button = statusItem?.button else { return }
 
-        // Handle right-click context menu
-        if let currentEvent = NSApp.currentEvent, currentEvent.type == .rightMouseUp {
-            let menu = NSMenu()
-            let isEnabled = PreferencesManager.shared.shortcutsEnabled
-            let toggleItem = NSMenuItem(
-                title: isEnabled ? "Shortcuts: Active (⌘⇧0 to pause)" : "Shortcuts: Paused (⌘⇧0 to resume)",
-                action: #selector(toggleShortcuts),
-                keyEquivalent: ""
-            )
-            toggleItem.state = isEnabled ? .on : .off
-            menu.addItem(toggleItem)
-            menu.addItem(NSMenuItem.separator())
-            menu.addItem(NSMenuItem(title: "Settings...", action: #selector(openSettings), keyEquivalent: ","))
-            menu.addItem(NSMenuItem(title: "Check for Updates...", action: #selector(checkForUpdates), keyEquivalent: "u"))
-            menu.addItem(NSMenuItem(title: "Open Downloads Folder", action: #selector(openDownloadsFolder), keyEquivalent: "o"))
-            menu.addItem(NSMenuItem.separator())
-            menu.addItem(NSMenuItem(title: "Quit SutraKey", action: #selector(quitApp), keyEquivalent: "q"))
+        // Handle right-click context menu (right-click or Control + left-click)
+        let isRightClick = NSApp.currentEvent?.type == .rightMouseUp ||
+            (NSApp.currentEvent?.type == .leftMouseUp && NSApp.currentEvent?.modifierFlags.contains(.control) == true)
 
+        if isRightClick {
+            if let pop = popover, pop.isShown {
+                pop.performClose(nil)
+            }
+
+            let menu = createContextMenu()
             statusItem?.menu = menu
             button.performClick(nil)
-            // Reset menu so next left-click opens popover
-            DispatchQueue.main.async { [weak self] in
-                self?.statusItem?.menu = nil
-            }
             return
         }
 
@@ -292,27 +280,88 @@ public final class EphemeralStatusBarController: NSObject, ObservableObject {
         pop.show(relativeTo: button.bounds, of: button, preferredEdge: .minY)
     }
 
-    @objc private func toggleShortcuts() {
+    /// Creates and configures the right-click context menu with explicit targets and enabled states.
+    public func createContextMenu() -> NSMenu {
+        let menu = NSMenu(title: "SutraKey")
+        menu.autoenablesItems = false
+        menu.delegate = self
+
+        let isEnabled = PreferencesManager.shared.shortcutsEnabled
+        let toggleItem = NSMenuItem(
+            title: isEnabled ? "Shortcuts: Active (⌘⇧0 to pause)" : "Shortcuts: Paused (⌘⇧0 to resume)",
+            action: #selector(toggleShortcuts(_:)),
+            keyEquivalent: ""
+        )
+        toggleItem.target = self
+        toggleItem.isEnabled = true
+        toggleItem.state = isEnabled ? .on : .off
+        menu.addItem(toggleItem)
+
+        menu.addItem(NSMenuItem.separator())
+
+        let settingsItem = NSMenuItem(title: "Settings...", action: #selector(openSettings(_:)), keyEquivalent: ",")
+        settingsItem.target = self
+        settingsItem.isEnabled = true
+        menu.addItem(settingsItem)
+
+        let updatesItem = NSMenuItem(title: "Check for Updates...", action: #selector(checkForUpdates(_:)), keyEquivalent: "u")
+        updatesItem.target = self
+        updatesItem.isEnabled = true
+        menu.addItem(updatesItem)
+
+        let downloadsItem = NSMenuItem(title: "Open Downloads Folder", action: #selector(openDownloadsFolder(_:)), keyEquivalent: "o")
+        downloadsItem.target = self
+        downloadsItem.isEnabled = true
+        menu.addItem(downloadsItem)
+
+        menu.addItem(NSMenuItem.separator())
+
+        let quitItem = NSMenuItem(title: "Quit SutraKey", action: #selector(quitApp(_:)), keyEquivalent: "q")
+        quitItem.target = self
+        quitItem.isEnabled = true
+        menu.addItem(quitItem)
+
+        return menu
+    }
+
+    @objc public func toggleShortcuts(_ sender: Any? = nil) {
         PreferencesManager.shared.toggleShortcuts()
     }
 
-    @objc private func openSettings() {
+    @objc public func openSettings(_ sender: Any? = nil) {
         SettingsWindowController.shared.showSettings()
     }
 
-    @objc private func checkForUpdates() {
+    @objc public func checkForUpdates(_ sender: Any? = nil) {
         SettingsWindowController.shared.showSettings()
         Task {
             await UpdateManager.shared.checkForUpdates()
         }
     }
 
-    @objc private func openDownloadsFolder() {
+    @objc public func openDownloadsFolder(_ sender: Any? = nil) {
         let dir = PreferencesManager.shared.downloadDirectory
         NSWorkspace.shared.selectFile(nil, inFileViewerRootedAtPath: dir.path)
     }
 
-    @objc private func quitApp() {
+    @objc public func quitApp(_ sender: Any? = nil) {
         NSApp.terminate(nil)
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+            exit(0)
+        }
+    }
+}
+
+// MARK: - NSMenuDelegate & NSMenuItemValidation
+
+extension EphemeralStatusBarController: NSMenuDelegate, NSMenuItemValidation {
+    public func menuDidClose(_ menu: NSMenu) {
+        DispatchQueue.main.async { [weak self] in
+            self?.statusItem?.menu = nil
+        }
+    }
+
+    public func validateMenuItem(_ menuItem: NSMenuItem) -> Bool {
+        return true
     }
 }
