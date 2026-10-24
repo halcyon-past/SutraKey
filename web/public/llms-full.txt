@@ -6,7 +6,7 @@
 **Repository**: https://github.com/halcyon-past/SutraKey  
 **Direct DMG Download**: https://github.com/halcyon-past/SutraKey/releases/latest/download/SutraKey.dmg  
 **Homebrew Tap**: https://github.com/halcyon-past/homebrew-tap  
-**Current Release**: v1.0.2 (https://github.com/halcyon-past/SutraKey/releases/tag/v1.0.2)  
+**Current Release**: v1.0.3 (https://github.com/halcyon-past/SutraKey/releases/tag/v1.0.3)  
 **Developer**: Aritro Saha (Software Engineer 1 at Bristol Myers Squibb, VIT Chennai Alumnus)  
 **Developer Website**: https://www.aritro.cloud/  
 **Wikidata**: https://www.wikidata.org/wiki/Q141715213  

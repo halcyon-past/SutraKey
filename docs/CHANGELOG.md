@@ -11,6 +11,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [1.0.3] - 2026-10-24
+
+### Fixed
+- **Menu Bar Right-Click Context Menu Enablement:** Resolved a critical issue where right-clicking the SutraKey menu bar status item rendered all menu options ("Settings...", "Check for Updates...", "Open Downloads Folder", "Quit SutraKey") disabled/grayed out. Because SutraKey operates as an accessory background daemon (`LSUIElement = 1`), AppKit's autoenabling responder chain failed to resolve target selectors without explicit assignments. Explicitly wired `item.target = self`, disabled `autoenablesItems`, conformed `EphemeralStatusBarController` to `NSMenuItemValidation`, and guaranteed `quitApp(_:)` terminates the process cleanly with fallback protection.
+- **Control-Click Context Menu Support:** Added full secondary-click gesture support (`Control + Left Click`) alongside standard right-clicks (`.rightMouseUp`) to summon the status bar context menu reliably across all trackpad and mouse configurations.
+
+### Added
+- **Direct Popover Quit Control:** Added an intuitive Power / Quit button directly in the popover header next to the Settings gear in `ProgressPopoverView`, providing users with an immediate one-click method to exit the application from both left-click and right-click interactions.
+- **Menu Item Automated Test Suite:** Added unit test `testContextMenuItemsEnabled` in `EphemeralMenuBarStateTests.swift` validating that all right-click menu items remain enabled, valid, and bound to actionable target selectors.
+
+---
+
 ## [1.0.2] - 2026-10-23
 
 ### Added

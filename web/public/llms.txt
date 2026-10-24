@@ -7,7 +7,7 @@
 - **GitHub Repository**: [https://github.com/halcyon-past/SutraKey](https://github.com/halcyon-past/SutraKey)
 - **Direct Universal DMG Download**: [https://github.com/halcyon-past/SutraKey/releases/latest/download/SutraKey.dmg](https://github.com/halcyon-past/SutraKey/releases/latest/download/SutraKey.dmg)
 - **Homebrew Tap Repository**: [https://github.com/halcyon-past/homebrew-tap](https://github.com/halcyon-past/homebrew-tap)
-- **Current Version**: v1.0.2 ([Release Notes](https://github.com/halcyon-past/SutraKey/releases/tag/v1.0.2))
+- **Current Version**: v1.0.3 ([Release Notes](https://github.com/halcyon-past/SutraKey/releases/tag/v1.0.3))
 - **Developer**: [Aritro Saha](https://www.aritro.cloud/) ([Wikidata Q141715213](https://www.wikidata.org/wiki/Q141715213) | [ORCID](https://orcid.org/0009-0007-0861-3978) | [GitHub](https://github.com/halcyon-past))
 - **License**: MIT License (100% Free & Open Source)
 - **Architecture**: Universal macOS Binary (Apple Silicon & Intel x86_64), macOS 14.0 Sonoma or macOS 15.0+ Sequoia
