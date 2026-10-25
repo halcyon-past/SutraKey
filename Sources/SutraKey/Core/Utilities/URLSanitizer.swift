@@ -46,6 +46,11 @@ public enum URLSanitizer: Sendable {
         return nil
     }
 
+    /// Convenience alias extracting and sanitizing a URL string.
+    public static func sanitize(_ text: String) -> URL? {
+        extractURL(from: text)
+    }
+
     /// Normalizes URLs into clean canonical formats (e.g. Instagram /reels/ -> /reel/ and strips tracking parameters).
     public static func normalizeWebURL(_ url: URL) -> URL {
         var str = url.absoluteString

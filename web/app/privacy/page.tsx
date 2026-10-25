@@ -55,7 +55,7 @@ export default function PrivacyPage() {
               Privacy Policy
             </h1>
             <p className="text-sm font-mono text-neutral-500 dark:text-neutral-400">
-              Effective Date: October 25, 2026 • Version 1.0.5
+              Effective Date: October 25, 2026 • Version 1.0.6
             </p>
           </div>
 

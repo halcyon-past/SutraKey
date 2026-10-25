@@ -11,6 +11,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [1.0.6] - 2026-10-25
+
+### Added
+- **Apple Liquid Glass Radial Wheel Redesign:** Completely overhauled the radial dial with a modern Apple Liquid Glass aesthetic. Replaced generic frosted materials with curved specular rim bevels, dynamic liquid caustic dispersion, high-gloss reflection sheens, dual-layer chamfers, and animated convex liquid jewel hubs that seamlessly react to hovered actions and center cancellations.
+- **Shortcuts.app & Siri Integration via Swift `AppIntents`:** Exposed first-class system actions in macOS Shortcuts and Siri:
+  - `Download Video from URL`: Grabs 4K/1080p MP4 directly from any media link.
+  - `Extract Audio from URL`: Extracts pristine 320kbps MP3 audio.
+  - `Convert Webpage to Clean PDF`: Renders full-bleed vector A4 PDFs via headless WebKit.
+  - `Download Subtitles from URL`: Extracts SRT/VTT subtitle tracks.
+  - `Open SutraKey Settings`: Quickly launches configuration preferences.
+  - Enabled power-user workflows with Raycast, Alfred, Stream Deck, and automated folder actions.
+- **Custom Deep Link URL Scheme (`sutrakey://`):** Registered the `sutrakey://` URL scheme and implemented `SutraURLRouter` with support for deep links (e.g. `sutrakey://download?url=...&format=video|audio|pdf` and shorthands `sutrakey://video?url=...`, `sutrakey://audio?url=...`, `sutrakey://pdf?url=...`), enabling one-click browser bookmarklets and Terminal scripting (`open "sutrakey://..."`).
+- **Interactive macOS Notification Actions:** Transformed passive completion banners into actionable dialogs with quick response buttons via `UNNotificationAction`:
+  - `[Open]`: Instantly launches the downloaded file in its default system app.
+  - `[Quick Look]`: Previews the file with macOS Quick Look / reveals it in Finder.
+  - `[Copy File]`: Copies the downloaded media directly to the system clipboard for zero-click pasting in Slack/Discord.
+  - `[Delete]`: Safely moves the file to the Trash.
+- **Automated Test Coverage:** Added unit test suite `AutomationAndShortcutsTests.swift` validating URL scheme routing, AppIntents metadata, and notification action handling.
+
+---
+
 ## [1.0.5] - 2026-10-25
 
 ### Added

@@ -42,6 +42,14 @@ public final class AppDelegate: NSObject, NSApplicationDelegate {
         // Start global keyboard/mouse monitor (Shift+Select, Shift+Click, Double-tap Shift)
         ShiftSelectionMonitor.shared.startMonitoring()
 
+        // Register Apple Event handler for sutrakey:// custom URL scheme
+        NSAppleEventManager.shared().setEventHandler(
+            self,
+            andSelector: #selector(handleGetURLEvent(_:withReplyEvent:)),
+            forEventClass: AEEventClass(kInternetEventClass),
+            andEventID: AEEventID(kAEGetURL)
+        )
+
         // Register system-wide Carbon hotkeys (Cmd+Shift+S, Option+Shift+S)
         GlobalHotKeyManager.shared.onTrigger = {
             ShiftSelectionMonitor.shared.attemptRadialTrigger(at: NSEvent.mouseLocation, allowClipboardFallback: true)
@@ -86,6 +94,18 @@ public final class AppDelegate: NSObject, NSApplicationDelegate {
     public func applicationOpenUntitledFile(_ sender: NSApplication) -> Bool {
         SettingsWindowController.shared.showSettings()
         return true
+    }
+
+    public func application(_ application: NSApplication, open urls: [URL]) {
+        for url in urls {
+            SutraURLRouter.shared.handle(url: url)
+        }
+    }
+
+    @objc private func handleGetURLEvent(_ event: NSAppleEventDescriptor, withReplyEvent replyEvent: NSAppleEventDescriptor) {
+        guard let urlString = event.paramDescriptor(forKeyword: AEKeyword(keyDirectObject))?.stringValue,
+              let url = URL(string: urlString) else { return }
+        SutraURLRouter.shared.handle(url: url)
     }
 
     private func checkAccessibilityPermissions() {
