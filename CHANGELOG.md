@@ -11,6 +11,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [1.0.7] - 2026-10-25
+
+### Changed
+- **Apple Liquid Glass Radial Wheel Refinement:**
+  - **Individual Floating Liquid Glass Wedges:** Completely removed the enclosing circular background plate in favor of sleek, independent floating liquid glass sectors and a central jewel hub.
+  - **Calibrated Translucent Optical Medium:** Formulated a balanced, smoked optical liquid glass medium (~50% translucent density) that diffuses background text into a smooth, dark wash for effortless label legibility while preserving vibrant transparency of underlying desktop colors and windows.
+  - **High-Gloss Specular Chamfer & Meniscus Sheen:** Engineered dual-stop specular edge reflections and curved overhead sheen simulating ambient light bouncing off polished liquid surface tension (avoiding rough, cloudy frosted-glass textures).
+  - **Dynamic Fluid Caustics & Bloom:** Enhanced pointer reactivity with outward spring blooms along radial vectors, internal radial caustic illumination in each action's accent color, and luminous glowing aura.
+  - **Convex Central Liquid Jewel Hub:** Re-engineered the central cancel knot into a convex liquid glass droplet with polished specular highlights, active liquid core, and reactive red cancel morphing.
+  - **URL Scheme Radial Menu Trigger:** Added `sutrakey://menu?url=...` (and `sutrakey://radial?url=...`) route to `SutraURLRouter` for summoning the radial wheel directly from Raycast, Alfred, terminal commands, or browser bookmarklets.
+
+---
+
 ## [1.0.6] - 2026-10-25
 
 ### Added

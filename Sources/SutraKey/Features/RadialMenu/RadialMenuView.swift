@@ -66,9 +66,9 @@ public struct RadialMenuView: View {
 
     @State private var appeared: Bool = true
 
-    private let menuRadius: CGFloat = 142.0
-    private let innerRadius: CGFloat = 34.0
-    private let iconRadius: CGFloat = 88.0
+    private let menuRadius: CGFloat = 138.0
+    private let innerRadius: CGFloat = 40.0
+    private let iconRadius: CGFloat = 89.0
 
     public init(
         state: RadialMenuState,
@@ -84,82 +84,14 @@ public struct RadialMenuView: View {
 
     public var body: some View {
         ZStack {
-            // 1. Ambient Dynamic Caustic Dispersion (responds fluidly to hovered action)
-            Circle()
-                .fill(
-                    RadialGradient(
-                        colors: [
-                            (state.hoveredAction?.accentColor ?? Color(red: 1.0, green: 0.42, blue: 0.24))
-                                .opacity(state.hoveredAction != nil ? 0.28 : 0.05),
-                            Color.clear
-                        ],
-                        center: .center,
-                        startRadius: 20,
-                        endRadius: 160
-                    )
-                )
-                .frame(width: 330, height: 330)
-
-            // 2. Liquid Glass Backdrop Disc (Dark smoke tint with specular curvature)
-            Circle()
-                .fill(Color(red: 0.06, green: 0.06, blue: 0.09).opacity(0.82))
-                .overlay(
-                    Circle()
-                        .fill(.ultraThinMaterial)
-                )
-                // Diagonal liquid refractive gloss sheen
-                .overlay(
-                    Circle()
-                        .fill(
-                            LinearGradient(
-                                stops: [
-                                    .init(color: Color.white.opacity(0.18), location: 0.0),
-                                    .init(color: Color.white.opacity(0.04), location: 0.35),
-                                    .init(color: Color.clear, location: 0.55),
-                                    .init(color: Color.white.opacity(0.08), location: 1.0)
-                                ],
-                                startPoint: .topLeading,
-                                endPoint: .bottomTrailing
-                            )
-                        )
-                )
-                .frame(width: 312, height: 312)
-                // Liquid Chamfer: Dual-layer specular edge highlight + dark refraction inner ring
-                .overlay(
-                    Circle()
-                        .stroke(
-                            LinearGradient(
-                                stops: [
-                                    .init(color: Color.white.opacity(0.50), location: 0.0),
-                                    .init(color: Color.white.opacity(0.16), location: 0.35),
-                                    .init(color: Color.white.opacity(0.05), location: 0.65),
-                                    .init(color: Color.white.opacity(0.30), location: 1.0)
-                                ],
-                                startPoint: .topLeading,
-                                endPoint: .bottomTrailing
-                            ),
-                            lineWidth: 1.4
-                        )
-                )
-                .overlay(
-                    Circle()
-                        .stroke(Color.black.opacity(0.40), lineWidth: 0.8)
-                        .padding(1.2)
-                )
-                .shadow(color: Color.black.opacity(0.68), radius: 32, x: 0, y: 14)
-                .shadow(
-                    color: (state.hoveredAction?.accentColor ?? Color.clear).opacity(0.18),
-                    radius: 20,
-                    x: 0,
-                    y: 2
-                )
-
-            // 3. Five Discrete Liquid Prismatic Wedges
+            // NO BACKGROUND CIRCLE! Floating sleek liquid glass wedges & central jewel hub only.
+            
+            // 1. Five Independent Floating Liquid Glass Wedges
             ForEach(ConversionAction.allCases) { action in
                 sliceView(for: action)
             }
 
-            // 4. Center Convex Liquid Jewel Hub (Dead-zone < 28pt)
+            // 2. Center Convex Liquid Jewel Hub (Dead-zone < 28pt)
             centerHubView
         }
         .frame(width: 340, height: 340)
@@ -183,98 +115,102 @@ public struct RadialMenuView: View {
         let posX = iconRadius * cos(radians)
         let posY = iconRadius * sin(radians)
 
-        // Fluid outward translation on hover (6pt along radial center vector)
-        let transX = isHovered ? 6.0 * cos(radians) : 0.0
-        let transY = isHovered ? -6.0 * sin(radians) : 0.0
+        // Fluid outward translation on hover (8pt along radial center vector)
+        let transX = isHovered ? 8.0 * cos(radians) : 0.0
+        let transY = isHovered ? -8.0 * sin(radians) : 0.0
 
         let wedgeShape = PieWedgeShape(
             startDegrees: startDeg,
             endDegrees: endDeg,
             innerRadius: innerRadius,
             outerRadius: menuRadius,
-            gapDegrees: 0.85
+            gapDegrees: 1.8
         )
 
         ZStack {
-            // Liquid Sector Body
+            // 1. Smoked Liquid Glass Body (Balanced 52% translucent optical density)
             if isHovered {
-                // Fluid caustic flood fill
+                // Internal fluid illumination radiating outward
                 wedgeShape
                     .fill(
-                        LinearGradient(
-                            stops: [
-                                .init(color: action.accentColor.opacity(0.46), location: 0.0),
-                                .init(color: action.accentColor.opacity(0.20), location: 0.65),
-                                .init(color: action.accentColor.opacity(0.34), location: 1.0)
+                        RadialGradient(
+                            colors: [
+                                action.accentColor.opacity(0.65),
+                                action.accentColor.opacity(0.35),
+                                Color(red: 0.04, green: 0.06, blue: 0.12).opacity(0.48)
                             ],
-                            startPoint: .topLeading,
-                            endPoint: .bottomTrailing
+                            center: .center,
+                            startRadius: 35,
+                            endRadius: 140
                         )
-                    )
-                    // High-gloss liquid specular rim
-                    .overlay(
-                        wedgeShape
-                            .stroke(
-                                LinearGradient(
-                                    stops: [
-                                        .init(color: Color.white.opacity(0.85), location: 0.0),
-                                        .init(color: action.accentColor, location: 0.40),
-                                        .init(color: action.accentColor.opacity(0.45), location: 1.0)
-                                    ],
-                                    startPoint: .topLeading,
-                                    endPoint: .bottomTrailing
-                                ),
-                                lineWidth: 2.0
-                            )
-                            .shadow(color: action.accentColor.opacity(0.80), radius: 10)
                     )
             } else {
-                // Clear liquid glass prism (unhovered)
+                // Translucent liquid glass prism with subtle obsidian water refraction
                 wedgeShape
                     .fill(
                         LinearGradient(
                             stops: [
-                                .init(color: Color.white.opacity(0.08), location: 0.0),
-                                .init(color: Color.white.opacity(0.02), location: 0.55),
-                                .init(color: Color.white.opacity(0.05), location: 1.0)
+                                .init(color: Color.white.opacity(0.20), location: 0.0),
+                                .init(color: Color(red: 0.08, green: 0.11, blue: 0.18).opacity(0.45), location: 0.35),
+                                .init(color: Color(red: 0.03, green: 0.04, blue: 0.09).opacity(0.56), location: 1.0)
                             ],
                             startPoint: .topLeading,
                             endPoint: .bottomTrailing
                         )
-                    )
-                    .overlay(
-                        wedgeShape
-                            .stroke(
-                                LinearGradient(
-                                    stops: [
-                                        .init(color: Color.white.opacity(0.26), location: 0.0),
-                                        .init(color: Color.white.opacity(0.08), location: 0.5),
-                                        .init(color: Color.white.opacity(0.18), location: 1.0)
-                                    ],
-                                    startPoint: .topLeading,
-                                    endPoint: .bottomTrailing
-                                ),
-                                lineWidth: 1.0
-                            )
                     )
             }
 
-            // Slice Icon & Crisp Short Badge
+            // 2. Liquid Surface Tension Meniscus: Polished Chamfer Rim
+            wedgeShape
+                .stroke(
+                    LinearGradient(
+                        stops: [
+                            .init(color: Color.white.opacity(isHovered ? 0.98 : 0.85), location: 0.0),
+                            .init(color: isHovered ? action.accentColor : Color.white.opacity(0.35), location: 0.35),
+                            .init(color: isHovered ? action.accentColor.opacity(0.50) : Color.white.opacity(0.12), location: 0.65),
+                            .init(color: Color.white.opacity(isHovered ? 0.80 : 0.55), location: 1.0)
+                        ],
+                        startPoint: .topLeading,
+                        endPoint: .bottomTrailing
+                    ),
+                    lineWidth: isHovered ? 1.8 : 1.3
+                )
+                .shadow(
+                    color: isHovered ? action.accentColor.opacity(0.90) : Color.black.opacity(0.35),
+                    radius: isHovered ? 16 : 8,
+                    y: isHovered ? 0 : 4
+                )
+
+            // 3. High-Gloss Specular Sheen (Curved liquid glass reflection)
+            wedgeShape
+                .stroke(
+                    LinearGradient(
+                        stops: [
+                            .init(color: Color.white.opacity(0.70), location: 0.0),
+                            .init(color: Color.white.opacity(0.0), location: 0.25)
+                        ],
+                        startPoint: .topLeading,
+                        endPoint: .center
+                    ),
+                    lineWidth: 2.0
+                )
+
+            // 4. Slice Icon & Crisp Short Badge
             VStack(spacing: 3) {
                 Image(systemName: action.sfSymbol)
-                    .font(.system(size: 20, weight: .semibold))
-                    .foregroundColor(isHovered ? Color.white : Color.white.opacity(0.92))
-                    .shadow(color: isHovered ? action.accentColor.opacity(0.95) : Color.black.opacity(0.35), radius: isHovered ? 8 : 2)
-                    .shadow(color: isHovered ? Color.white.opacity(0.40) : Color.clear, radius: 2)
+                    .font(.system(size: 21, weight: .semibold))
+                    .foregroundColor(isHovered ? Color.white : Color.white.opacity(0.96))
+                    .shadow(color: isHovered ? action.accentColor.opacity(0.95) : Color.black.opacity(0.85), radius: isHovered ? 8 : 3)
+                    .shadow(color: Color.black.opacity(0.50), radius: 1)
 
                 Text(action.shortBadge)
                     .font(.system(size: 10, weight: .bold, design: .rounded))
                     .tracking(0.6)
-                    .foregroundColor(isHovered ? action.accentColor : Color.white.opacity(0.80))
-                    .shadow(color: isHovered ? action.accentColor.opacity(0.70) : Color.black.opacity(0.30), radius: isHovered ? 4 : 1)
+                    .foregroundColor(isHovered ? action.accentColor : Color.white.opacity(0.95))
+                    .shadow(color: isHovered ? action.accentColor.opacity(0.90) : Color.black.opacity(0.85), radius: isHovered ? 4 : 2)
             }
             .offset(x: posX, y: -posY) // Invert Y for SwiftUI coordinate orientation
-            .scaleEffect(isHovered ? 1.14 : 1.0)
+            .scaleEffect(isHovered ? 1.15 : 1.0)
         }
         .offset(x: transX, y: transY)
         .animation(.spring(response: 0.22, dampingFraction: 0.72), value: isHovered)
@@ -301,69 +237,70 @@ public struct RadialMenuView: View {
         let activeColor = state.hoveredAction?.accentColor ?? Color(red: 1.0, green: 0.42, blue: 0.24)
 
         return ZStack {
-            // Subtle concentric liquid guide ring
+            // Concentric specular guide ring
             Circle()
                 .stroke(
                     LinearGradient(
-                        colors: [Color.white.opacity(0.18), Color.white.opacity(0.04)],
+                        colors: [Color.white.opacity(0.35), Color.white.opacity(0.08)],
                         startPoint: .topLeading,
                         endPoint: .bottomTrailing
                     ),
                     lineWidth: 1.0
                 )
-                .frame(width: 64, height: 64)
+                .frame(width: 68, height: 68)
 
-            // Convex Liquid Jewel Knob Base (56pt diameter)
+            // Floating Convex Glass Droplet (52pt diameter)
             Circle()
                 .fill(
                     state.isCenterHovered
-                        ? Color(red: 0.30, green: 0.05, blue: 0.05).opacity(0.88)
-                        : (state.hoveredAction != nil
-                            ? Color.white.opacity(0.12)
-                            : Color(red: 0.08, green: 0.08, blue: 0.12).opacity(0.94))
-                )
-                // Convex specular lens highlight
-                .overlay(
-                    Circle()
-                        .fill(
-                            LinearGradient(
-                                stops: [
-                                    .init(color: Color.white.opacity(0.28), location: 0.0),
-                                    .init(color: Color.white.opacity(0.04), location: 0.45),
-                                    .init(color: Color.clear, location: 1.0)
-                                ],
-                                startPoint: .topLeading,
-                                endPoint: .bottomTrailing
-                            )
+                        ? LinearGradient(
+                            stops: [
+                                .init(color: Color(red: 0.95, green: 0.20, blue: 0.20).opacity(0.85), location: 0.0),
+                                .init(color: Color(red: 0.65, green: 0.08, blue: 0.08).opacity(0.90), location: 1.0)
+                            ],
+                            startPoint: .topLeading,
+                            endPoint: .bottomTrailing
+                        )
+                        : LinearGradient(
+                            stops: [
+                                .init(color: Color.white.opacity(0.35), location: 0.0),
+                                .init(color: Color(red: 0.08, green: 0.12, blue: 0.20).opacity(0.42), location: 0.35),
+                                .init(color: Color(red: 0.04, green: 0.05, blue: 0.10).opacity(0.58), location: 1.0)
+                            ],
+                            startPoint: .topLeading,
+                            endPoint: .bottomTrailing
                         )
                 )
-                .frame(width: 56, height: 56)
+                .frame(width: 52, height: 52)
+                // Convex specular highlight
                 .overlay(
                     Circle()
                         .stroke(
                             LinearGradient(
                                 stops: [
-                                    .init(color: state.isCenterHovered ? Color.red : Color.white.opacity(0.55), location: 0.0),
-                                    .init(color: state.isCenterHovered ? Color.red.opacity(0.6) : Color.white.opacity(0.14), location: 0.5),
-                                    .init(color: state.isCenterHovered ? Color.red.opacity(0.8) : Color.white.opacity(0.30), location: 1.0)
+                                    .init(color: state.isCenterHovered ? Color.red : Color.white.opacity(0.90), location: 0.0),
+                                    .init(color: state.isCenterHovered ? Color.red.opacity(0.7) : Color.white.opacity(0.30), location: 0.5),
+                                    .init(color: state.isCenterHovered ? Color.red.opacity(0.6) : Color.white.opacity(0.60), location: 1.0)
                                 ],
                                 startPoint: .topLeading,
                                 endPoint: .bottomTrailing
                             ),
-                            lineWidth: state.isCenterHovered ? 2.0 : 1.4
+                            lineWidth: 1.4
                         )
                 )
                 .shadow(
-                    color: state.isCenterHovered ? Color.red.opacity(0.55) : Color.black.opacity(0.40),
-                    radius: state.isCenterHovered ? 12 : 7
+                    color: state.isCenterHovered ? Color.red.opacity(0.70) : Color.black.opacity(0.40),
+                    radius: state.isCenterHovered ? 14 : 8,
+                    x: 0,
+                    y: 3
                 )
 
             // Core Indicator: Animated Cancel "X" or Glowing Liquid Core
             if state.isCenterHovered {
                 Image(systemName: "xmark")
                     .font(.system(size: 16, weight: .bold))
-                    .foregroundColor(.red)
-                    .shadow(color: Color.red.opacity(0.8), radius: 6)
+                    .foregroundColor(.white)
+                    .shadow(color: Color.black.opacity(0.6), radius: 4)
                     .transition(.scale.combined(with: .opacity))
             } else {
                 Circle()
@@ -372,10 +309,6 @@ public struct RadialMenuView: View {
                     .shadow(
                         color: state.hoveredAction != nil ? activeColor.opacity(0.95) : activeColor.opacity(0.50),
                         radius: state.hoveredAction != nil ? 10 : 4
-                    )
-                    .shadow(
-                        color: state.hoveredAction != nil ? activeColor.opacity(0.60) : Color.clear,
-                        radius: 16
                     )
                     .transition(.scale.combined(with: .opacity))
             }

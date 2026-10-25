@@ -5,6 +5,7 @@ import os
 /// Supported routes parsed from the `sutrakey://` deep link URL scheme.
 public enum SutraURLRoute: Equatable, Sendable {
     case download(url: URL, action: ConversionAction)
+    case menu(url: URL)
     case settings
     case unknown(String)
 }
@@ -94,6 +95,10 @@ public final class SutraURLRouter: NSObject {
         case "settings", "preferences":
             return .settings
 
+        case "menu", "radial":
+            let target = rawTargetURLStr.flatMap { URLSanitizer.sanitize($0) } ?? URL(string: "https://youtube.com/watch?v=dQw4w9WgXcQ")!
+            return .menu(url: target)
+
         default:
             return .unknown(url.absoluteString)
         }
@@ -141,6 +146,16 @@ public final class SutraURLRouter: NSObject {
         case .settings:
             Logger.app.info("Opening Settings via URL scheme.")
             SettingsWindowController.shared.showSettings()
+            return true
+
+        case .menu(let targetURL):
+            Logger.app.info("Summoning radial menu via URL scheme for: \(targetURL.absoluteString)")
+            let mouseLoc = NSEvent.mouseLocation
+            RadialPanelController.shared.showMenu(for: targetURL, at: mouseLoc) { action in
+                Task {
+                    await ConversionTaskActor.shared.enqueueJob(url: targetURL, action: action)
+                }
+            }
             return true
 
         case .unknown(let reason):
