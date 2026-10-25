@@ -1,10 +1,12 @@
 import AppKit
+import Carbon
 import SwiftUI
 
 /// Settings view providing configuration for downloads, quality, menu bar presence, and GitHub auto-updates.
 public struct SettingsView: View {
     @ObservedObject public var prefs: PreferencesManager
     @ObservedObject public var updater: UpdateManager
+    @ObservedObject public var shortcutRecorder: ShortcutRecorderCoordinator = .shared
 
     @State private var selectedTab: SettingsTab = .general
 
@@ -61,6 +63,9 @@ public struct SettingsView: View {
                 .tag(SettingsTab.about)
         }
         .frame(width: 560, height: 500)
+        .onDisappear {
+            shortcutRecorder.stopRecording()
+        }
     }
 
     // MARK: - General Tab
@@ -139,7 +144,7 @@ public struct SettingsView: View {
                 Divider()
 
                 // Section: App Shortcuts
-                VStack(alignment: .leading, spacing: 8) {
+                VStack(alignment: .leading, spacing: 10) {
                     HStack {
                         Text("Application Shortcuts")
                             .font(.system(size: 13, weight: .bold))
@@ -148,7 +153,7 @@ public struct SettingsView: View {
 
                         // Keyboard Badge
                         HStack(spacing: 4) {
-                            Text("Toggle:")
+                            Text("Pause/Resume:")
                                 .font(.system(size: 11))
                                 .foregroundColor(.secondary)
                             Text("⌘⇧0")
@@ -163,10 +168,87 @@ public struct SettingsView: View {
                     Toggle("Enable application shortcuts & gestures", isOn: $prefs.shortcutsEnabled)
                         .font(.system(size: 12))
 
-                    Text("Controls radial triggers: ⌘⇧S (Cmd+Shift+S), ⌥⇧S (Option+Shift+S), and Shift+Select mouse text selection across macOS. Press ⌘⇧0 anytime to toggle.")
-                        .font(.system(size: 11))
-                        .foregroundColor(.secondary)
-                        .fixedSize(horizontal: false, vertical: true)
+                    // Custom Shortcut Recorder Box
+                    VStack(alignment: .leading, spacing: 8) {
+                        HStack(spacing: 12) {
+                            Text("Global Radial Hotkey:")
+                                .font(.system(size: 12, weight: .medium))
+
+                            // Shortcut Badge / Recording Button
+                            Button {
+                                if shortcutRecorder.isRecording {
+                                    shortcutRecorder.stopRecording()
+                                } else {
+                                    shortcutRecorder.startRecording()
+                                }
+                            } label: {
+                                HStack(spacing: 6) {
+                                    if shortcutRecorder.isRecording {
+                                        ProgressView()
+                                            .controlSize(.small)
+                                        Text("Type shortcut...")
+                                            .font(.system(size: 11, weight: .semibold))
+                                            .foregroundColor(.orange)
+                                    } else {
+                                        Text(prefs.customShortcutDisplayString)
+                                            .font(.system(size: 12, weight: .bold, design: .monospaced))
+                                            .foregroundColor(.primary)
+                                    }
+                                }
+                                .padding(.horizontal, 10)
+                                .padding(.vertical, 4)
+                                .background(shortcutRecorder.isRecording ? Color.orange.opacity(0.15) : Color(NSColor.controlBackgroundColor))
+                                .cornerRadius(6)
+                                .overlay(
+                                    RoundedRectangle(cornerRadius: 6)
+                                        .stroke(shortcutRecorder.isRecording ? Color.orange : Color(NSColor.separatorColor), lineWidth: 1)
+                                )
+                            }
+                            .buttonStyle(.plain)
+
+                            if shortcutRecorder.isRecording {
+                                Button("Cancel (Esc)") {
+                                    shortcutRecorder.stopRecording()
+                                }
+                                .font(.system(size: 11))
+                                .buttonStyle(.link)
+                            } else {
+                                Button("Reset to Default") {
+                                    prefs.resetCustomShortcut()
+                                    GlobalHotKeyManager.shared.reloadHotKeys()
+                                }
+                                .font(.system(size: 11))
+                                .buttonStyle(.link)
+                                .disabled(prefs.customHotKeyCode == 1 && prefs.customHotKeyModifiers == (UInt32(cmdKey) | UInt32(shiftKey)))
+                            }
+
+                            Spacer()
+                        }
+
+                        if let err = shortcutRecorder.errorMessage {
+                            HStack(spacing: 6) {
+                                Image(systemName: "exclamationmark.circle.fill")
+                                    .foregroundColor(.orange)
+                                    .font(.system(size: 11))
+                                Text(err)
+                                    .font(.system(size: 11))
+                                    .foregroundColor(.orange)
+                            }
+                            .padding(.vertical, 2)
+                        }
+
+                        Text("Summons the radial conversion menu under your cursor from any macOS app. Must contain at least one modifier (⌘, ⌥, ⌃, ⇧). Shift+Select text or links also works natively.")
+                            .font(.system(size: 11))
+                            .foregroundColor(.secondary)
+                            .fixedSize(horizontal: false, vertical: true)
+                    }
+                    .padding(10)
+                    .background(Color(NSColor.controlBackgroundColor).opacity(0.5))
+                    .cornerRadius(8)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 8)
+                            .stroke(Color(NSColor.separatorColor).opacity(0.2), lineWidth: 1)
+                    )
                 }
 
                 Divider()

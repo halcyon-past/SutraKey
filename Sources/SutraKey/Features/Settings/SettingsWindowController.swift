@@ -14,8 +14,10 @@ public final class SettingsWindowController: NSObject, NSWindowDelegate {
 
     /// Displays the Settings window, creating it if needed and bringing it to the front.
     public func showSettings() {
-        if let existing = window, existing.isVisible {
+        if let existing = window {
+            existing.center()
             existing.makeKeyAndOrderFront(nil)
+            existing.orderFrontRegardless()
             NSApp.activate(ignoringOtherApps: true)
             return
         }
@@ -24,7 +26,7 @@ public final class SettingsWindowController: NSObject, NSWindowDelegate {
         let hostingController = NSHostingController(rootView: settingsView)
 
         let win = NSWindow(
-            contentRect: NSRect(x: 0, y: 0, width: 560, height: 500),
+            contentRect: NSRect(x: 0, y: 0, width: 560, height: 520),
             styleMask: [.titled, .closable, .miniaturizable],
             backing: .buffered,
             defer: false
@@ -38,10 +40,11 @@ public final class SettingsWindowController: NSObject, NSWindowDelegate {
 
         self.window = win
         win.makeKeyAndOrderFront(nil)
+        win.orderFrontRegardless()
         NSApp.activate(ignoringOtherApps: true)
     }
 
     public func windowWillClose(_ notification: Notification) {
-        // Keeps window reference cached or cleans up
+        // Keeps window reference cached for instant, leak-free reopening
     }
 }

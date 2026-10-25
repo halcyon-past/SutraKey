@@ -57,6 +57,19 @@ public final class AppDelegate: NSObject, NSApplicationDelegate {
         }
 
         Logger.app.info("SutraKey running invisibly in background. Ready for Shift+Select or Cmd+Shift+S.")
+
+        // First launch or Permission Relaunch visual cue:
+        // If it is the first launch or accessibility permissions are not yet granted,
+        // present the Settings window so the user gets immediate visual feedback and setup guidance.
+        let hasLaunchedKey = "cloud.aritro.sutrakey.hasLaunchedBefore"
+        let isFirstLaunch = !UserDefaults.standard.bool(forKey: hasLaunchedKey)
+        if isFirstLaunch || !AXIsProcessTrusted() {
+            UserDefaults.standard.set(true, forKey: hasLaunchedKey)
+            Logger.app.info("Presenting Settings window for initial setup or permissions guidance.")
+            DispatchQueue.main.async {
+                SettingsWindowController.shared.showSettings()
+            }
+        }
     }
 
     public func applicationWillTerminate(_ notification: Notification) {

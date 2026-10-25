@@ -1,5 +1,6 @@
 import AppKit
 import ApplicationServices
+import Carbon
 import Foundation
 import os
 
@@ -132,12 +133,21 @@ public final class ShiftSelectionMonitor: NSObject {
 
         guard PreferencesManager.shared.shortcutsEnabled else { return }
 
-        // Secondary global hotkey listener for Cmd + Shift + S
-        if event.keyCode == 1 { // 1 = 'S' (kVK_ANSI_S)
+        // Secondary global hotkey listener for user's configured shortcut
+        let customCode = PreferencesManager.shared.customHotKeyCode
+        let customMods = PreferencesManager.shared.customHotKeyModifiers
+        if UInt32(event.keyCode) == customCode {
             let flags = event.modifierFlags
-            if flags.contains(.command) && flags.contains(.shift) {
-                Logger.events.info("Cmd+Shift+S hotkey detected via event monitor. Invoking trigger...")
+            var matches = true
+            if (customMods & UInt32(cmdKey)) != 0 && !flags.contains(.command) { matches = false }
+            if (customMods & UInt32(shiftKey)) != 0 && !flags.contains(.shift) { matches = false }
+            if (customMods & UInt32(optionKey)) != 0 && !flags.contains(.option) { matches = false }
+            if (customMods & UInt32(controlKey)) != 0 && !flags.contains(.control) { matches = false }
+
+            if matches {
+                Logger.events.info("Configured hotkey detected via event monitor. Invoking trigger...")
                 attemptRadialTrigger(at: NSEvent.mouseLocation, allowClipboardFallback: true)
+                return
             }
         }
     }

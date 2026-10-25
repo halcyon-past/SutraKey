@@ -1,4 +1,5 @@
 import AppKit
+import Carbon
 import Foundation
 import os
 import SwiftUI
@@ -21,6 +22,8 @@ public final class PreferencesManager: ObservableObject {
     private let kBrowserCookiesSource = "cloud.aritro.sutrakey.browserCookiesSource"
     private let kCustomCookiesPath = "cloud.aritro.sutrakey.customCookiesPath"
     private let kCookiesOnlyForAuthSites = "cloud.aritro.sutrakey.cookiesOnlyForAuthSites"
+    private let kCustomHotKeyCode = "cloud.aritro.sutrakey.customHotKeyCode"
+    private let kCustomHotKeyModifiers = "cloud.aritro.sutrakey.customHotKeyModifiers"
 
     // MARK: - Published Properties
 
@@ -99,6 +102,32 @@ public final class PreferencesManager: ObservableObject {
         }
     }
 
+    @Published public var customHotKeyCode: UInt32 {
+        didSet {
+            UserDefaults.standard.set(Int(customHotKeyCode), forKey: kCustomHotKeyCode)
+        }
+    }
+
+    @Published public var customHotKeyModifiers: UInt32 {
+        didSet {
+            UserDefaults.standard.set(Int(customHotKeyModifiers), forKey: kCustomHotKeyModifiers)
+        }
+    }
+
+    public var customShortcutDisplayString: String {
+        ShortcutRecorderCoordinator.stringRepresentation(keyCode: customHotKeyCode, modifiers: customHotKeyModifiers)
+    }
+
+    public func setCustomShortcut(keyCode: UInt32, modifiers: UInt32) {
+        self.customHotKeyCode = keyCode
+        self.customHotKeyModifiers = modifiers
+    }
+
+    public func resetCustomShortcut() {
+        self.customHotKeyCode = UInt32(kVK_ANSI_S)
+        self.customHotKeyModifiers = UInt32(cmdKey | shiftKey)
+    }
+
     // MARK: - Init
 
     public init() {
@@ -143,6 +172,13 @@ public final class PreferencesManager: ObservableObject {
         self.browserCookiesSource = UserDefaults.standard.string(forKey: kBrowserCookiesSource) ?? defaultBrowser
         self.customCookiesPath = UserDefaults.standard.string(forKey: kCustomCookiesPath) ?? ""
         self.cookiesOnlyForAuthRequiredSites = UserDefaults.standard.object(forKey: kCookiesOnlyForAuthSites) == nil ? true : UserDefaults.standard.bool(forKey: kCookiesOnlyForAuthSites)
+
+        let defaultKeyCode = UInt32(kVK_ANSI_S)
+        let defaultModifiers = UInt32(cmdKey | shiftKey)
+        let savedKeyCode = UserDefaults.standard.object(forKey: kCustomHotKeyCode) as? Int
+        let savedModifiers = UserDefaults.standard.object(forKey: kCustomHotKeyModifiers) as? Int
+        self.customHotKeyCode = savedKeyCode != nil ? UInt32(savedKeyCode!) : defaultKeyCode
+        self.customHotKeyModifiers = savedModifiers != nil ? UInt32(savedModifiers!) : defaultModifiers
     }
 
     /// Determines whether a target URL requires authenticated browser cookies (e.g. Instagram login walls).

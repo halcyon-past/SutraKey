@@ -30,3 +30,6 @@ web/out/
 *.tsbuildinfo
 next-env.d.ts
 
+# Video projects & temporary render artifacts
+product-intro/
+

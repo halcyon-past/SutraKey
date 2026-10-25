@@ -11,6 +11,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [1.0.4] - 2026-10-25
+
+### Fixed
+- **App Reopen & Foreground Activation (`LSUIElement = 1`):** Resolved an issue where double-clicking the app in Finder/Spotlight or clicking [Quit & Reopen] in macOS System Settings after granting permissions produced no visual response. Implemented `applicationShouldHandleReopen(_:hasVisibleWindows:)` and `applicationOpenUntitledFile(_:)` in `AppDelegate` to summon and bring the Settings window to the front via `orderFrontRegardless()` and `NSApp.activate(ignoringOtherApps: true)`.
+- **First-Launch & Permission Guidance Window:** Ensured users receive immediate visual cues and setup instructions on first launch or when Accessibility permissions are not yet granted (`AXIsProcessTrusted() == false`), automatically presenting the configuration window instead of running purely invisibly.
+- **Menu Bar Icon Bounds & Notch Overflow Prevention:** Enforced fixed `18×18` point bounds across all menu bar icon representations (`MenuBarIcon.templateImage`, custom assets, and SF Symbols) to prevent status item clipping or hiding behind MacBook camera notches. Pinned idle menu item width strictly to `NSStatusItem.squareLength` (switching to variable length only while actively rendering download progress).
+- **Safe Event Dispatch & Native Menu Popups:** Replaced deprecated menu assignment and simulated clicks in `EphemeralStatusBarController` with native `NSMenu.popUp(positioning:at:in:)` and wrapped `NSApp.currentEvent` safely to eliminate force-unwrap crashes.
+- **Shortcut Recorder Event Monitor Leak Fix:** Refactored shortcut recording from SwiftUI struct view `@State` into a centralized `@MainActor final class` reference coordinator (`ShortcutRecorderCoordinator`), eliminating local `NSEvent` monitor memory leaks on view re-renders. Added clean monitor lifecycle teardown in `SettingsView.onDisappear`.
+- **Carbon Global HotKey Concurrency:** Added thread-safe `NSLock` synchronization around Carbon hotkey registration and unregistration in `GlobalHotKeyManager`, preventing race conditions during hotkey reloading.
+
+### Added
+- **Configurable Global Radial Shortcut:** Added full support for customizing the system-wide radial trigger shortcut (defaulting to `⌘⇧S`) in Settings → General with an interactive key recorder, error validation, and reset-to-default button.
+- **Space & Special Key Parsing:** Added support for recording Space (`kVK_Space`, key code 49), Return, Tab, and Arrow keys with human-friendly glyph formatting.
+- **Modifier Key Validation:** Strictly required at least one modifier key (`⌘`, `⌥`, `⌃`, `⇧`) for custom shortcuts, rejecting bare alphanumeric or symbol keys to protect system typing.
+- **Automated Test Suite:** Added unit test suite `ShortcutRecorderAndReopenTests.swift` validating shortcut recording, key code formatting, modifier persistence, and window reuse.
+
+---
+
 ## [1.0.3] - 2026-10-24
 
 ### Fixed

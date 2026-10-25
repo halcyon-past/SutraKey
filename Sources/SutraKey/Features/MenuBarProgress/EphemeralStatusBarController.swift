@@ -161,7 +161,7 @@ public final class EphemeralStatusBarController: NSObject, ObservableObject {
             return
         }
 
-        let item = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
+        let item = NSStatusBar.system.statusItem(withLength: NSStatusItem.squareLength)
         item.isVisible = true
 
         if let button = item.button {
@@ -210,6 +210,7 @@ public final class EphemeralStatusBarController: NSObject, ObservableObject {
         }
 
         if let sfImage = NSImage(systemSymbolName: "arrow.down.circle.fill", accessibilityDescription: "SutraKey") {
+            sfImage.size = NSSize(width: 18, height: 18)
             sfImage.isTemplate = true
             return sfImage
         }
@@ -220,13 +221,16 @@ public final class EphemeralStatusBarController: NSObject, ObservableObject {
     private func updateStatusItemDisplay() {
         guard allowsSystemStatusItem, let item = statusItem, let button = item.button else { return }
 
-        // Load custom template image if available
+        // Load custom template image if available with strict 18x18 bounds
         if let image = loadMenuBarIcon() {
+            image.size = NSSize(width: 18, height: 18)
+            image.isTemplate = true
             button.image = image
             button.imagePosition = .imageLeading
         }
 
         if let highestProgressJob = activeTasks.max(by: { $0.progress < $1.progress }) {
+            item.length = NSStatusItem.variableLength
             if highestProgressJob.progress <= 0.05 {
                 button.title = " Connecting..."
             } else {
@@ -234,6 +238,8 @@ public final class EphemeralStatusBarController: NSObject, ObservableObject {
                 button.title = " \(percent)%"
             }
         } else {
+            // Strict square length when idle avoids notch overflow on camera-notch MacBooks
+            item.length = NSStatusItem.squareLength
             button.title = ""
         }
     }
@@ -241,9 +247,12 @@ public final class EphemeralStatusBarController: NSObject, ObservableObject {
     @objc public func statusItemClicked() {
         guard let button = statusItem?.button else { return }
 
-        // Handle right-click context menu (right-click or Control + left-click)
-        let isRightClick = NSApp.currentEvent?.type == .rightMouseUp ||
-            (NSApp.currentEvent?.type == .leftMouseUp && NSApp.currentEvent?.modifierFlags.contains(.control) == true)
+        // Safely evaluate currentEvent without force unwrapping
+        let isRightClick: Bool = {
+            guard let event = NSApp.currentEvent else { return false }
+            return event.type == .rightMouseUp ||
+                (event.type == .leftMouseUp && event.modifierFlags.contains(.control))
+        }()
 
         if isRightClick {
             if let pop = popover, pop.isShown {
@@ -251,8 +260,7 @@ public final class EphemeralStatusBarController: NSObject, ObservableObject {
             }
 
             let menu = createContextMenu()
-            statusItem?.menu = menu
-            button.performClick(nil)
+            menu.popUp(positioning: nil, at: NSPoint(x: 0, y: button.bounds.height + 4), in: button)
             return
         }
 

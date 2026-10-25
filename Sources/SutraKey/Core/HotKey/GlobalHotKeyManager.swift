@@ -8,6 +8,7 @@ import os
 public final class GlobalHotKeyManager: NSObject {
     public static let shared = GlobalHotKeyManager()
 
+    private let lock = NSLock()
     private var hotKeyRefs: [EventHotKeyRef] = []
     private var eventHandler: EventHandlerRef?
 
@@ -18,8 +19,11 @@ public final class GlobalHotKeyManager: NSObject {
         super.init()
     }
 
-    /// Registers global shortcut keys (Cmd+Shift+S, Option+Shift+S, Cmd+Shift+0).
+    /// Registers global shortcut keys (Custom Shortcut, Option+Shift+S, Cmd+Shift+0).
     public func registerHotKeys() {
+        lock.lock()
+        defer { lock.unlock() }
+
         guard hotKeyRefs.isEmpty else { return }
 
         // 1. Install Carbon event handler on the system Event Dispatcher Target
@@ -61,21 +65,28 @@ public final class GlobalHotKeyManager: NSObject {
             return
         }
 
-        // 2. Register Cmd + Shift + S
+        // 2. Register Primary HotKey (Configured by user or default Cmd + Shift + S)
+        let primaryCode = PreferencesManager.shared.customHotKeyCode
+        let primaryMods = PreferencesManager.shared.customHotKeyModifiers
+
         registerKey(
-            keyCode: UInt32(kVK_ANSI_S),
-            modifiers: UInt32(cmdKey | shiftKey),
+            keyCode: primaryCode,
+            modifiers: primaryMods,
             id: 1,
             target: target
         )
 
-        // 3. Register Option + Shift + S
-        registerKey(
-            keyCode: UInt32(kVK_ANSI_S),
-            modifiers: UInt32(optionKey | shiftKey),
-            id: 2,
-            target: target
-        )
+        // 3. Register Option + Shift + S as secondary fallback if not already the primary
+        let optionShiftMods = UInt32(optionKey | shiftKey)
+        let sKeyCode = UInt32(kVK_ANSI_S)
+        if primaryCode != sKeyCode || primaryMods != optionShiftMods {
+            registerKey(
+                keyCode: sKeyCode,
+                modifiers: optionShiftMods,
+                id: 2,
+                target: target
+            )
+        }
 
         // 4. Register Cmd + Shift + 0 (Toggle Shortcuts)
         registerKey(
@@ -93,7 +104,13 @@ public final class GlobalHotKeyManager: NSObject {
             target: target
         )
 
-        Logger.events.info("GlobalHotKeyManager successfully registered Cmd+Shift+S, Option+Shift+S, and Cmd+Shift+0 shortcuts.")
+        Logger.events.info("GlobalHotKeyManager successfully registered shortcuts.")
+    }
+
+    /// Reloads hotkey registrations dynamically after preferences change.
+    public func reloadHotKeys() {
+        unregisterHotKeys()
+        registerHotKeys()
     }
 
     private func registerKey(keyCode: UInt32, modifiers: UInt32, id: UInt32, target: EventTargetRef?) {
@@ -133,6 +150,9 @@ public final class GlobalHotKeyManager: NSObject {
 
     /// Unregisters all hotkeys.
     public func unregisterHotKeys() {
+        lock.lock()
+        defer { lock.unlock() }
+
         for ref in hotKeyRefs {
             UnregisterEventHotKey(ref)
         }
