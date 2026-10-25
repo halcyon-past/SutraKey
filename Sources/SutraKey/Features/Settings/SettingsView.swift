@@ -1,5 +1,6 @@
 import AppKit
 import Carbon
+import os
 import SwiftUI
 
 /// Settings view providing configuration for downloads, quality, menu bar presence, and GitHub auto-updates.
@@ -571,19 +572,14 @@ public struct SettingsView: View {
                         .stroke(Color.green.opacity(0.2), lineWidth: 1)
                 )
 
-            case .updateAvailable(let version, let release):
-                VStack(alignment: .leading, spacing: 8) {
+            case .updateAvailable(let version, let release, _, _):
+                VStack(alignment: .leading, spacing: 10) {
                     HStack {
                         Image(systemName: "sparkles")
                             .foregroundColor(.orange)
                         Text("New Version Available: v\(version)")
                             .font(.system(size: 13, weight: .bold))
                         Spacer()
-                        Button("Download Update") {
-                            updater.openDownloadOrReleasePage()
-                        }
-                        .buttonStyle(.borderedProminent)
-                        .tint(Color(red: 1.0, green: 0.42, blue: 0.24))
                     }
 
                     if let notes = release.body, !notes.isEmpty {
@@ -598,8 +594,33 @@ public struct SettingsView: View {
                         .background(Color(NSColor.textBackgroundColor))
                         .cornerRadius(6)
                     }
+
+                    HStack(spacing: 12) {
+                        Button {
+                            Task {
+                                do {
+                                    try await updater.downloadAndInstallUpdate()
+                                } catch {
+                                    Logger.app.error("In-app update failed: \(error.localizedDescription)")
+                                }
+                            }
+                        } label: {
+                            HStack(spacing: 6) {
+                                Image(systemName: "arrow.triangle.2.circlepath.circle.fill")
+                                Text("Update & Relaunch")
+                            }
+                        }
+                        .buttonStyle(.borderedProminent)
+                        .tint(Color(red: 1.0, green: 0.42, blue: 0.24))
+
+                        Button("Download DMG Manually") {
+                            updater.openDownloadOrReleasePage()
+                        }
+                        .font(.system(size: 11))
+                        .buttonStyle(.link)
+                    }
                 }
-                .padding(12)
+                .padding(14)
                 .background(Color.orange.opacity(0.12))
                 .cornerRadius(10)
                 .overlay(
@@ -607,15 +628,62 @@ public struct SettingsView: View {
                         .stroke(Color.orange.opacity(0.25), lineWidth: 1)
                 )
 
-            case .failed(let message):
-                HStack(spacing: 8) {
-                    Image(systemName: "exclamationmark.triangle.fill")
-                        .foregroundColor(.red)
-                    Text("Could not check for updates: \(message)")
+            case .downloading(let progress):
+                VStack(alignment: .leading, spacing: 8) {
+                    HStack(spacing: 8) {
+                        ProgressView(value: progress > 0 ? progress : nil)
+                        if progress > 0 {
+                            Text("\(Int(progress * 100))%")
+                                .font(.system(size: 11, design: .monospaced))
+                                .foregroundColor(.secondary)
+                        }
+                    }
+                    Text("Downloading latest release...")
                         .font(.system(size: 12))
-                        .foregroundColor(.red)
+                        .foregroundColor(.secondary)
                 }
-                .padding(10)
+                .padding(14)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .background(Color(NSColor.controlBackgroundColor))
+                .cornerRadius(8)
+
+            case .installing:
+                HStack(spacing: 10) {
+                    ProgressView()
+                        .controlSize(.small)
+                    Text("Extracting, verifying bundle, and relaunching SutraKey...")
+                        .font(.system(size: 12, weight: .medium))
+                }
+                .padding(14)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .background(Color.orange.opacity(0.1))
+                .cornerRadius(8)
+
+            case .failed(let message):
+                VStack(alignment: .leading, spacing: 8) {
+                    HStack(spacing: 8) {
+                        Image(systemName: "exclamationmark.triangle.fill")
+                            .foregroundColor(.red)
+                        Text("Update failed: \(message)")
+                            .font(.system(size: 12))
+                            .foregroundColor(.red)
+                    }
+                    HStack(spacing: 12) {
+                        Button("Try Again") {
+                            Task {
+                                await updater.checkForUpdates()
+                            }
+                        }
+                        .font(.system(size: 11))
+
+                        Button("Download DMG Manually") {
+                            updater.openDownloadOrReleasePage()
+                        }
+                        .font(.system(size: 11))
+                        .buttonStyle(.link)
+                    }
+                }
+                .padding(12)
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .background(Color.red.opacity(0.1))
                 .cornerRadius(8)

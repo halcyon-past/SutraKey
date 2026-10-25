@@ -312,7 +312,13 @@ public final class EphemeralStatusBarController: NSObject, ObservableObject {
         settingsItem.isEnabled = true
         menu.addItem(settingsItem)
 
-        let updatesItem = NSMenuItem(title: "Check for Updates...", action: #selector(checkForUpdates(_:)), keyEquivalent: "u")
+        let updateTitle: String
+        if case .updateAvailable(let ver, _, _, _) = UpdateManager.shared.status {
+            updateTitle = "Update to v\(ver)..."
+        } else {
+            updateTitle = "Check for Updates..."
+        }
+        let updatesItem = NSMenuItem(title: updateTitle, action: #selector(checkForUpdates(_:)), keyEquivalent: "u")
         updatesItem.target = self
         updatesItem.isEnabled = true
         menu.addItem(updatesItem)

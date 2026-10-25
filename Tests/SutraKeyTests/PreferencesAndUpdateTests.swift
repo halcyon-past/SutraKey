@@ -16,6 +16,8 @@ struct PreferencesAndUpdateTests {
         #expect(updater.isVersion("1.0.2", greaterThan: "1.0.1") == true)
         #expect(updater.isVersion("1.0.3", greaterThan: "1.0.2") == true)
         #expect(updater.isVersion("1.0.4", greaterThan: "1.0.3") == true)
+        #expect(updater.isVersion("1.0.5", greaterThan: "1.0.4") == true)
+        #expect(updater.isVersion("v1.0.5", greaterThan: "1.0.4") == true)
         #expect(updater.isVersion("1.0.0", greaterThan: "1.0.0") == false)
         #expect(updater.isVersion("0.9.9", greaterThan: "1.0.0") == false)
         #expect(updater.isVersion("1.0.0", greaterThan: "1.0.1") == false)

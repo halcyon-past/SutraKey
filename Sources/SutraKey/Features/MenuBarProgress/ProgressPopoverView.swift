@@ -52,6 +52,26 @@ public struct ProgressPopoverView: View {
 
                 Spacer()
 
+                if case .updateAvailable(let ver, _, _, _) = UpdateManager.shared.status {
+                    Button {
+                        SettingsWindowController.shared.showSettings()
+                    } label: {
+                        HStack(spacing: 3) {
+                            Image(systemName: "sparkles")
+                                .font(.system(size: 9))
+                            Text("v\(ver)")
+                                .font(.system(size: 10, weight: .bold))
+                        }
+                        .foregroundColor(.white)
+                        .padding(.horizontal, 6)
+                        .padding(.vertical, 2)
+                        .background(Color(red: 1.0, green: 0.42, blue: 0.24))
+                        .cornerRadius(4)
+                    }
+                    .buttonStyle(.plain)
+                    .help("Update to v\(ver) available in Settings")
+                }
+
                 // Shortcuts Quick Toggle Button
                 Button {
                     PreferencesManager.shared.toggleShortcuts()

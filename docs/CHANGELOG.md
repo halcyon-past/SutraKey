@@ -11,6 +11,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [1.0.5] - 2026-10-25
+
+### Added
+- **Native In-App Auto-Update Engine:** Implemented a zero-dependency, in-place self-updater that updates SutraKey directly within the application when clicked, eliminating the need to manually download, mount, and drag the DMG into `/Applications`.
+- **One-Click Update & Relaunch:** Integrated "Update & Relaunch" in Settings → Updates. Automatically downloads the universal release package (preferring `.zip` for high-speed extraction via native `ditto`, with silent `hdiutil` `.dmg` fallback), verifies executable bundle integrity, performs an atomic in-place binary swap in `/Applications/SutraKey.app`, clears macOS Gatekeeper quarantine flags (`com.apple.quarantine`), and automatically relaunches the updated app.
+- **Real-Time Download & Install Progress:** Added live byte-level download progress tracking with an interactive percentage progress bar in the Updates tab, plus an installation spinner during verification and relaunch staging.
+- **Dynamic Menu Bar & Popover Badges:** Added an instant update notification badge in the Progress Popover header (`vX.X.X Available`) and dynamically updated the menu bar context menu item to `Update to vX.X.X...` when a newer version is detected.
+
+---
+
 ## [1.0.4] - 2026-10-25
 
 ### Fixed
