@@ -4,7 +4,7 @@ cask "sutrakey" do
 
   url "https://github.com/halcyon-past/SutraKey/releases/download/v#{version}/SutraKey-v#{version}.dmg"
   name "SutraKey"
-  desc "Shift + Select radial media and document downloader for macOS"
+  desc "Shift + Select radial media and document downloader"
   homepage "https://sutrakey.aritro.cloud/"
 
   livecheck do
@@ -19,7 +19,7 @@ cask "sutrakey" do
 
   zap trash: [
     "~/Library/Application Support/cloud.aritro.sutrakey",
-    "~/Library/Preferences/cloud.aritro.sutrakey.plist",
     "~/Library/Caches/cloud.aritro.sutrakey",
+    "~/Library/Preferences/cloud.aritro.sutrakey.plist",
   ]
 end
