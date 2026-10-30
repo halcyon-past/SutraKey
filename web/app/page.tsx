@@ -15,14 +15,14 @@ export default function Home() {
   return (
     <SmoothScrollProvider>
       <div className="relative min-h-screen flex flex-col bg-[#fafafc] text-[#1d1d1f] dark:bg-[#0b0b0f] dark:text-[#f5f5f7] transition-colors duration-400 overflow-x-hidden">
-        {/* Hardware-Isolated Ambient Chromatic Lighting Background Pools */}
-        <div className="pointer-events-none fixed inset-0 overflow-hidden z-0 contain-paint">
+        {/* Hardware-Accelerated Ambient Chromatic Lighting Background Pools */}
+        <div className="pointer-events-none fixed inset-0 overflow-hidden z-0">
           {/* Top-right pastel pink ambient glow */}
-          <div className="absolute top-[10%] right-[-10%] w-[600px] h-[600px] rounded-full ambient-glow-pink opacity-50 dark:opacity-25" />
+          <div className="absolute -top-[10%] -right-[10%] w-[750px] h-[750px] rounded-full ambient-glow-pink blur-[130px] opacity-70 dark:opacity-50 animate-float-slow" />
           {/* Mid-left pastel mint ambient glow */}
-          <div className="absolute top-[45%] left-[-10%] w-[650px] h-[650px] rounded-full ambient-glow-green opacity-40 dark:opacity-20" />
+          <div className="absolute top-[35%] -left-[15%] w-[800px] h-[800px] rounded-full ambient-glow-green blur-[150px] opacity-60 dark:opacity-45 animate-float-reverse" />
           {/* Lower-center subtle iris ambient glow */}
-          <div className="absolute top-[75%] left-[25%] w-[700px] h-[700px] rounded-full ambient-glow-iris opacity-35 dark:opacity-15" />
+          <div className="absolute top-[70%] left-[20%] w-[850px] h-[850px] rounded-full ambient-glow-iris blur-[160px] opacity-60 dark:opacity-40 animate-float-slow" />
         </div>
 
         <div className="relative z-10 flex flex-col min-h-screen">

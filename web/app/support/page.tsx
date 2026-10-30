@@ -109,10 +109,10 @@ export default function SupportPage() {
     <SmoothScrollProvider>
       <div className="relative min-h-screen flex flex-col bg-[#fafafc] text-[#1d1d1f] dark:bg-[#0b0b0f] dark:text-[#f5f5f7] transition-colors duration-400 overflow-x-hidden">
         {/* Ambient Glows */}
-        <div className="pointer-events-none fixed inset-0 overflow-hidden z-0 contain-paint">
-          <div className="absolute top-[10%] right-[-10%] w-[500px] h-[500px] rounded-full ambient-glow-pink opacity-40 dark:opacity-20" />
-          <div className="absolute top-[45%] left-[-10%] w-[550px] h-[550px] rounded-full ambient-glow-green opacity-40 dark:opacity-15" />
-          <div className="absolute top-[80%] right-[10%] w-[600px] h-[600px] rounded-full ambient-glow-iris opacity-30 dark:opacity-10" />
+        <div className="pointer-events-none fixed inset-0 overflow-hidden z-0">
+          <div className="absolute -top-[10%] -right-[10%] w-[650px] h-[650px] rounded-full ambient-glow-pink blur-[130px] opacity-70 dark:opacity-50 animate-float-slow" />
+          <div className="absolute top-[40%] -left-[10%] w-[700px] h-[700px] rounded-full ambient-glow-green blur-[140px] opacity-65 dark:opacity-45 animate-float-reverse" />
+          <div className="absolute top-[75%] right-[5%] w-[750px] h-[750px] rounded-full ambient-glow-iris blur-[150px] opacity-60 dark:opacity-40 animate-float-slow" />
         </div>
 
         <div className="relative z-10 flex flex-col min-h-screen">

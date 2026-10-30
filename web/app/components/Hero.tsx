@@ -17,6 +17,10 @@ export function Hero() {
 
   return (
     <section className="relative pt-10 pb-8 md:pt-16 md:pb-12 overflow-hidden px-4">
+      {/* Dynamic Ambient Pastel Lighting Pools (Pink & Emerald glow directly behind header) */}
+      <div className="pointer-events-none absolute -top-16 left-1/2 -translate-x-1/2 w-[650px] sm:w-[850px] h-[450px] rounded-full ambient-glow-pink blur-[100px] opacity-80 dark:opacity-65 animate-float-slow -z-10" />
+      <div className="pointer-events-none absolute top-16 left-1/2 -translate-x-1/2 w-[700px] sm:w-[900px] h-[480px] rounded-full ambient-glow-green blur-[120px] opacity-70 dark:opacity-55 animate-float-reverse -z-10" />
+
       <div className="max-w-4xl mx-auto text-center flex flex-col items-center">
         {/* Top Badges Row: GitHub Stars + Developer Attribution */}
         <motion.div
