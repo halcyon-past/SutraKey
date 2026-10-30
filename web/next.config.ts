@@ -151,6 +151,32 @@ const nextConfig: NextConfig = {
         ],
       },
       {
+        source: "/.well-known/ai-catalog.json",
+        headers: [
+          {
+            key: "Content-Type",
+            value: "application/json; charset=utf-8",
+          },
+          {
+            key: "Cache-Control",
+            value: "public, max-age=3600, s-maxage=3600",
+          },
+        ],
+      },
+      {
+        source: "/e89f41b9c7d0482591ae2f33c8b57a10.txt",
+        headers: [
+          {
+            key: "Content-Type",
+            value: "text/plain; charset=utf-8",
+          },
+          {
+            key: "Cache-Control",
+            value: "public, max-age=86400, s-maxage=86400",
+          },
+        ],
+      },
+      {
         source: "/(favicon.ico|apple-touch-icon.png|og-image.jpg|banner-social.jpg|.*\\.webp)",
         headers: [
           {

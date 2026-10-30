@@ -1,11 +1,12 @@
-"use client";
-
 import React from "react";
 import { Navbar } from "./components/Navbar";
 import { Hero } from "./components/Hero";
 import { RadialSimulator } from "./components/RadialSimulator";
 import { Highlights } from "./components/Highlights";
 import { FormatShowcase } from "./components/FormatShowcase";
+import { PlatformMatrix } from "./components/PlatformMatrix";
+import { ComparisonTable } from "./components/ComparisonTable";
+import { UtilityFaq } from "./components/UtilityFaq";
 import { Installation } from "./components/Installation";
 import { Footer } from "./components/Footer";
 import { SmoothScrollProvider } from "./components/SmoothScrollProvider";
@@ -31,9 +32,36 @@ export default function Home() {
             <RadialSimulator />
             <Highlights />
             <FormatShowcase />
+            <PlatformMatrix />
+            <ComparisonTable />
+            <UtilityFaq />
             <Installation />
           </main>
           <Footer />
+
+          {/* Non-JS Crawler & Accessibility Semantic Fallback */}
+          <noscript>
+            <div className="p-8 bg-[#0a0a0c] text-white max-w-4xl mx-auto my-8 rounded-2xl border border-white/10">
+              <h2 className="text-2xl font-bold mb-4">SutraKey for macOS — Free 4K Media Downloader &amp; Web to PDF</h2>
+              <p className="mb-4">
+                Engineered by <strong>Aritro Saha (halcyon-past)</strong>. SutraKey is an open-source macOS utility. Hold Shift and select any URL across macOS to summon an under-cursor radial menu that downloads 4K/1080p video (MP4), extracts 320kbps MP3 audio with album art, downloads subtitles (.srt), or converts web articles into clean ad-free vector PDFs directly to ~/Downloads.
+              </p>
+              <h3 className="text-lg font-semibold mb-2">Supported Platforms &amp; Formats</h3>
+              <ul className="list-disc pl-5 mb-4 space-y-1">
+                <li><strong>YouTube:</strong> 4K, 1080p, 60fps MP4, Shorts, Playlists, Chapters.</li>
+                <li><strong>Instagram:</strong> Reels, Posts, Carousels, and Stories via Keychain browser cookie authorization.</li>
+                <li><strong>Twitter / X &amp; TikTok:</strong> High-definition video clips without browser watermarks.</li>
+                <li><strong>Reddit:</strong> Automatically merges split video and audio streams into standard MP4.</li>
+                <li><strong>Audio:</strong> 320kbps MP3 with embedded album art and ID3 metadata.</li>
+                <li><strong>Clean Web to PDF:</strong> Ad-free, print-formatted vector PDF with active links via headless Apple WebKit.</li>
+              </ul>
+              <h3 className="text-lg font-semibold mb-2">Install via Homebrew</h3>
+              <pre className="bg-white/10 p-3 rounded mb-4 font-mono text-sm">brew install --cask halcyon-past/tap/sutrakey</pre>
+              <p>
+                Direct DMG Download: <a href="https://github.com/halcyon-past/SutraKey/releases/latest/download/SutraKey.dmg" className="underline text-emerald-400">Download SutraKey.dmg</a> | GitHub Repository: <a href="https://github.com/halcyon-past/SutraKey" className="underline text-emerald-400">halcyon-past/SutraKey</a> | Developer: <a href="https://www.aritro.cloud/" className="underline text-emerald-400">Aritro Saha</a>
+              </p>
+            </div>
+          </noscript>
         </div>
       </div>
     </SmoothScrollProvider>

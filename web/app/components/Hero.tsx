@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { Download, Check, Copy, Sparkles } from "lucide-react";
+import { Download, Check, Copy, Sparkles, UserCheck } from "lucide-react";
 import { motion } from "motion/react";
 import { LiquidGlass } from "./LiquidGlass";
 import { GitHubBadge } from "./GitHubBadge";
@@ -18,17 +18,26 @@ export function Hero() {
   return (
     <section className="relative pt-10 pb-8 md:pt-16 md:pb-12 overflow-hidden px-4">
       <div className="max-w-4xl mx-auto text-center flex flex-col items-center">
-        {/* GitHub Stars & Forks Badge Pill */}
+        {/* Top Badges Row: GitHub Stars + Developer Attribution */}
         <motion.div
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-          className="mb-6 inline-flex justify-center"
+          className="mb-6 flex flex-wrap items-center justify-center gap-3"
         >
           <GitHubBadge />
+          <a
+            href="https://www.aritro.cloud/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium bg-black/[0.04] dark:bg-white/[0.06] text-neutral-600 dark:text-neutral-300 border border-black/[0.06] dark:border-white/[0.08] hover:bg-black/[0.08] dark:hover:bg-white/[0.12] transition-colors"
+          >
+            <UserCheck size={12} className="text-pink-500" />
+            <span>Built by <strong className="font-semibold text-neutral-900 dark:text-white">Aritro Saha (halcyon-past)</strong></span>
+          </a>
         </motion.div>
 
-        {/* Hero Title (Apple iPad Air inspired typography with pastel sheen) */}
+        {/* Hero Title with Utility Keywords */}
         <motion.h1
           initial={{ opacity: 0, y: 15 }}
           animate={{ opacity: 1, y: 0 }}
@@ -41,19 +50,35 @@ export function Hero() {
           </span>
         </motion.h1>
 
-        {/* Subtitle */}
+        {/* Subtitle Addressing Core User Problem & Utility */}
         <motion.p
           initial={{ opacity: 0, y: 15 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
-          className="text-base sm:text-lg md:text-xl text-neutral-600 dark:text-neutral-300 font-normal max-w-2xl mx-auto leading-relaxed mb-8"
+          className="text-base sm:text-lg md:text-xl text-neutral-600 dark:text-neutral-300 font-normal max-w-2xl mx-auto leading-relaxed mb-6"
         >
-          <strong className="font-semibold text-neutral-900 dark:text-white">SutraKey</strong> (also known as <strong className="font-semibold text-neutral-900 dark:text-white">Sutra Key</strong>) is an invisible thread connecting any highlighted text or URL to instant local media. 
-          Zero latency. Zero telemetry. Straight to{" "}
+          Stop pasting links into sketchy, ad-filled download sites. <strong className="font-semibold text-neutral-900 dark:text-white">SutraKey</strong> is a free, open-source macOS utility by <a href="https://www.aritro.cloud/" target="_blank" rel="noopener noreferrer" className="underline hover:text-black dark:hover:text-white">Aritro Saha (halcyon-past)</a> that downloads 4K video, extracts 320kbps MP3 audio, or converts web articles to clean vector PDFs straight to{" "}
           <span className="font-mono text-xs sm:text-sm px-2 py-0.5 rounded-md bg-black/[0.04] dark:bg-white/[0.08] text-neutral-800 dark:text-neutral-200 border border-black/[0.06] dark:border-white/[0.1]">
             ~/Downloads
           </span>.
         </motion.p>
+
+        {/* Utility Keywords Pills */}
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.25 }}
+          className="flex flex-wrap items-center justify-center gap-2 mb-8 max-w-xl"
+        >
+          {["4K 60fps MP4", "320kbps MP3 + Artwork", "Subtitles (.SRT)", "Clean Web to PDF", "No Ads & Zero Telemetry"].map((badge) => (
+            <span
+              key={badge}
+              className="text-[11px] font-medium px-2.5 py-1 rounded-full bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 border border-emerald-500/20"
+            >
+              {badge}
+            </span>
+          ))}
+        </motion.div>
 
         {/* Action Lockup: Direct DMG + Homebrew Command */}
         <motion.div
@@ -73,7 +98,7 @@ export function Hero() {
           >
             <Download size={16} />
             <span>Download for macOS</span>
-            <span className="text-[11px] font-normal opacity-70 ml-0.5">Universal</span>
+            <span className="text-[11px] font-normal opacity-70 ml-0.5">Universal (Apple Silicon &amp; Intel)</span>
           </motion.a>
 
           {/* Copyable Homebrew Pill (Liquid Glass) */}
@@ -105,7 +130,7 @@ export function Hero() {
           <kbd className="keycap-apple px-2.5 py-1 bg-white dark:bg-[#1f1f26] text-neutral-800 dark:text-neutral-100 border border-black/10 dark:border-white/15 shadow-sm text-[11px] animate-pulse">
             ⇧ Shift
           </kbd>
-          <span>+ Select any URL in any app to summon the wheel</span>
+          <span>+ Select any URL in any app to summon the wheel (or press ⌘⇧S)</span>
         </motion.div>
 
         {/* Feature Badges (Pristine, balanced specs grid with hover elevation) */}
@@ -127,8 +152,8 @@ export function Hero() {
             whileHover={{ y: -2 }}
             className="px-4 py-3.5 rounded-2xl bg-white/60 dark:bg-white/[0.03] border border-black/[0.05] dark:border-white/[0.07] backdrop-blur-md shadow-sm flex flex-col items-center justify-center text-center transition-shadow hover:shadow-md"
           >
-            <div className="text-xs font-semibold text-[#1d1d1f] dark:text-white">100% Native</div>
-            <div className="text-[11px] text-neutral-500 dark:text-neutral-400 mt-0.5">Swift 6 Concurrency</div>
+            <div className="text-xs font-semibold text-[#1d1d1f] dark:text-white">100% Native Swift 6</div>
+            <div className="text-[11px] text-neutral-500 dark:text-neutral-400 mt-0.5">Engineered by Aritro Saha</div>
           </motion.div>
 
           <motion.div
@@ -136,14 +161,14 @@ export function Hero() {
             className="px-4 py-3.5 rounded-2xl bg-white/60 dark:bg-white/[0.03] border border-black/[0.05] dark:border-white/[0.07] backdrop-blur-md shadow-sm flex flex-col items-center justify-center text-center transition-shadow hover:shadow-md"
           >
             <div className="text-xs font-semibold text-[#1d1d1f] dark:text-white">Zero Telemetry</div>
-            <div className="text-[11px] text-neutral-500 dark:text-neutral-400 mt-0.5">Never touches a cloud</div>
+            <div className="text-[11px] text-neutral-500 dark:text-neutral-400 mt-0.5">100% local, no trackers</div>
           </motion.div>
 
           <motion.div
             whileHover={{ y: -2 }}
             className="px-4 py-3.5 rounded-2xl bg-white/60 dark:bg-white/[0.03] border border-black/[0.05] dark:border-white/[0.07] backdrop-blur-md shadow-sm flex flex-col items-center justify-center text-center transition-shadow hover:shadow-md"
           >
-            <div className="text-xs font-semibold text-[#1d1d1f] dark:text-white">QuickTime Native</div>
+            <div className="text-xs font-semibold text-[#1d1d1f] dark:text-white">QuickTime Ready</div>
             <div className="text-[11px] text-neutral-500 dark:text-neutral-400 mt-0.5">H.264 / AAC MP4</div>
           </motion.div>
         </motion.div>

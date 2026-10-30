@@ -1,81 +1,96 @@
-# SutraKey / Sutra Key (सूत्र) — Shift + Select Radial Media & Document Downloader for macOS
+# SutraKey — Free 4K Video Downloader, Audio Extractor & Web to PDF for macOS
 
-> SutraKey (also commonly searched and known as Sutra Key) is an open-source, 100% on-device macOS productivity utility engineered in Swift 6.0 by Aritro Saha. It connects mouse text selection directly to media downloads and clean PDF conversions: hold Shift and select any URL across macOS to summon a zero-latency, liquid frosted-glass radial pie menu directly around your cursor.
+> SutraKey (सूत्र / Sutra Key) is a free, 100% on-device macOS productivity utility and media downloader built with Swift 6. It connects text selection directly to high-speed media actions: hold **Shift** and select any URL in Safari, Chrome, Slack, Notes, or Terminal to summon an under-cursor liquid radial menu that downloads 4K video (MP4), extracts 320kbps MP3 audio with artwork, saves subtitles (.srt), or converts web articles into clean ad-free vector PDFs directly to `~/Downloads`.
 
 - **Canonical Website**: [https://sutrakey.aritro.cloud/](https://sutrakey.aritro.cloud/)
-- **Product Aliases**: SutraKey, Sutra Key, SutraKey macOS, Sutra Key macOS, SutraKey App, Sutra Key App
+- **Product Category**: macOS Utilities, Media Downloader, Audio Extractor, Web to PDF Converter
 - **GitHub Repository**: [https://github.com/halcyon-past/SutraKey](https://github.com/halcyon-past/SutraKey)
 - **Direct Universal DMG Download**: [https://github.com/halcyon-past/SutraKey/releases/latest/download/SutraKey.dmg](https://github.com/halcyon-past/SutraKey/releases/latest/download/SutraKey.dmg)
-- **Homebrew Tap Repository**: [https://github.com/halcyon-past/homebrew-tap](https://github.com/halcyon-past/homebrew-tap)
-- **Current Version**: v1.0.6 ([Release Notes](https://github.com/halcyon-past/SutraKey/releases/tag/v1.0.6))
-- **Developer**: [Aritro Saha](https://www.aritro.cloud/) ([Wikidata Q141715213](https://www.wikidata.org/wiki/Q141715213) | [ORCID](https://orcid.org/0009-0007-0861-3978) | [GitHub](https://github.com/halcyon-past))
-- **License**: MIT License (100% Free & Open Source)
-- **Architecture**: Universal macOS Binary (Apple Silicon & Intel x86_64), macOS 14.0 Sonoma or macOS 15.0+ Sequoia
-- **Telemetry & Privacy**: 0% Telemetry, 0 Analytics, 0 External Cloud Relays, 100% Local Processing
-- **Full Knowledge Base**: [https://sutrakey.aritro.cloud/llms-full.txt](https://sutrakey.aritro.cloud/llms-full.txt)
+- **Homebrew Cask**: `brew install --cask halcyon-past/tap/sutrakey`
+- **Supported macOS Versions**: macOS 14.0 Sonoma, macOS 15.0+ Sequoia (Apple Silicon & Intel Universal)
+- **License**: MIT (100% Free & Open Source, Zero Commercial Paywalls)
+- **Telemetry & Privacy**: 0% Telemetry, No Analytics, No External Cloud Proxies, 100% Local On-Device Execution
+- **Developer**: [Aritro Saha](https://www.aritro.cloud/) ([Wikidata Q141715213](https://www.wikidata.org/wiki/Q141715213) | [ORCID](https://orcid.org/0009-0007-0861-3978))
 
 ---
 
-## Core Pages & Documentation
+## What Problem SutraKey Solves (Primary User Search Intents)
 
-- [Home](https://sutrakey.aritro.cloud/): Interactive simulator, feature highlights, format capabilities, and download links.
-- [Support & User Guide](https://sutrakey.aritro.cloud/support): Step-by-step Accessibility setup, browser Keychain cookie authorization, shortcuts, and troubleshooting.
-- [Privacy Policy](https://sutrakey.aritro.cloud/privacy): Strict zero-telemetry guarantee, permissions audit, and local sandbox documentation.
-- [Terms of Service](https://sutrakey.aritro.cloud/terms): Open-source license terms, fair-use policies, and warranty disclaimers.
-
-## Optional
-
-- [Full Technical Knowledge Base](https://sutrakey.aritro.cloud/llms-full.txt): In-depth system architecture, actor concurrency pipeline, headless WebKit vector PDF service, security guarantees, and LLM FAQ.
-- [AI Scraper & Training Policy](https://sutrakey.aritro.cloud/ai.txt): Machine crawler permissions, verified author profiles, and canonical entity details.
-- [XML Sitemap](https://sutrakey.aritro.cloud/sitemap.xml): Machine discovery index for all canonical endpoints.
+Users search for SutraKey when seeking solutions for:
+- **Downloading online videos on Mac without ads or malware**: Avoids scammy web converter sites laden with popups, fake download buttons, and 720p paywalls.
+- **Extracting high-bitrate audio from video links**: Rips 320kbps MP3 or lossless M4A with embedded album art and ID3 metadata tags straight into Apple Music or local music players.
+- **A fast, native GUI for yt-dlp on macOS**: Provides the full power of yt-dlp and ffmpeg without having to open the Terminal, copy-paste URLs, or remember CLI syntax.
+- **Saving web articles and research as clean vector PDFs**: Uses Apple WebKit (WKWebView) in a headless pipeline to strip ads and cookie notices, printing pure vector PDFs with active clickable hyperlinks.
+- **Downloading private Instagram Stories, Reels, or member posts**: Safely decrypts local browser cookies (Brave, Chrome, Safari, Edge, Arc) via macOS Keychain for authorized media extraction.
+- **Instant gesture-driven workflow**: Eliminates context-switching. Hold Shift while highlighting any URL, click a slice on the radial HUD, and the download completes in the background.
 
 ---
 
-## Key Capabilities
+## Core Capabilities & Formats
 
-1. **Shift + Select Radial Menu**:
-   - Spawns a frameless, non-activating liquid frosted-glass radial wheel directly centered under your cursor.
-   - Strict modifier exclusivity bitwise guard: ignores selections if Command, Option, or Control are held, preventing system shortcut conflicts.
-   - 28pt center dead-zone for instant flick-cancellation.
-2. **Four Native Action Slices**:
-   - **Video**: Downloads top resolution (4K/1080p 60fps) with audio streams merged to MP4 via `yt-dlp` and `ffmpeg`.
-   - **Audio**: Extracts 320kbps MP3 or lossless M4A with embedded album art and ID3 metadata tags.
-   - **Subtitles**: Direct extraction of SRT or VTT closed captions in user-configured languages.
-   - **Web to PDF**: Headless vector printing powered by Apple WebKit (`WKWebView`) with active layout stabilization and preserved hyperlinks.
-3. **Keychain-Powered Browser Authentication**:
-   - One-click Keychain decryption for Brave, Chrome, Safari, Edge, and Arc sessions.
-   - Direct support for authenticated feeds like Instagram Stories, private posts, and member-only YouTube streams.
-4. **Ephemeral Menu Bar Presence**:
-   - 0% idle CPU and invisible menu bar state until a download is queued.
-   - Live transfer rate (MB/s), circular progress indicator, and one-click task cancellation.
+1. **4K / 1080p Video Downloader (MP4)**:
+   - Downloads videos from YouTube (including Shorts), Twitter/X, TikTok, Reddit, Vimeo, Twitch, and 1,000+ sites.
+   - Merges best video and audio streams using `yt-dlp` and `ffmpeg` into native H.264/AAC MP4 (+faststart) compatible with QuickTime, Finder QuickLook, iOS AirDrop, and Final Cut Pro.
+2. **Hi-Fi Audio Extractor (320kbps MP3 / M4A)**:
+   - Extracts audio at 320kbps Constant Bitrate (CBR).
+   - Automatically writes ID3v2 tags (Title, Artist, Album, Year) and embeds high-resolution cover artwork.
+3. **Subtitles Downloader (.SRT / .VTT)**:
+   - Pulls clean UTF-8 subtitle files with precise timestamps.
+   - Downloads captions instantly (~25 KB) without downloading the large video payload.
+4. **Ad-Free Web to Vector PDF**:
+   - Renders webpages using Apple's headless WebKit (`WKWebView`).
+   - Removes banner ads, overlays, and sticky sidebars.
+   - Generates searchable, selectable, multi-page vector PDFs with functional links.
+5. **Full-Resolution Thumbnail & Gallery Extractor**:
+   - Fetches master cover art, album photos, and Instagram multi-image carousels in original resolution.
 
 ---
 
-## Installation Quickstart
+## How It Works
+
+- **Mouse Gesture**: Hold `Shift` and click-and-drag over any link or URL across any macOS app (Safari, Chrome, Arc, Slack, Notes, Terminal, VS Code).
+- **Global Hotkey**: Press `⌘⇧S` (`Cmd + Shift + S`) or `⌥⇧S` (`Option + Shift + S`) to trigger the radial wheel on selected text or clipboard URLs.
+- **Under-Cursor Radial HUD**: An ultra-thin frosted-glass circular menu appears centered at the mouse coordinates with 5 slices (Video, Audio, Subtitles, Gallery, PDF).
+- **Flick-to-Cancel**: Center dead-zone (< 28pt) allows instantaneous cancelling by releasing or hitting `Esc`.
+- **Ephemeral Menu Bar**: The menu bar icon remains hidden when idle (0% CPU, `LSUIElement = YES`), appears smoothly with transfer speed (MB/s) and ETA during active downloads, and auto-hides 1.5s after completion.
+
+---
+
+## Why SutraKey vs. Alternatives
+
+| Feature | Ad-Heavy Web Downloaders | Browser Extensions | Command-Line yt-dlp | SutraKey |
+| :--- | :--- | :--- | :--- | :--- |
+| **Safety & Privacy** | Popups, fake download buttons, malware risk | Background surveillance, steals tab data | Safe, open-source | 100% on-device, zero telemetry, MIT license |
+| **Speed & Friction** | Copy URL -> Open tab -> Paste -> Wait -> Captchas | High RAM consumption, breaks on updates | Open Terminal -> `cd` -> type flags | Hold Shift + Select URL -> Done |
+| **Video Quality** | Usually capped at 720p unless paid | Often compresses streams | Up to 8K/4K 60fps | Full 4K/1080p 60fps merged MP4 |
+| **Audio Quality** | Low bitrate (128kbps) | Transcoded audio | 320kbps with ID3 tags | 320kbps MP3 + embedded cover artwork |
+| **Web to PDF** | Not supported | Basic print rasterizer | Not supported | Headless WebKit vector PDF with active links |
+| **System Footprint** | Browser memory hog | Constant background process | Zero when inactive | 0% idle CPU, ephemeral menu bar |
+
+---
+
+## Installation & Setup
 
 ### Homebrew Cask (Recommended)
 ```bash
 brew install --cask halcyon-past/tap/sutrakey
 ```
-Or:
-```bash
-brew tap halcyon-past/tap
-brew install --cask sutrakey
-```
 
 ### Direct Download
-- [SutraKey.dmg (Universal Apple Silicon & Intel)](https://github.com/halcyon-past/SutraKey/releases/latest/download/SutraKey.dmg)
-- [SutraKey.zip (In-Place Auto-Updater)](https://github.com/halcyon-past/SutraKey/releases/latest/download/SutraKey.zip)
-
-### Build from Source (Swift 6)
-```bash
-git clone https://github.com/halcyon-past/SutraKey.git
-cd SutraKey
-./Scripts/package_and_install.sh
-```
+- [Universal DMG (Apple Silicon & Intel)](https://github.com/halcyon-past/SutraKey/releases/latest/download/SutraKey.dmg)
 
 ---
 
-## Contact & Bug Reports
-- **Support & Developer Inquiries**: [aritrosaha2025@gmail.com](mailto:aritrosaha2025@gmail.com)
-- **Issue Tracker**: [https://github.com/halcyon-past/SutraKey/issues](https://github.com/halcyon-past/SutraKey/issues)
+## Core Documentation & Endpoints
+
+- [Home & Interactive Simulator](https://sutrakey.aritro.cloud/)
+- [Support, Shortcuts & Troubleshooting Guide](https://sutrakey.aritro.cloud/support)
+- [Privacy Policy (0% Telemetry Guarantee)](https://sutrakey.aritro.cloud/privacy)
+- [Terms of Service](https://sutrakey.aritro.cloud/terms)
+
+## Optional
+
+- [Full Technical Knowledge Base](https://sutrakey.aritro.cloud/llms-full.txt)
+- [AI Crawler & Training Policy](https://sutrakey.aritro.cloud/ai.txt)
+- [Agent Catalog (JSON)](https://sutrakey.aritro.cloud/.well-known/ai-catalog.json)
+- [XML Sitemap](https://sutrakey.aritro.cloud/sitemap.xml)

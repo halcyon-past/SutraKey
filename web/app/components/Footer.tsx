@@ -153,19 +153,26 @@ export function Footer() {
         {/* Legal Disclaimer, Author Attribution & Copyright */}
         <div className="pt-6 border-t border-black/[0.04] dark:border-white/[0.04] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-[11px] text-neutral-400 dark:text-neutral-500">
           <div>
-            Created by{" "}
+            Created &amp; engineered by{" "}
             <a
               href="https://www.aritro.cloud/"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-neutral-700 dark:text-neutral-300 hover:text-black dark:hover:text-white font-medium underline transition-colors"
+              className="text-neutral-800 dark:text-neutral-200 hover:text-black dark:hover:text-white font-medium underline transition-colors"
             >
               Aritro Saha
-            </a>
-            . Released under the MIT License.
+            </a>{" "}
+            (<a
+              href="https://github.com/halcyon-past"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hover:text-black dark:hover:text-white underline transition-colors"
+            >
+              @halcyon-past
+            </a>). Released under the MIT License.
           </div>
           <div>
-            Native Swift 6 • Apple Silicon &amp; Intel Universal • macOS 14+
+            100% Free &amp; Open Source • Native Swift 6 • Apple Silicon &amp; Intel Universal • macOS 14+
           </div>
         </div>
       </div>

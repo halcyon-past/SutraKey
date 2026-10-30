@@ -7,16 +7,16 @@ import { SmoothScrollProvider } from "../components/SmoothScrollProvider";
 import { FileText, Scale, CheckCircle2, AlertTriangle, ArrowLeft } from "lucide-react";
 
 export const metadata: Metadata = {
-  title: "Terms of Service — SutraKey (Sutra Key) for macOS",
+  title: "Terms of Service (MIT Open Source License) — SutraKey by Aritro Saha",
   description:
-    "SutraKey (Sutra Key) Terms of Service and open-source MIT license conditions for the native macOS radial media and document downloader.",
+    "SutraKey Terms of Service and open-source MIT license conditions by Aritro Saha (halcyon-past) for the native macOS radial media and document downloader.",
   alternates: {
     canonical: "/terms",
   },
   openGraph: {
-    title: "Terms of Service — SutraKey (Sutra Key) for macOS",
+    title: "Terms of Service (MIT Open Source License) — SutraKey by Aritro Saha",
     description:
-      "SutraKey (Sutra Key): Open-source MIT license details and acceptable fair use guidelines for the macOS utility.",
+      "SutraKey by Aritro Saha (halcyon-past): Open-source MIT license details and acceptable fair use guidelines for the macOS utility.",
     url: "https://sutrakey.aritro.cloud/terms",
     images: ["/og-image.jpg"],
   },

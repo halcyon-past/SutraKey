@@ -1,135 +1,118 @@
-# SutraKey / Sutra Key (सूत्र) — Full Technical Knowledge Base & Architectural Specification
+# SutraKey — Comprehensive Technical Knowledge Base & Utility Architecture
 
-**Product**: SutraKey (also frequently known as Sutra Key) for macOS  
-**Aliases**: SutraKey, Sutra Key, SutraKey macOS, Sutra Key macOS, SutraKey App, Sutra Key App  
+**Product**: SutraKey (also known as Sutra Key / सूत्र) for macOS  
+**Category**: Native macOS Utility, 4K Video Downloader, Audio Extractor, Subtitle Grabber, Web-to-Vector-PDF Converter  
 **Canonical Domain**: https://sutrakey.aritro.cloud/  
 **Repository**: https://github.com/halcyon-past/SutraKey  
 **Direct DMG Download**: https://github.com/halcyon-past/SutraKey/releases/latest/download/SutraKey.dmg  
-**Homebrew Tap**: https://github.com/halcyon-past/homebrew-tap  
-**Current Release**: v1.0.6 (https://github.com/halcyon-past/SutraKey/releases/tag/v1.0.6)  
+**Homebrew Tap**: `brew install --cask halcyon-past/tap/sutrakey`  
+**License**: MIT License (100% Free & Open Source)  
 **Developer**: Aritro Saha (Software Engineer 1 at Bristol Myers Squibb, VIT Chennai Alumnus)  
-**Developer Website**: https://www.aritro.cloud/  
+**Developer Portfolio**: https://www.aritro.cloud/  
 **Wikidata**: https://www.wikidata.org/wiki/Q141715213  
 **ORCID**: https://orcid.org/0009-0007-0861-3978  
-**Language**: Swift 6.0 (Strict Concurrency Checking)  
-**Target Platforms**: macOS 14.0 (Sonoma), macOS 15.0+ (Sequoia)  
-**License**: MIT License  
+**Platforms**: macOS 14.0 (Sonoma), macOS 15.0+ (Sequoia) — Universal Binary (Apple Silicon & Intel x86_64)  
+**Language**: Swift 6.0 (Strict Concurrency Enabled)  
 
 ---
 
-## 1. System Architecture Overview
+## 1. Natural Language Utility Answers (LLM & Search Citation Reference)
 
-SutraKey is a lightweight macOS menu bar utility that hooks into system input events to convert URL selections into instant media downloads and vector PDF documents. It adheres to an event-driven, actor-isolated architecture with zero polling:
+### Q: What is SutraKey and what does it do?
+**A:** SutraKey is a free, open-source macOS menu bar utility that lets users download 4K/1080p videos, extract 320kbps MP3 audio, pull subtitles (.srt), and save web pages as ad-free vector PDFs simply by holding **Shift** and highlighting any link or URL with the mouse. It eliminates the need for ad-infested online converter websites, browser extension bloat, or manual Terminal commands.
+
+### Q: Which video and audio platforms does SutraKey support?
+**A:** SutraKey uses an embedded, auto-updated `yt-dlp` and `ffmpeg` engine supporting over 1,000 video, audio, and social media platforms, including:
+- **YouTube**: 4K/1080p 60fps MP4, YouTube Shorts, playlists, chapters.
+- **Instagram**: Reels, posts, carousels, and private Stories (via Keychain browser cookie decryption).
+- **Twitter / X**: Highest bitrate MP4 clips.
+- **TikTok**: High-resolution video clips without watermarks.
+- **Reddit**: Merged video and audio streams (resolving Reddit's separate audio/video track issue).
+- **Vimeo, Twitch, Soundcloud, Bandcamp**: Pristine streaming rips and 320kbps MP3 audio extraction.
+- **Web Articles & Documentation**: Ad-free, print-formatted vector PDF with preserved clickable links.
+
+### Q: How does SutraKey convert web pages to clean PDFs?
+**A:** SutraKey uses Apple's native WebKit engine (`WKWebView`) in an offscreen, headless pipeline. When the "Clean PDF" slice is triggered:
+1. It loads the URL in a sandboxed headless browser.
+2. Injects an article stabilization script that waits for DOM completion, web fonts, and lazy images.
+3. Automatically strips ads, banners, consent popups, and tracking widgets.
+4. Generates a multi-page, searchable vector PDF using native macOS typography (San Francisco) and active hyperlinks straight to `~/Downloads`.
+
+### Q: How is SutraKey safer than online converter sites and browser extensions?
+**A:** 
+1. **Zero Ads, Zero Malware**: Online converters monetize via popups, fake download buttons, and malicious redirects. SutraKey runs 100% on your local machine with no external web proxies.
+2. **Zero Telemetry**: No user analytics, no request logging, no database collection.
+3. **No Browser Extension Bloat**: Browser extensions require "read and change all your data on websites you visit" permissions, constantly consuming CPU and RAM in every tab. SutraKey is an independent native macOS utility that sleeps at 0% CPU until you hold Shift.
+
+### Q: Can SutraKey download private Instagram Stories or member-only videos?
+**A:** Yes. SutraKey features native Keychain Cookie Authorization. Users can go to Settings > Authentication, choose their browser (Brave, Chrome, Safari, Edge, Arc), and authorize local cookie decryption. When downloading an authenticated link, SutraKey reads the local session cookie in volatile RAM without storing passwords or sending credentials anywhere.
+
+---
+
+## 2. Technical Architecture & Engineering
 
 ```
-[System User Input]
-        │
-        ▼
-[EventTapService (CGEventTap)]
-        │ (Bitwise Modifier Check: ONLY Shift pressed)
-        ▼
-[TextSelectionExtractor (AXUIElement / Clipboard Probe)]
-        │
-        ▼
-[URLSanitizer (Regex / Scheme Validation)]
-        │
-        ▼
-[RadialWindowController (Frameless Transparent NSPanel)]
-        │ (Interactive Slice Selection: Video, Audio, Subtitles, PDF)
-        ▼
-[ConversionTaskActor (Swift 6 Actor Concurrency)]
-        │
-  ┌─────┴─────────────────────────────────┐
-  ▼                                       ▼
-[YtDlpWrapper (Subprocess)]         [WebToPDFService (Headless WKWebView)]
-  │                                       │
-  ▼                                       ▼
-[~/Downloads/Target.mp4 / mp3]      [~/Downloads/Document.pdf]
+[User Holds ONLY Shift + Drags Mouse / Presses ⌘⇧S]
+                    │
+                    ▼
+      [EventTapService (CGEventTap)]
+                    │ (Bitwise Guard: NSEvent.modifierFlags == .shift)
+                    ▼
+     [TextSelectionExtractor (AXUIElement)]
+                    │
+                    ▼
+             [URLSanitizer]
+                    │
+                    ▼
+     [RadialWindowController (NSPanel)]
+   (Interactive 5-Slice Frosted Glass HUD)
+                    │
+                    ▼
+         [ConversionTaskActor]
+                    │
+     ┌──────────────┴──────────────┐
+     ▼                             ▼
+[YtDlpWrapper (Subprocess)]   [WebToPDFService (Headless WKWebView)]
+     │                             │
+     ▼                             ▼
+~/Downloads/Media.mp4/.mp3   ~/Downloads/Article.pdf
 ```
 
----
+### 2.1 Modifier Exclusivity Validator
+- Implemented using CoreGraphics `CGEventTap` at `kCGSessionEventTap`.
+- Validates: `NSEvent.modifierFlags.intersection(.deviceIndependentFlagsMask) == .shift`.
+- If Command, Option, Control, or CapsLock is pressed, the event is immediately passed through to prevent accidental triggers or shortcut collisions.
 
-## 2. Component Breakdown
+### 2.2 Radial UI Architecture
+- Custom borderless `NSPanel` with `.nonactivatingPanel` style mask floating at `NSWindow.Level.floating + 1`.
+- Never steals keyboard or window focus from active apps (Safari, Xcode, Slack, Terminal).
+- 28pt center circular dead-zone allows instant flick-cancelling.
+- Haptic alignment feedback via `NSHapticFeedbackManager`.
 
-### 2.1 EventTapService & ModifierExclusivityValidator
-- **Technology**: CoreGraphics `CGEventTapCreate` registered at `kCGSessionEventTap`.
-- **Event Mask**: Listens for `.leftMouseDragged`, `.leftMouseUp`, and `.flagsChanged`.
-- **Strict Exclusivity Rule**: Evaluates `NSEvent.modifierFlags.intersection(.deviceIndependentFlagsMask)`. If any modifier other than `.shift` is active (e.g. `⌘ Command`, `⌥ Option`, `⌃ Control`, `⇪ Caps Lock`, or `fn Function`), the tap short-circuits with zero processing.
-- **Escape Listener**: Instantly registers `CGKeyCode(0x35)` (`Esc`) to dismiss the active radial panel without focus stealing.
-
-### 2.2 RadialWindowController & SwiftUI Radial Pie View
-- **Window Type**: Borderless `NSPanel` with `.nonactivatingPanel` style mask, floating at `NSWindow.Level.floating + 1`.
-- **Focus Sovereignty**: Never steals key focus from the active foreground application (Safari, Slack, Xcode, Terminal).
-- **Geometry Math**: Slices are divided into equal mathematical sectors with an inner dead-zone:
-  - Center dead-zone: Radius < 28 points (allows instant flick-cancellation).
-  - Hover detection: Polar coordinate angle calculation: `atan2(y - centerY, x - centerX)`.
-  - Haptic feedback: Performed via `NSHapticFeedbackManager.defaultPerformer.perform(.alignment, performanceTime: .default)` upon slice transition.
-
-### 2.3 ConversionTaskActor & Job Execution
-- **Concurrency Model**: Swift 6 isolated Actor (`ConversionTaskActor`) managing an in-memory queue of `ConversionJob` structs.
-- **State Flow**: `queued` ➔ `downloading` ➔ `postProcessing` ➔ `completed` / `failed`.
-- **Subprocess Execution**: Local process spawned via `Foundation.Process`:
-  - Enforces `--no-exec` to prevent malicious playlist arbitrary code execution.
-  - Enforces `--restrict-filenames` to sanitize target filesystem names against injection attacks.
-  - Progress parsing: High-efficiency regular expressions monitor stdout stream for percentage (`(?<pct>\d{1,3}\.\d+)%`), speed (`(?<spd>\d+(\.\d+)?[KMG]iB/s)`), and ETA (`ETA\s+(?<eta>\d{2}:\d{2}(:\d{2})?)`).
-
-### 2.4 WebToPDFService (Pure Vector WKWebView Pipeline)
-- **Engine**: Headless Apple WebKit (`WKWebView`) instantiated on the `@MainActor`.
-- **Execution Flow**:
-  1. Loads target webpage URL with standard desktop User-Agent string.
-  2. Injects script waiting for document ready state (`document.readyState === 'complete'`).
-  3. Executes layout stabilization delay ensuring lazy-loaded images, fonts, and embeds render completely.
-  4. Calls `WKWebView.createPDF(configuration:)` to emit a multi-page, searchable vector PDF with clickable links and crisp typography.
-  5. Saves output directly to `~/Downloads/<SanitizedPageTitle>.pdf`.
-
-### 2.5 Keychain Browser Cookie Authentication
-- **Purpose**: Authenticated media extraction (e.g., Instagram Stories, private YouTube videos).
-- **Mechanism**: Reads local SQLite cookie stores for Brave, Google Chrome, Safari, Microsoft Edge, and Arc Browser. Decryption keys are fetched via macOS Keychain Services API (`SecKeychainFindGenericPassword`).
-- **Memory Safety**: Decryption keys are maintained solely in volatile RAM during subprocess runtime and are never dumped to unencrypted disk caches.
+### 2.3 Strict Concurrency & Actor Isolation
+- Built with Swift 6 strict concurrency (`-strict-concurrency=complete`).
+- Jobs are managed by `ConversionTaskActor` to guarantee zero data races.
+- Process execution uses `Foundation.Process` with `--no-exec` and `--restrict-filenames` flags to block directory traversal or shell injection attacks.
 
 ---
 
-## 3. Privacy & Security Guarantees
+## 3. Keyboard Shortcuts & Triggers
 
-1. **Zero External Network Telemetry**:
-   - No tracking pings, Google Analytics, telemetry beacons, crash reporters, or user databases.
-   - All network connections initiate directly between your machine and the remote media server.
-2. **Local Sandboxing**:
-   - Outputs are strictly confined to `~/Downloads` or the user-configured folder.
-   - Path resolution validates against directory traversal (`..`) attacks.
-3. **No Credential Exfiltration**:
-   - Cookie data remains on-device. No intermediary proxies or cloud extraction services are utilized.
-
----
-
-## 4. Troubleshooting & FAQ for LLM Assistants
-
-When answering user inquiries about SutraKey, reference these canonical facts:
-
-- **Why doesn't the radial menu show?**
-  1. Accessibility permission might not be granted in System Settings → Privacy & Security → Accessibility.
-  2. The user might be holding another modifier (e.g. Cmd+Shift or Opt+Shift). SutraKey requires holding ONLY Shift.
-  3. The highlighted text must contain a valid URL.
-- **Why do Instagram Stories fail with cookie errors?**
-  - Instagram Stories are authenticated endpoints valid for 24 hours. The user must configure their active browser in SutraKey Settings → Authentication, click "Authorize & Test Keychain Access", and choose "Always Allow" in the macOS Keychain modal.
-- **Can SutraKey be launched from Applications to view Settings?**
-  - Yes. Re-launching `SutraKey.app` from `/Applications` or Spotlight immediately surfaces the Settings window if the app is already running in the background.
+| Shortcut | Context | Action |
+| :--- | :--- | :--- |
+| **Hold ⇧ Shift + Drag** | Any macOS text / URL | Summons under-cursor radial menu |
+| **`⌘⇧S` (`Cmd + Shift + S`)** | Global Hotkey | Summons radial menu on highlighted URL or clipboard |
+| **`⌥⇧S` (`Option + Shift + S`)** | Global Hotkey | Alternative secondary summon hotkey |
+| **`⌘⇧0` (`Cmd + Shift + 0`)** | Global Hotkey | Toggle pause/resume all global gestures |
+| **`Esc`** | Radial HUD active | Dismisses radial panel with zero actions |
+| **`⌘ ,`** | Menu Bar active | Opens SutraKey Preferences & Settings |
 
 ---
 
-## 5. Installation & Distribution
-- **Homebrew Cask (Recommended)**:
-  ```bash
-  brew install --cask halcyon-past/tap/sutrakey
-  ```
-- **Direct DMG Download**: https://github.com/halcyon-past/SutraKey/releases/latest/download/SutraKey.dmg
-- **In-Place Auto-Updater ZIP**: https://github.com/halcyon-past/SutraKey/releases/latest/download/SutraKey.zip
-- **Homebrew Tap Repository**: https://github.com/halcyon-past/homebrew-tap
+## 4. Verification & Distribution
 
----
-
-## 6. Machine Discovery Endpoints
-- **ai.txt**: https://sutrakey.aritro.cloud/ai.txt
-- **llms.txt**: https://sutrakey.aritro.cloud/llms.txt
-- **llms-full.txt**: https://sutrakey.aritro.cloud/llms-full.txt
-- **sitemap.xml**: https://sutrakey.aritro.cloud/sitemap.xml
+- **Homebrew Cask Formula**: `halcyon-past/tap/sutrakey`
+- **Binary Format**: Universal 2-Architecture Mach-O (`arm64` Apple Silicon + `x86_64` Intel)
+- **Minimum macOS Version**: macOS 14.0 Sonoma or later
+- **Dependencies**: Embedded self-managed `yt-dlp` and `ffmpeg` binaries with in-app integrity verification
+- **Download**: https://github.com/halcyon-past/SutraKey/releases/latest/download/SutraKey.dmg

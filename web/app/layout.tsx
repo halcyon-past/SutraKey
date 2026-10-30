@@ -5,11 +5,13 @@ import "./globals.css";
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
+  display: "swap",
 });
 
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
+  display: "swap",
 });
 
 const SITE_URL = "https://sutrakey.aritro.cloud";
@@ -25,47 +27,42 @@ export const viewport: Viewport = {
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
-    default: "SutraKey (Sutra Key) — Shift + Select Radial Media & Document Downloader for macOS",
-    template: "%s | SutraKey (Sutra Key) for macOS",
+    default: "Free 4K Video Downloader, Audio Extractor & Web to PDF for Mac — SutraKey by Aritro Saha",
+    template: "%s | SutraKey for macOS by Aritro Saha (halcyon-past)",
   },
   description:
-    "SutraKey (also known as Sutra Key) is a free, open-source macOS utility. Hold Shift + Select any URL to summon a zero-latency liquid radial wheel that downloads video (4K/1080p MP4), audio (320kbps MP3/M4A), subtitles (SRT/VTT), or clean vector PDFs straight to ~/Downloads. 100% Native Swift 6.",
-  applicationName: "SutraKey (Sutra Key)",
-  authors: [{ name: "Aritro Saha", url: "https://www.aritro.cloud/" }],
-  creator: "Aritro Saha",
+    "Free, open-source macOS media downloader created by Aritro Saha (halcyon-past). Hold Shift and select any link to download 4K/1080p video (YouTube, Twitter/X, TikTok, Reddit), extract 320kbps MP3 audio with artwork, or save web articles as clean ad-free vector PDFs directly to ~/Downloads. 100% native Swift 6, zero telemetry.",
+  applicationName: "SutraKey by Aritro Saha (halcyon-past)",
+  authors: [{ name: "Aritro Saha (halcyon-past)", url: "https://www.aritro.cloud/" }],
+  creator: "Aritro Saha (halcyon-past)",
   publisher: "Aritro Saha",
-  category: "Developer Tools & Productivity",
+  category: "Utilities & Productivity",
   keywords: [
+    "macOS media downloader",
+    "mac video downloader no ads",
+    "free mac video downloader",
+    "download youtube video mac",
+    "extract audio to mp3 mac",
+    "convert webpage to clean pdf mac",
+    "yt-dlp mac GUI",
+    "save instagram stories mac",
+    "download reddit video audio mac",
+    "download twitter x video mac",
+    "shift select download mac",
+    "radial menu media downloader macos",
+    "download subtitles srt mac",
+    "open source mac video downloader",
+    "native swift 6 mac utility",
+    "4k 60fps youtube downloader mac",
+    "web article to vector pdf mac",
+    "zero telemetry mac app",
+    "Aritro Saha",
+    "halcyon-past",
+    "Aritro Saha developer",
     "SutraKey",
     "Sutra Key",
     "SutraKey macOS",
     "Sutra Key macOS",
-    "SutraKey app",
-    "Sutra Key app",
-    "SutraKey download",
-    "Sutra Key download",
-    "SutraKey GitHub",
-    "Sutra Key GitHub",
-    "SutraKey Aritro Saha",
-    "Sutra Key Aritro Saha",
-    "SutraKey Mac",
-    "Sutra Key Mac",
-    "Aritro Saha",
-    "halcyon-past",
-    "Q141715213",
-    "macOS media downloader",
-    "macOS radial menu",
-    "Shift select downloader Mac",
-    "video downloader macOS",
-    "audio extractor macOS",
-    "web to pdf macOS",
-    "yt-dlp macOS GUI",
-    "native Swift 6 macOS utility",
-    "Instagram stories downloader Mac",
-    "zero telemetry Mac app",
-    "free open source macOS software",
-    "WebKit vector PDF Mac",
-    "Apple Silicon universal utility",
   ],
   alternates: {
     canonical: "/",
@@ -85,32 +82,32 @@ export const metadata: Metadata = {
     type: "website",
     locale: "en_US",
     url: SITE_URL,
-    siteName: "SutraKey (Sutra Key)",
-    title: "SutraKey (Sutra Key) — Shift + Select Radial Media & Document Downloader for macOS",
+    siteName: "SutraKey by Aritro Saha (halcyon-past)",
+    title: "Free 4K Video Downloader, Audio Extractor & Web to PDF for Mac — SutraKey",
     description:
-      "SutraKey (Sutra Key): Hold Shift + Select any URL to summon a zero-latency liquid radial wheel. Downloads video, audio, subtitles, or clean PDFs straight to ~/Downloads. 100% Native Swift 6, Free & Open Source.",
+      "Free open-source macOS media downloader by Aritro Saha (halcyon-past). Hold Shift + Select any link to download 4K video, 320kbps MP3 audio, or clean vector PDFs straight to ~/Downloads. Native Swift 6, 0% telemetry.",
     images: [
       {
         url: "/og-image.jpg",
         width: 1200,
         height: 630,
         type: "image/jpeg",
-        alt: "SutraKey (Sutra Key) — Shift + Select Radial Media & Document Downloader for macOS",
+        alt: "SutraKey — Free 4K Video Downloader, Audio Extractor & Web to PDF for macOS by Aritro Saha (halcyon-past)",
       },
       {
         url: "/og-image.webp",
         width: 1200,
         height: 630,
         type: "image/webp",
-        alt: "SutraKey (Sutra Key) — Shift + Select Radial Media & Document Downloader for macOS",
+        alt: "SutraKey — Free 4K Video Downloader, Audio Extractor & Web to PDF for macOS by Aritro Saha (halcyon-past)",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "SutraKey (Sutra Key) — Shift + Select Radial Media & Document Downloader for macOS",
+    title: "Free 4K Video Downloader, Audio Extractor & Web to PDF for Mac — SutraKey",
     description:
-      "SutraKey (Sutra Key): Hold Shift + Select any URL to summon a zero-latency liquid radial wheel that downloads straight to ~/Downloads. 100% Native Swift 6.",
+      "Free open-source macOS media downloader by Aritro Saha (halcyon-past). Hold Shift + Select any URL to download 4K MP4, 320kbps MP3, or clean vector PDFs straight to ~/Downloads.",
     creator: "@halcyon_past",
     images: ["/og-image.jpg"],
   },
@@ -144,7 +141,7 @@ const jsonLd = {
       "@type": "Person",
       "@id": PERSON_ID,
       name: "Aritro Saha",
-      alternateName: ["Megh", "halcyon-past"],
+      alternateName: ["halcyon-past", "Megh", "Aritro Saha (halcyon-past)"],
       url: "https://www.aritro.cloud/",
       jobTitle: "Software Engineer 1",
       worksFor: {
@@ -177,13 +174,11 @@ const jsonLd = {
         "SutraKey macOS",
         "Sutra Key macOS",
         "SutraKey App",
-        "Sutra Key App",
-        "SutraKey (सूत्र)",
         "Sutra Key (सूत्र)",
       ],
-      operatingSystem: "macOS 14.0 or later",
-      applicationCategory: "UtilitiesApplication",
-      applicationSubCategory: "Media Downloader, Audio Extractor, and Web PDF Converter",
+      operatingSystem: "macOS 14.0 Sonoma, macOS 15.0+ Sequoia (Apple Silicon & Intel Universal)",
+      applicationCategory: "UtilitiesApplication, MultimediaApplication",
+      applicationSubCategory: "4K Video Downloader, Audio Extractor, Subtitle Grabber, and Web to PDF Converter",
       softwareVersion: "1.0.6",
       license: "https://opensource.org/licenses/MIT",
       url: SITE_URL,
@@ -199,16 +194,16 @@ const jsonLd = {
       ],
       screenshot: `${SITE_URL}/og-image.jpg`,
       description:
-        "Hold Shift + Select any URL to summon a zero-latency liquid radial wheel that downloads video (4K/1080p MP4), audio (320kbps MP3/M4A), subtitles (SRT/VTT), or clean vector PDFs directly to ~/Downloads. 100% Native Swift 6, Free & Open Source.",
+        "Free open-source macOS media downloader and web to PDF converter engineered by Aritro Saha (halcyon-past). Hold Shift + Select any URL to summon an under-cursor radial menu that downloads 4K video, extracts 320kbps MP3 audio, saves subtitles, or converts web articles into clean ad-free vector PDFs to ~/Downloads.",
       featureList: [
-        "Exclusive Shift + Select radial wheel HUD under the cursor",
+        "Shift + Select radial wheel HUD under the cursor",
         "Bitwise modifier exclusivity guard preventing system shortcut collisions",
-        "4 native action slots: 4K Video, Hi-Fi Audio, Subtitles, and Web to PDF",
-        "Headless WebKit vector PDF generation with link preservation",
+        "5 native action slots: 4K Video, Hi-Fi 320kbps MP3 Audio, Subtitles (.SRT), Full-Res Thumbnails, and Web to PDF",
+        "Headless WebKit vector PDF generation with link preservation and ad-stripping",
         "100% on-device processing with zero telemetry and zero cloud proxies",
-        "One-click Keychain browser cookie authorization (Brave, Chrome, Safari) for private feeds & stories",
+        "One-click Keychain browser cookie authorization (Brave, Chrome, Safari, Edge, Arc) for private feeds & stories",
         "Ephemeral menu bar indicator displaying real-time speed (MB/s) and ETA",
-        "Strict filesystem confinement to ~/Downloads with traversal defenses",
+        "Strict filesystem confinement to ~/Downloads with directory traversal defenses",
       ],
       offers: {
         "@type": "Offer",
@@ -257,17 +252,14 @@ const jsonLd = {
       "@type": "WebSite",
       "@id": `${SITE_URL}/#website`,
       url: SITE_URL,
-      name: "SutraKey (Sutra Key)",
+      name: "SutraKey — Free 4K Video Downloader, Audio Extractor & Web to PDF for macOS",
       alternateName: [
-        "SutraKey",
-        "Sutra Key",
-        "SutraKey macOS",
-        "Sutra Key macOS",
+        "SutraKey by Aritro Saha",
+        "Sutra Key by Aritro Saha (halcyon-past)",
         "SutraKey Official Website",
-        "Sutra Key Official Website",
       ],
       description:
-        "Official website and documentation for SutraKey (Sutra Key) — the open-source Shift + Select radial media and document downloader for macOS by Aritro Saha.",
+        "Official website and documentation for SutraKey — the open-source Shift + Select radial media and document downloader for macOS engineered by Aritro Saha (halcyon-past).",
       author: {
         "@id": PERSON_ID,
       },
@@ -309,47 +301,119 @@ const jsonLd = {
       ],
     },
     {
+      "@type": "HowTo",
+      "@id": `${SITE_URL}/#howto-download-video`,
+      name: "How to Download 4K Video or Extract MP3 Audio on Mac using Shift + Select",
+      description:
+        "Step-by-step guide to download high-resolution video or extract audio using SutraKey by Aritro Saha.",
+      step: [
+        {
+          "@type": "HowToStep",
+          name: "Highlight Any Link",
+          text: "Hold down ONLY the Shift key on your Mac keyboard and click-and-drag your mouse over any URL or link in Safari, Chrome, Slack, Notes, or Terminal.",
+        },
+        {
+          "@type": "HowToStep",
+          name: "Select Format from Radial HUD",
+          text: "Release over the 'Video' slice for 4K/1080p MP4 or 'Audio' slice for 320kbps MP3 with embedded artwork on the under-cursor radial wheel.",
+        },
+        {
+          "@type": "HowToStep",
+          name: "Access File in ~/Downloads",
+          text: "SutraKey processes the media via yt-dlp and ffmpeg in the background and saves the finished file straight to your macOS Downloads folder.",
+        },
+      ],
+    },
+    {
+      "@type": "HowTo",
+      "@id": `${SITE_URL}/#howto-web-to-pdf`,
+      name: "How to Convert Any Web Article or Documentation into a Clean Vector PDF on Mac",
+      description:
+        "Step-by-step guide to generate ad-free vector PDFs from web links using SutraKey.",
+      step: [
+        {
+          "@type": "HowToStep",
+          name: "Highlight Article Link",
+          text: "Hold Shift and select the link to any web page, news article, or documentation.",
+        },
+        {
+          "@type": "HowToStep",
+          name: "Select Clean PDF",
+          text: "Choose the 'Clean PDF' slice on the radial menu. SutraKey loads the page in headless WebKit, strips ads and cookie popups, and stabilizes fonts.",
+        },
+        {
+          "@type": "HowToStep",
+          name: "View Clean Vector PDF",
+          text: "A searchable, paginated vector PDF with clickable links is saved immediately to your ~/Downloads folder.",
+        },
+      ],
+    },
+    {
       "@type": "FAQPage",
       "@id": `${SITE_URL}/#faq`,
       mainEntity: [
         {
           "@type": "Question",
-          name: "What is SutraKey (or Sutra Key)?",
+          name: "What is SutraKey and who created it?",
           acceptedAnswer: {
             "@type": "Answer",
-            text: "SutraKey (also frequently searched as Sutra Key) is an open-source, 100% on-device macOS utility written in Swift 6.0 by Aritro Saha. Holding Shift while selecting any link or URL summons a zero-latency radial wheel to download 4K video, audio, subtitles, or vector PDFs directly to ~/Downloads.",
+            text: "SutraKey (also known as Sutra Key) is a free, open-source macOS utility created and engineered by Aritro Saha (known online as halcyon-past). It connects text selection directly to high-speed media actions: holding Shift and highlighting any URL summons an under-cursor radial pie menu to download 4K video, extract 320kbps MP3 audio, save subtitles (.srt), or convert web articles to clean ad-free vector PDFs.",
           },
         },
         {
           "@type": "Question",
-          name: "How do I summon the SutraKey radial menu?",
+          name: "How do I download videos or extract MP3 audio on Mac without ads?",
           acceptedAnswer: {
             "@type": "Answer",
-            text: "Hold down the Shift key and click-and-drag your mouse to select any URL or text containing a link across any macOS application. The radial menu will instantly appear centered under your cursor.",
+            text: "With SutraKey running, simply hold the Shift key while selecting any video URL (YouTube, Twitter/X, TikTok, Reddit, Vimeo) in any macOS app, or press Command+Shift+S. Select 'Video' or 'Audio' on the radial menu, and SutraKey will download the media directly to ~/Downloads without ads, popups, or cloud tracking.",
           },
         },
         {
           "@type": "Question",
-          name: "Does SutraKey collect my browsing history or clipboard data?",
+          name: "How do I convert a web page or article into a clean vector PDF on Mac?",
           acceptedAnswer: {
             "@type": "Answer",
-            text: "No. SutraKey operates with 0% telemetry and 100% on-device processing. Selected URLs are evaluated strictly in volatile RAM to display download options and are never sent to external servers or logged to disk.",
+            text: "Hold Shift and select any webpage link, then choose 'Clean PDF' on the radial wheel. SutraKey launches a headless Apple WebKit instance (WKWebView), strips ads and cookie consent banners, and prints a crisp, searchable, paginated vector PDF with clickable hyperlinks directly into ~/Downloads.",
           },
         },
         {
           "@type": "Question",
-          name: "How do I download Instagram Stories or private media?",
+          name: "Can SutraKey download private Instagram Stories or posts?",
           acceptedAnswer: {
             "@type": "Answer",
-            text: "Open SutraKey Settings > Authentication, select your active browser (Brave, Chrome, Safari, Edge, or Arc), and click 'Authorize & Test Keychain Access'. When macOS prompts for Keychain access, select 'Always Allow' to securely decrypt local session cookies.",
+            text: "Yes. SutraKey includes Keychain Browser Cookie Authentication. In Settings > Authentication, select the browser where you are logged into Instagram (Brave, Chrome, Safari, Edge, Arc) and click 'Authorize & Test Keychain Access'. When prompted by macOS, choose 'Always Allow'. SutraKey securely decrypts local session cookies in volatile RAM to extract private Stories and posts.",
           },
         },
         {
           "@type": "Question",
-          name: "How does the Web to PDF option work?",
+          name: "Why is a native Mac app better than web video downloaders or browser extensions?",
           acceptedAnswer: {
             "@type": "Answer",
-            text: "SutraKey uses Apple's native WebKit framework (WKWebView) in a headless vector pipeline to render the webpage, wait for DOM stabilization, and print a clean, paginated vector PDF with active hyperlinks straight to your ~/Downloads folder.",
+            text: "Online downloaders are filled with popups, fake download buttons, malware risks, and 720p limits. Browser extensions consume background RAM in every tab and often steal browsing history. SutraKey runs 100% locally on your Mac with 0% idle CPU, zero telemetry, and zero ads, saving 4K 60fps MP4 and 320kbps MP3 files straight to ~/Downloads.",
+          },
+        },
+        {
+          "@type": "Question",
+          name: "How is SutraKey different from running yt-dlp in the Terminal?",
+          acceptedAnswer: {
+            "@type": "Answer",
+            text: "SutraKey bundles and manages yt-dlp and ffmpeg natively, providing a zero-latency radial GUI. Instead of opening Terminal, changing directories, copy-pasting URLs, and typing complex flags, you simply hold Shift and highlight the URL. You get full 4K H.264/AAC quality, embedded album art, and progress indicators without typing a single command.",
+          },
+        },
+        {
+          "@type": "Question",
+          name: "Does SutraKey collect or track any user data?",
+          acceptedAnswer: {
+            "@type": "Answer",
+            text: "No. SutraKey operates with strict 0% telemetry and zero analytics. Selected URLs are evaluated solely in temporary RAM to trigger the local download and are never logged to disk or sent to external servers. All network traffic is strictly between your Mac and the target media host.",
+          },
+        },
+        {
+          "@type": "Question",
+          name: "Is SutraKey free and open-source?",
+          acceptedAnswer: {
+            "@type": "Answer",
+            text: "Yes. SutraKey is 100% free and open-source under the MIT License. The complete Swift 6 source code is available on GitHub at https://github.com/halcyon-past/SutraKey.",
           },
         },
       ],
@@ -365,25 +429,27 @@ export default function RootLayout({
   return (
     <html lang="en" className="dark scroll-smooth">
       <head>
-        {/* Preconnect & Performance Hints for Core Web Vitals */}
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-
         {/* Direct Favicon and Touch Icon Links */}
         <link rel="icon" type="image/x-icon" href="/favicon.ico" />
         <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
         <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
         <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
 
+        {/* Author Verification & Social Profiles */}
         <link rel="author" href="https://www.aritro.cloud/" />
         <link rel="me" href="https://www.aritro.cloud/" />
         <link rel="me" href="https://www.wikidata.org/wiki/Q141715213" />
         <link rel="me" href="https://github.com/halcyon-past" />
         <link rel="me" href="https://dev.to/halcyonpast" />
         <link rel="me" href="https://linkedin.com/in/aritro-saha" />
+
+        {/* AI & Agent Discovery Standards */}
+        <link rel="ai-catalog" href="/.well-known/ai-catalog.json" />
         <link rel="alternate" type="text/plain" href="/ai.txt" title="AI Scraper Policy" />
         <link rel="alternate" type="text/plain" href="/llms.txt" title="LLM Context Summary" />
-        <link rel="alternate" type="text/plain" href="/llms-full.txt" title="LLM Full Knowledge Base (llms-full.txt)" />
+        <link rel="alternate" type="text/plain" href="/llms-full.txt" title="LLM Full Knowledge Base" />
+        <link rel="alternate" type="text/markdown" href="/llms.txt" title="Markdown Context" />
+
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}

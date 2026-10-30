@@ -61,6 +61,15 @@ export function Navbar() {
             <a href="/#formats" className="hover:text-black dark:hover:text-white transition-colors">
               Formats
             </a>
+            <a href="/#platforms" className="hover:text-black dark:hover:text-white transition-colors">
+              Platforms
+            </a>
+            <a href="/#compare" className="hover:text-black dark:hover:text-white transition-colors">
+              Compare
+            </a>
+            <a href="/#faq" className="hover:text-black dark:hover:text-white transition-colors">
+              FAQ
+            </a>
             <a href="/#installation" className="hover:text-black dark:hover:text-white transition-colors">
               Install
             </a>

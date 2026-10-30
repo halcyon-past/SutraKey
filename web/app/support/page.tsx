@@ -23,16 +23,16 @@ import {
 } from "lucide-react";
 
 export const metadata: Metadata = {
-  title: "Support & Documentation — SutraKey (Sutra Key) for macOS",
+  title: "Support & Setup Guide — SutraKey for Mac by Aritro Saha (halcyon-past)",
   description:
-    "Complete documentation, setup instructions, Accessibility permissions, browser cookie authentication, and troubleshooting for SutraKey (Sutra Key) on macOS.",
+    "Complete documentation, shortcut reference, Accessibility setup, browser cookie authorization, and troubleshooting for SutraKey by Aritro Saha (halcyon-past).",
   alternates: {
     canonical: "/support",
   },
   openGraph: {
-    title: "Support & Documentation — SutraKey (Sutra Key) for macOS",
+    title: "Support & Setup Guide — SutraKey for Mac by Aritro Saha (halcyon-past)",
     description:
-      "SutraKey (Sutra Key): Master the Shift+Select radial gesture, grant Accessibility permissions, configure browser cookies for private media, and troubleshoot downloads.",
+      "SutraKey documentation by Aritro Saha (halcyon-past): Master the Shift+Select radial gesture, grant Accessibility permissions, configure browser cookies for private media, and troubleshoot downloads.",
     url: "https://sutrakey.aritro.cloud/support",
     images: ["/og-image.jpg"],
   },

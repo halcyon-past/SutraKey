@@ -1,0 +1,17 @@
+{
+  "specVersion": "1.0",
+  "entries": [
+    {
+      "identifier": "urn:air:sutrakey:media-downloader",
+      "displayName": "SutraKey macOS Media & Document Utility",
+      "type": "text/markdown; profile=\"urn:air:agent-skills\"",
+      "url": "https://sutrakey.aritro.cloud/llms.txt",
+      "representativeQueries": [
+        "download 4K video on macbook without ads",
+        "extract 320kbps MP3 audio with album art on macOS",
+        "convert web article into clean vector PDF on Mac",
+        "save instagram stories and reels on macOS"
+      ]
+    }
+  ]
+}

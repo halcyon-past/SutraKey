@@ -1,60 +1,129 @@
+# robots.txt for SutraKey (https://sutrakey.aritro.cloud/)
+# Free & Open Source 4K Video Downloader, Audio Extractor & Web to PDF Converter for macOS
+
 User-agent: *
 Allow: /
+Content-Signal: search=yes, ai-input=yes, ai-train=yes
 
-# AI & LLM Search Crawlers
-User-agent: GPTBot
+# Brave Search Engine Crawler
+User-agent: Bravebot
 Allow: /
+Content-Signal: search=yes, ai-input=yes, ai-train=yes
 
-User-agent: OAI-SearchBot
-Allow: /
-
-User-agent: ChatGPT-User
-Allow: /
-
+# Anthropic / Claude Search & Training Crawlers
 User-agent: ClaudeBot
 Allow: /
+Content-Signal: search=yes, ai-input=yes, ai-train=yes
 
 User-agent: Claude-Web
 Allow: /
+Content-Signal: search=yes, ai-input=yes, ai-train=yes
+
+User-agent: Claude-SearchBot
+Allow: /
+Content-Signal: search=yes, ai-input=yes, ai-train=yes
+
+User-agent: Claude-User
+Allow: /
+Content-Signal: search=yes, ai-input=yes, ai-train=yes
 
 User-agent: anthropic-ai
 Allow: /
+Content-Signal: search=yes, ai-input=yes, ai-train=yes
 
+# OpenAI / ChatGPT Search & Training Crawlers
+User-agent: GPTBot
+Allow: /
+Content-Signal: search=yes, ai-input=yes, ai-train=yes
+
+User-agent: OAI-SearchBot
+Allow: /
+Content-Signal: search=yes, ai-input=yes, ai-train=yes
+
+User-agent: ChatGPT-User
+Allow: /
+Content-Signal: search=yes, ai-input=yes, ai-train=yes
+
+# Perplexity AI Search & Direct Fetch Bots
 User-agent: PerplexityBot
 Allow: /
+Content-Signal: search=yes, ai-input=yes, ai-train=yes
 
 User-agent: Perplexity-User
 Allow: /
+Content-Signal: search=yes, ai-input=yes, ai-train=yes
+
+# Google Search & Gemini Extended Crawlers
+User-agent: Googlebot
+Allow: /
+Content-Signal: search=yes, ai-input=yes, ai-train=yes
 
 User-agent: Google-Extended
 Allow: /
+Content-Signal: search=yes, ai-input=yes, ai-train=yes
 
-User-agent: Googlebot
+User-agent: Google-Agent
 Allow: /
+Content-Signal: search=yes, ai-input=yes, ai-train=yes
 
-User-agent: Applebot
+# Microsoft Bing & IndexNow Crawler
+User-agent: Bingbot
 Allow: /
+Content-Signal: search=yes, ai-input=yes, ai-train=yes
 
-User-agent: Applebot-Extended
+# DuckDuckGo Search
+User-agent: DuckDuckBot
 Allow: /
-
-User-agent: Amazonbot
-Allow: /
-
-User-agent: YouBot
-Allow: /
+Content-Signal: search=yes, ai-input=yes, ai-train=yes
 
 User-agent: DuckAssistBot
 Allow: /
+Content-Signal: search=yes, ai-input=yes, ai-train=yes
+
+# Apple Intelligence & Siribot
+User-agent: Applebot
+Allow: /
+Content-Signal: search=yes, ai-input=yes, ai-train=yes
+
+User-agent: Applebot-Extended
+Allow: /
+Content-Signal: search=yes, ai-input=yes, ai-train=yes
+
+# Common Crawl (Foundation for Open-Source LLMs & Web Indexes)
+User-agent: CCBot
+Allow: /
+Content-Signal: search=yes, ai-input=yes, ai-train=yes
+
+# Other Major Search Engines & AI Crawlers
+User-agent: YandexBot
+Allow: /
+Content-Signal: search=yes, ai-input=yes, ai-train=yes
+
+User-agent: YouBot
+Allow: /
+Content-Signal: search=yes, ai-input=yes, ai-train=yes
+
+User-agent: Amazonbot
+Allow: /
+Content-Signal: search=yes, ai-input=yes, ai-train=yes
 
 User-agent: cohere-ai
 Allow: /
+Content-Signal: search=yes, ai-input=yes, ai-train=yes
 
 User-agent: Meta-ExternalAgent
 Allow: /
+Content-Signal: search=yes, ai-input=yes, ai-train=yes
 
+# Canonical XML Sitemap
 Sitemap: https://sutrakey.aritro.cloud/sitemap.xml
-# LLM Knowledge Base Endpoints:
+
+# Agentic Resource Discovery (ARD) Agentmap
+Agentmap: https://sutrakey.aritro.cloud/.well-known/ai-catalog.json
+
+# LLM & AI Knowledge Base Endpoints
 # https://sutrakey.aritro.cloud/llms.txt
 # https://sutrakey.aritro.cloud/llms-full.txt
 # https://sutrakey.aritro.cloud/ai.txt
+# https://sutrakey.aritro.cloud/.well-known/ai.txt
+# https://sutrakey.aritro.cloud/.well-known/ai-catalog.json
