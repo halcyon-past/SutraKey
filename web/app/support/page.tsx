@@ -100,7 +100,7 @@ const FAQS = [
   },
   {
     q: "Is SutraKey completely free and open-source?",
-    a: "Yes! SutraKey is 100% free and open-source under the MIT License, with zero ads, zero telemetry, and zero paywalls.",
+    a: "Yes! SutraKey is 100% free and open-source under the Apache License 2.0, with zero ads, zero telemetry, and zero paywalls.",
   },
 ];
 

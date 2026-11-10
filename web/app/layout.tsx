@@ -180,7 +180,7 @@ const jsonLd = {
       applicationCategory: "UtilitiesApplication, MultimediaApplication",
       applicationSubCategory: "4K Video Downloader, Audio Extractor, Subtitle Grabber, and Web to PDF Converter",
       softwareVersion: "1.0.6",
-      license: "https://opensource.org/licenses/MIT",
+      license: "https://www.apache.org/licenses/LICENSE-2.0",
       url: SITE_URL,
       downloadUrl: "https://github.com/halcyon-past/SutraKey/releases/latest/download/SutraKey.dmg",
       codeRepository: "https://github.com/halcyon-past/SutraKey",
@@ -413,7 +413,7 @@ const jsonLd = {
           name: "Is SutraKey free and open-source?",
           acceptedAnswer: {
             "@type": "Answer",
-            text: "Yes. SutraKey is 100% free and open-source under the MIT License. The complete Swift 6 source code is available on GitHub at https://github.com/halcyon-past/SutraKey.",
+            text: "Yes. SutraKey is 100% free and open-source under the Apache License 2.0. The complete Swift 6 source code is available on GitHub at https://github.com/halcyon-past/SutraKey.",
           },
         },
       ],

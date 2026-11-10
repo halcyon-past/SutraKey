@@ -760,7 +760,7 @@ public struct SettingsView: View {
                         .underline()
                 }
 
-                Text("Licensed under MIT License • Open Source")
+                Text("Licensed under Apache License 2.0 • Open Source")
                     .font(.system(size: 10))
                     .foregroundColor(.secondary)
             }

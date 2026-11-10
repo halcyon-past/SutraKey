@@ -3,7 +3,7 @@
 Thank you for your interest in contributing to **SutraKey**! SutraKey is a 100% free and open-source native macOS utility engineered with Swift 6 strict concurrency and high-craft native UI.
 
 - **Website:** [https://sutrakey.aritro.cloud](https://sutrakey.aritro.cloud)
-- **License:** MIT License
+- **License:** Apache License 2.0
 
 ---
 

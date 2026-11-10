@@ -7,7 +7,7 @@ const COMPARISONS = [
     webDownloaders: "Ad popups, fake download buttons & malware redirects",
     extensions: "Broad permissions; reads and changes data on all websites",
     terminal: "Safe but requires CLI knowledge & manual configuration",
-    sutrakey: "100% on-device Swift 6 binary, zero telemetry, MIT open-source",
+    sutrakey: "100% on-device Swift 6 binary, zero telemetry, Apache 2.0 open-source",
     sutrakeyWin: true,
   },
   {

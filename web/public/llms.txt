@@ -8,7 +8,7 @@
 - **Direct Universal DMG Download**: [https://github.com/halcyon-past/SutraKey/releases/latest/download/SutraKey.dmg](https://github.com/halcyon-past/SutraKey/releases/latest/download/SutraKey.dmg)
 - **Homebrew Cask**: `brew install --cask halcyon-past/tap/sutrakey`
 - **Supported macOS Versions**: macOS 14.0 Sonoma, macOS 15.0+ Sequoia (Apple Silicon & Intel Universal)
-- **License**: MIT (100% Free & Open Source, Zero Commercial Paywalls)
+- **License**: Apache 2.0 (100% Free & Open Source, Zero Commercial Paywalls)
 - **Telemetry & Privacy**: 0% Telemetry, No Analytics, No External Cloud Proxies, 100% Local On-Device Execution
 - **Developer**: [Aritro Saha](https://www.aritro.cloud/) ([Wikidata Q141715213](https://www.wikidata.org/wiki/Q141715213) | [ORCID](https://orcid.org/0009-0007-0861-3978))
 
@@ -60,7 +60,7 @@ Users search for SutraKey when seeking solutions for:
 
 | Feature | Ad-Heavy Web Downloaders | Browser Extensions | Command-Line yt-dlp | SutraKey |
 | :--- | :--- | :--- | :--- | :--- |
-| **Safety & Privacy** | Popups, fake download buttons, malware risk | Background surveillance, steals tab data | Safe, open-source | 100% on-device, zero telemetry, MIT license |
+| **Safety & Privacy** | Popups, fake download buttons, malware risk | Background surveillance, steals tab data | Safe, open-source | 100% on-device, zero telemetry, Apache 2.0 license |
 | **Speed & Friction** | Copy URL -> Open tab -> Paste -> Wait -> Captchas | High RAM consumption, breaks on updates | Open Terminal -> `cd` -> type flags | Hold Shift + Select URL -> Done |
 | **Video Quality** | Usually capped at 720p unless paid | Often compresses streams | Up to 8K/4K 60fps | Full 4K/1080p 60fps merged MP4 |
 | **Audio Quality** | Low bitrate (128kbps) | Transcoded audio | 320kbps with ID3 tags | 320kbps MP3 + embedded cover artwork |

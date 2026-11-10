@@ -7,16 +7,16 @@ import { SmoothScrollProvider } from "../components/SmoothScrollProvider";
 import { FileText, Scale, CheckCircle2, AlertTriangle, ArrowLeft } from "lucide-react";
 
 export const metadata: Metadata = {
-  title: "Terms of Service (MIT Open Source License) — SutraKey by Aritro Saha",
+  title: "Terms of Service (Apache 2.0 Open Source License) — SutraKey by Aritro Saha",
   description:
-    "SutraKey Terms of Service and open-source MIT license conditions by Aritro Saha (halcyon-past) for the native macOS radial media and document downloader.",
+    "SutraKey Terms of Service and open-source Apache License 2.0 conditions by Aritro Saha (halcyon-past) for the native macOS radial media and document downloader.",
   alternates: {
     canonical: "/terms",
   },
   openGraph: {
-    title: "Terms of Service (MIT Open Source License) — SutraKey by Aritro Saha",
+    title: "Terms of Service (Apache 2.0 Open Source License) — SutraKey by Aritro Saha",
     description:
-      "SutraKey by Aritro Saha (halcyon-past): Open-source MIT license details and acceptable fair use guidelines for the macOS utility.",
+      "SutraKey by Aritro Saha (halcyon-past): Open-source Apache License 2.0 details and acceptable fair use guidelines for the macOS utility.",
     url: "https://sutrakey.aritro.cloud/terms",
     images: ["/og-image.jpg"],
   },
@@ -49,7 +49,7 @@ export default function TermsPage() {
           <div className="mb-10">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-blue-500/10 text-blue-600 dark:text-blue-400 border border-blue-500/20 mb-4">
               <Scale size={14} />
-              Open-Source MIT License • Transparent &amp; Permissive
+              Open-Source Apache 2.0 License • Transparent &amp; Permissive
             </div>
             <h1 className="text-3xl sm:text-5xl font-bold tracking-tight text-neutral-900 dark:text-white mb-3">
               Terms of Service
@@ -74,10 +74,10 @@ export default function TermsPage() {
             <section className="space-y-3">
               <h2 className="text-lg font-bold text-neutral-900 dark:text-white flex items-center gap-2">
                 <FileText size={18} className="text-pink-500" />
-                2. MIT License Grant
+                2. Apache 2.0 License Grant
               </h2>
               <p className="text-sm leading-relaxed text-neutral-600 dark:text-neutral-300">
-                SutraKey is free, open-source software licensed under the terms of the MIT License. You are granted permission, free of charge, to use, copy, modify, merge, publish, distribute, and sublicense copies of the Software, subject to the condition that the copyright notice and license are retained in all substantial portions of the Software.
+                SutraKey is free, open-source software licensed under the terms of the Apache License, Version 2.0. You are granted a perpetual, worldwide, non-exclusive, no-charge, royalty-free, irrevocable copyright and patent license to reproduce, prepare derivative works of, publicly display, publicly perform, sublicense, and distribute the Software, subject to retaining copyright notices, license text, and prominent change notices on modified files.
               </p>
             </section>
 

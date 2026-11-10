@@ -129,7 +129,7 @@ export function Footer() {
               rel="noopener noreferrer"
               className="hover:text-black dark:hover:text-white transition-colors"
             >
-              MIT License
+              Apache 2.0 License
             </a>
             <a
               href="https://github.com/halcyon-past/SutraKey/issues"
@@ -169,7 +169,7 @@ export function Footer() {
               className="hover:text-black dark:hover:text-white underline transition-colors"
             >
               @halcyon-past
-            </a>). Released under the MIT License.
+            </a>). Released under the Apache 2.0 License.
           </div>
           <div>
             100% Free &amp; Open Source • Native Swift 6 • Apple Silicon &amp; Intel Universal • macOS 14+

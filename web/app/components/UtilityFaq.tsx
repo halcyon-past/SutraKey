@@ -32,7 +32,7 @@ const FAQ_ITEMS = [
   },
   {
     q: "Is SutraKey completely free and open source?",
-    a: "Yes. SutraKey is 100% free and open-source under the MIT License. The complete Swift 6 source code is publicly accessible on GitHub at https://github.com/halcyon-past/SutraKey.",
+    a: "Yes. SutraKey is 100% free and open-source under the Apache License 2.0. The complete Swift 6 source code is publicly accessible on GitHub at https://github.com/halcyon-past/SutraKey.",
   },
 ];
 

@@ -12,7 +12,7 @@
   <a href="https://github.com/halcyon-past/SutraKey/stargazers"><img src="https://img.shields.io/github/stars/halcyon-past/SutraKey?style=flat-square&logo=github&label=Stars&color=orange" alt="GitHub Stars"></a>
   <a href="https://github.com/halcyon-past/SutraKey/network/members"><img src="https://img.shields.io/github/forks/halcyon-past/SutraKey?style=flat-square&logo=github&label=Forks&color=blue" alt="GitHub Forks"></a>
   <a href="https://github.com/halcyon-past/SutraKey/actions/workflows/ci-build-and-test.yml"><img src="https://img.shields.io/badge/CI-passing-brightgreen?style=flat-square" alt="CI Status"></a>
-  <a href="https://github.com/halcyon-past/SutraKey/blob/main/LICENSE"><img src="https://img.shields.io/badge/License-MIT-blue.svg?style=flat-square" alt="License"></a>
+  <a href="https://github.com/halcyon-past/SutraKey/blob/main/LICENSE"><img src="https://img.shields.io/badge/License-Apache%202.0-blue.svg?style=flat-square" alt="License"></a>
   <a href="https://developer.apple.com/macos/"><img src="https://img.shields.io/badge/macOS-14.0%2B%20Sonoma-black.svg?style=flat-square&logo=apple" alt="macOS"></a>
   <a href="https://swift.org"><img src="https://img.shields.io/badge/Swift-6.0-F05138.svg?style=flat-square&logo=swift" alt="Swift 6"></a>
   <a href="https://sutrakey.aritro.cloud"><img src="https://img.shields.io/badge/Website-sutrakey.aritro.cloud-orange.svg?style=flat-square" alt="Website"></a>
@@ -157,6 +157,6 @@ swift test
 
 ## ✦ License & Privacy
 
-- **License:** 100% Free & Open Source under the [MIT License](LICENSE).
+- **License:** 100% Free & Open Source under the [Apache License 2.0](LICENSE).
 - **Privacy:** 0% telemetry, 0 analytics trackers, 0 cloud dependencies. Read our full [Privacy Policy](docs/PRIVACY_POLICY.md).
 - **Author:** [Aritro Saha](https://www.aritro.cloud/) ([@halcyon-past](https://github.com/halcyon-past))

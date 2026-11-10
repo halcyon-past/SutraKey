@@ -18,11 +18,11 @@ These Terms constitute a legally binding agreement between you ("User," "you," o
 
 ## 2. Open-Source License Grant
 
-SutraKey is open-source software licensed under the **MIT License**. Subject to your compliance with these Terms and the MIT License:
+SutraKey is open-source software licensed under the **Apache License, Version 2.0**. Subject to your compliance with these Terms and the Apache License 2.0:
 
-- You are granted the non-exclusive, perpetual right to run, copy, modify, merge, publish, distribute, and/or sublicense copies of the Software.
-- The above copyright notice and permission notice shall be included in all copies or substantial portions of the Software.
-- The full license terms are available in the repository at [LICENSE](https://github.com/halcyon-past/SutraKey/blob/main/LICENSE).
+- You are granted a perpetual, worldwide, non-exclusive, no-charge, royalty-free, irrevocable copyright and patent license to reproduce, prepare Derivative Works of, publicly display, publicly perform, sublicense, and distribute the Work and such Derivative Works in Source or Object form.
+- You must retain the copyright notice, license text, and any prominent notice of changes on modified files when distributing copies or Derivative Works.
+- The full license terms are available in the repository at [LICENSE](https://github.com/halcyon-past/SutraKey/blob/main/LICENSE) and at [http://www.apache.org/licenses/LICENSE-2.0](http://www.apache.org/licenses/LICENSE-2.0).
 
 ---
 
